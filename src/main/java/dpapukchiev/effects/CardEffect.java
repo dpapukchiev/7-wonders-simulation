@@ -3,15 +3,13 @@ package dpapukchiev.effects;
 import dpapukchiev.cards.Card;
 import dpapukchiev.cards.ManufacturedGood;
 import dpapukchiev.cards.RawMaterial;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class CardEffect {
@@ -20,8 +18,7 @@ public class CardEffect {
     protected int usedCount;
     protected double coinReward;
     protected double pointsAward;
-    protected boolean wildcardManufacturedGood;
-    protected List<ManufacturedGood> providedManufacturedGoods;
+    protected ManufacturedGood providedManufacturedGood;
     protected boolean wildcardRawMaterial;
     protected List<RawMaterial> providedRawMaterials;
     protected List<Card> freeCards;

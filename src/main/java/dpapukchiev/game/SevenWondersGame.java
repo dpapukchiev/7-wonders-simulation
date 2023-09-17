@@ -32,7 +32,14 @@ public class SevenWondersGame extends SchedulingElement {
             GameOptions gameOptions
     ) {
         super(parent);
-        this.gameOptions = gameOptions;
+        this.gameOptions = gameOptions.toBuilder()
+                .playerRandomVariables(
+                        IntStream.rangeClosed(1, gameOptions.numberOfPlayers())
+                                .mapToObj(i -> new RandomVariable(parent, new NormalRV()))
+                                .toList()
+                )
+                .build();
+
         this.cityDistribution = new RandomVariable(parent, new NormalRV());
         this.deck = new Deck(getParentModelElement());
     }
@@ -76,6 +83,7 @@ public class SevenWondersGame extends SchedulingElement {
             players.add(Player.builder()
                     .name("Player-" + i)
                     .city(cities.get(i))
+                    .pickACard(gameOptions.playerRandomVariables().get(i))
                     .build());
         }
 
@@ -131,16 +139,17 @@ public class SevenWondersGame extends SchedulingElement {
         return currentOffset;
     }
 
-    private int scheduleTurns(int startingOffset, int age) {
-        int lastOffset = startingOffset;
-        var currentIndexPerPlayer = new HashMap<Player, Integer>();
-        for (int j = 0; j < 7; j++) {
+    private int scheduleTurns(int ageStartingOffset, int age) {
+        int lastOffset = ageStartingOffset;
+        var currentHandIndexPerPlayer = new HashMap<Player, Integer>();
+
+        // Every age starts with 7 cards and ends with 1 discarded
+        for (int j = 0; j < 6; j++) {
             for (int i = 0; i < players.size(); i++) {
                 var player = players.get(i);
-                var handToAssign = getHandOfCards(age, currentIndexPerPlayer, i, player);
+                var handToAssign = getHandOfCards(age, currentHandIndexPerPlayer, i, player);
 
-
-                int newOffset = startingOffset + j;
+                int newOffset = ageStartingOffset + j;
                 lastOffset = newOffset;
                 scheduleEvent(new ExecutePlayerTurn(), newOffset, i, TurnContext.builder()
                         .turnCountAge(j + 1)
@@ -163,7 +172,7 @@ public class SevenWondersGame extends SchedulingElement {
         var handToAssign = handsPerAge.get(currentHandIndex);
 
 
-        // CARD ROTATION PER TURN
+        // CARD ROTATION PER AGE
         if (age == 2) {
             if (currentHandIndex - 1 < 0) {
                 currentIndexPerPlayer.put(player, players.size() - 1);

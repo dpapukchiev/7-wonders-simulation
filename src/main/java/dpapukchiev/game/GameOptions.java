@@ -1,10 +1,13 @@
 package dpapukchiev.game;
 
-import jsl.simulation.ModelElement;
+import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
 
-@Builder
+import java.util.List;
+
+@Builder(toBuilder = true)
 public record GameOptions(
-        int numberOfPlayers
+        int numberOfPlayers,
+        List<RandomVariable> playerRandomVariables
 ) {
 }

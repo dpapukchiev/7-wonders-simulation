@@ -2,19 +2,20 @@ package dpapukchiev.cards;
 
 import dpapukchiev.cost.Cost;
 import dpapukchiev.effects.CardEffect;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 public class Card {
     @ToString.Include
-    private String name;
-    private int requiredPlayersCount;
-    private int age;
-    private Cost cost;
-    private CardType type;
-    private CardEffect effect;
+    protected String name;
+    protected int requiredPlayersCount;
+    protected int age;
+    protected Cost cost;
+    protected CardType type;
+    @ToString.Include
+    protected CardEffect effect;
 }
