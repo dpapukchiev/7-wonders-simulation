@@ -18,8 +18,10 @@ import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -149,6 +151,16 @@ public class Player {
         );
     }
 
+    private Map<String, Double> getResourcesMap() {
+        var result = new HashMap<String, Double>();
+        List.of(RawMaterial.values())
+                .forEach(rm -> result.put(rm.name(), getRawMaterialCount(rm) + getRawMaterialCountWildcard(rm)));
+
+        List.of(ManufacturedGood.values())
+                .forEach(mg -> result.put(mg.name(), getManufacturedGoodCount(mg) + getManufacturedGoodCountWildcard(mg)));
+        return result;
+    }
+
     private CostReport processSelectedCard(TurnContext turnContext, Card card, HandOfCards handOfCards) {
         var costReport = card.getCost().generateCostReport(turnContext);
         boolean isFreeUpgrade = builtCards.stream()
@@ -197,6 +209,7 @@ public class Player {
                         war loss: %.1f
                         war win: %.1f
                         shields: %.1f
+                        resources: %s
                         built cards (%d):
                         %s
                         """,
@@ -206,6 +219,7 @@ public class Player {
                 getWarLossPoints(),
                 getWarWinPoints(),
                 getShieldCount(),
+                getResourcesMap(),
                 builtCards.size(),
                 cards
         );
