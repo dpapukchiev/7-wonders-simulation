@@ -8,6 +8,7 @@ import dpapukchiev.city.CityName;
 import dpapukchiev.cost.CostReport;
 import dpapukchiev.effects.CardEffect;
 import dpapukchiev.effects.EffectUsageType;
+import dpapukchiev.effects.PreferentialTrading;
 import dpapukchiev.game.TurnContext;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
@@ -24,6 +25,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static dpapukchiev.effects.PreferentialTrading.PreferentialTradingType.LEFT;
+import static dpapukchiev.effects.PreferentialTrading.PreferentialTradingType.RIGHT;
 import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
 @Log4j2
@@ -108,8 +111,6 @@ public class Player {
         var startingCoins = turnContext.getPlayer().getCoins();
         var handOfCards = turnContext.getHandOfCards();
 
-        // buy resources
-        // free upgrades
         var cardsToPickFrom = handOfCards.getBuildableCards(turnContext);
 
         if (cardsToPickFrom.isEmpty()) {
@@ -208,6 +209,39 @@ public class Player {
                 builtCards.size(),
                 cards
         );
+    }
+
+    public double getTradingPriceLeft(RawMaterial rawMaterial) {
+        return getCardsWithPreferentialTrading(LEFT)
+                .anyMatch(c -> c.getEffect().getPreferentialTrading().rawMaterials().contains(rawMaterial)) ?
+                1 : 2;
+    }
+
+    public double getTradingPriceRight(RawMaterial rawMaterial) {
+        return getCardsWithPreferentialTrading(RIGHT)
+                .anyMatch(c -> c.getEffect().getPreferentialTrading().rawMaterials().contains(rawMaterial)) ?
+                1 : 2;
+    }
+
+    public double getTradingPriceLeft(ManufacturedGood manufacturedGood) {
+        return getCardsWithPreferentialTrading(LEFT)
+                .anyMatch(c -> c.getEffect().getPreferentialTrading().manufacturedGoods().contains(manufacturedGood)) ?
+                1 : 2;
+    }
+
+    public double getTradingPriceRight(ManufacturedGood manufacturedGood) {
+        return getCardsWithPreferentialTrading(RIGHT)
+                .anyMatch(c -> c.getEffect().getPreferentialTrading().manufacturedGoods().contains(manufacturedGood)) ?
+                1 : 2;
+    }
+
+    private Stream<Card> getCardsWithPreferentialTrading(PreferentialTrading.PreferentialTradingType tradingType) {
+        return builtCards.stream()
+                .filter(c -> c.getEffect().getPreferentialTrading() != null)
+                .filter(c -> List.of(
+                        PreferentialTrading.PreferentialTradingType.BOTH,
+                        tradingType
+                ).contains(c.getEffect().getPreferentialTrading().type()));
     }
 
     private static int countMaterial(RawMaterial rawMaterial, Stream<CardEffect> validEffects) {

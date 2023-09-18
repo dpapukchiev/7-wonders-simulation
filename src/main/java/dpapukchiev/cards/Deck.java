@@ -1,6 +1,7 @@
 package dpapukchiev.cards;
 
 import dpapukchiev.cost.FreeToPlayCost;
+import dpapukchiev.effects.PreferentialTrading;
 import dpapukchiev.effects.RawMaterialEffect;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
@@ -73,10 +74,21 @@ public class Deck {
         // COMMERCIAL
         allCards.add(new CommercialCardCoinReward("Taverne", 5, 4));
         allCards.add(new CommercialCardCoinReward("Taverne", 5, 5));
-        // TODO: fix effects
-        allCards.add(new CommercialCardCoinReward("Kontor Ost", 0, 3));
-        allCards.add(new CommercialCardCoinReward("Kontor West", 0, 3));
-        allCards.add(new CommercialCardCoinReward("Markt", 0, 3));
+        allCards.add(new CommercialTradingCard("Kontor Ost", 0, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.RIGHT,
+                List.of(),
+                List.of(RawMaterial.CLAY, RawMaterial.METAL_ORE, RawMaterial.STONE, RawMaterial.WOOD)
+        )));
+        allCards.add(new CommercialTradingCard("Kontor West", 0, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.LEFT,
+                List.of(),
+                List.of(RawMaterial.CLAY, RawMaterial.METAL_ORE, RawMaterial.STONE, RawMaterial.WOOD)
+        )));
+        allCards.add(new CommercialTradingCard("Markt", 0, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.BOTH,
+                List.of(ManufacturedGood.GLASS, ManufacturedGood.SCRIPTS, ManufacturedGood.TEXTILE),
+                List.of()
+        )));
 
         // SCIENCE
         allCards.add(new ScienceCard("Aphoteke", 3, List.of(ScienceSymbol.COMPASS), List.of(ManufacturedGood.TEXTILE)));

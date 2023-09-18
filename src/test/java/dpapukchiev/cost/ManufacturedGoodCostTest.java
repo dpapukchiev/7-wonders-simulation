@@ -1,13 +1,16 @@
 package dpapukchiev.cost;
 
+import dpapukchiev.cards.CommercialTradingCard;
 import dpapukchiev.cards.ManufacturedGood;
 import dpapukchiev.cards.SingleManufacturedGoodCard;
+import dpapukchiev.effects.PreferentialTrading;
 import dpapukchiev.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -129,6 +132,35 @@ class ManufacturedGoodCostTest extends BaseCostTest {
     }
 
     @Test
+    void canBuildOffTradeLeftRightComplexWithPreferential() {
+        // player 2 on the left
+        // player 3 on the right
+        player1.setCoins(4);
+        player1.setBuiltCards(Collections.singletonList(new CommercialTradingCard(
+                "test", 1, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.BOTH,
+                List.of(ManufacturedGood.GLASS),
+                List.of()
+        ))));
+
+        testInstance = new ManufacturedGoodCost(List.of(
+                ManufacturedGood.GLASS,
+                ManufacturedGood.GLASS,
+                ManufacturedGood.SCRIPTS
+        ));
+
+        setManufacturedGoodCount(player2, ManufacturedGood.SCRIPTS, 1);
+        setManufacturedGoodCount(player3, ManufacturedGood.GLASS, 2);
+
+        var result = testInstance.generateCostReport(getTurnContext());
+
+        assertTrue(result.isAffordable());
+        assertEquals(ManufacturedGood.GLASS.name() + "," + ManufacturedGood.SCRIPTS.name(), result.getResourcesIncluded());
+        assertEquals(2, result.getToPayRight());
+        assertEquals(2, result.getToPayLeft());
+    }
+
+    @Test
     void canBuildOffOwnComplex() {
         testInstance = new ManufacturedGoodCost(List.of(
                 ManufacturedGood.GLASS,
@@ -156,7 +188,7 @@ class ManufacturedGoodCostTest extends BaseCostTest {
         ));
 
         setManufacturedGoodCount(player1, ManufacturedGood.TEXTILE, 1);
-        setManufacturedGoodCount(player1, ManufacturedGood.GLASS,1);
+        setManufacturedGoodCount(player1, ManufacturedGood.GLASS, 1);
 
         var result = testInstance.generateCostReport(getTurnContext());
 

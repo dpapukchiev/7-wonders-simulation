@@ -3,6 +3,7 @@ package dpapukchiev.cost;
 import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.game.TurnContext;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
+@Log4j2
 @AllArgsConstructor
 public class RawMaterialCost implements Cost {
     private final List<RawMaterial> rawMaterialsList;
@@ -29,10 +31,11 @@ public class RawMaterialCost implements Cost {
         return rm -> {
             var requiredCount = rm.getValue().size();
             var neededMaterial = RawMaterial.valueOf(rm.getKey());
-            var currentCount = turnContext.getPlayer().getRawMaterialCount(neededMaterial) +
-                    turnContext.getPlayer().getRawMaterialCountWildcard(neededMaterial);
+            var player = turnContext.getPlayer();
+            var currentCount = player.getRawMaterialCount(neededMaterial) +
+                    player.getRawMaterialCountWildcard(neededMaterial);
 
-            if(currentCount >= requiredCount){
+            if (currentCount >= requiredCount) {
                 return CostReport.builder()
                         .affordable(true)
                         .resourcesIncluded(neededMaterial.name())
@@ -41,18 +44,31 @@ public class RawMaterialCost implements Cost {
 
             var diff = requiredCount - currentCount;
 
-            var leftCount = turnContext.getPlayer().getLeftPlayer().getRawMaterialCount(neededMaterial);
+            // TODO: get better price
+            var leftCount = player.getLeftPlayer().getRawMaterialCount(neededMaterial);
             var takeFromLeft = Math.min(leftCount, diff);
-            var priceLeft = takeFromLeft * 2; // TODO: preferential
+            var priceLeft = takeFromLeft * player.getTradingPriceLeft(neededMaterial);
 
-            var rightCount = turnContext.getPlayer().getRightPlayer().getRawMaterialCount(neededMaterial);
+            var rightCount = player.getRightPlayer().getRawMaterialCount(neededMaterial);
             var takeFromRight = Math.min(rightCount, diff - takeFromLeft);
-            var priceRight = takeFromRight * 2; // TODO: preferential
+            var priceRight = takeFromRight * player.getTradingPriceRight(neededMaterial);
 
-            boolean hasEnoughCoinsForTrade = (priceLeft + priceRight) <= turnContext.getPlayer().getCoins();
+            boolean hasEnoughCoinsForTrade = (priceLeft + priceRight) <= player.getCoins();
             boolean hasEnoughResources = (currentCount + leftCount + rightCount) >= requiredCount;
 
             boolean isAffordable = hasEnoughResources && hasEnoughCoinsForTrade;
+            if (isAffordable) {
+                log.info("Player {} has {}/{} {}. Buying {}x{} from left and {}x{} from right.",
+                        player.getName(),
+                        currentCount,
+                        requiredCount,
+                        neededMaterial.name(),
+                        takeFromLeft,
+                        player.getTradingPriceLeft(neededMaterial),
+                        takeFromRight,
+                        player.getTradingPriceRight(neededMaterial)
+                );
+            }
             return CostReport.builder()
                     .affordable(isAffordable)
                     .resourcesIncluded(neededMaterial.name())

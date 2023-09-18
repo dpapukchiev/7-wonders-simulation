@@ -1,10 +1,9 @@
 package dpapukchiev.cost;
 
 import dpapukchiev.cards.ManufacturedGood;
-import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.game.TurnContext;
-import dpapukchiev.player.Player;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
+@Log4j2
 @AllArgsConstructor
 public class ManufacturedGoodCost implements Cost {
     private final List<ManufacturedGood> manufacturedGoodList;
@@ -23,7 +23,10 @@ public class ManufacturedGoodCost implements Cost {
                 .collect(groupingBy(ManufacturedGood::name));
 
         return materialsNeeded.entrySet().stream()
-                .map(createCostReport(turnContext))
+                .map(s -> {
+                    var result = createCostReport(turnContext).apply(s);
+                    return result;
+                })
                 .reduce(CostReport.builder().affordable(true).build(), CostReport::merge);
     }
 
@@ -31,10 +34,11 @@ public class ManufacturedGoodCost implements Cost {
         return rm -> {
             var requiredCount = rm.getValue().size();
             var manufacturedGood = ManufacturedGood.valueOf(rm.getKey());
-            var currentCount = turnContext.getPlayer().getManufacturedGoodCount(manufacturedGood) +
-                    turnContext.getPlayer().getManufacturedGoodCountWildcard(manufacturedGood);
+            var player = turnContext.getPlayer();
+            var currentCount = player.getManufacturedGoodCount(manufacturedGood) +
+                    player.getManufacturedGoodCountWildcard(manufacturedGood);
 
-            if(currentCount >= requiredCount){
+            if (currentCount >= requiredCount) {
                 return CostReport.builder()
                         .affordable(true)
                         .resourcesIncluded(manufacturedGood.name())
@@ -43,23 +47,42 @@ public class ManufacturedGoodCost implements Cost {
 
             var diff = requiredCount - currentCount;
 
-            var leftCount = turnContext.getPlayer().getLeftPlayer().getManufacturedGoodCount(manufacturedGood);
+            // TODO: get better price
+            var leftCount = player.getLeftPlayer().getManufacturedGoodCount(manufacturedGood);
             var takeFromLeft = Math.min(leftCount, diff);
-            var priceLeft = takeFromLeft * 2; // TODO: preferential
 
-            var rightCount = turnContext.getPlayer().getRightPlayer().getManufacturedGoodCount(manufacturedGood);
+            var rightCount = player.getRightPlayer().getManufacturedGoodCount(manufacturedGood);
             var takeFromRight = Math.min(rightCount, diff - takeFromLeft);
-            var priceRight = takeFromRight * 2; // TODO: preferential
 
-            boolean hasEnoughCoinsForTrade = (priceLeft + priceRight) <= turnContext.getPlayer().getCoins();
             boolean hasEnoughResources = (currentCount + leftCount + rightCount) >= requiredCount;
+            if (!hasEnoughResources) {
+                return CostReport.builder()
+                        .affordable(false)
+                        .resourcesIncluded(manufacturedGood.name())
+                        .build();
+            }
 
-            boolean isAffordable = hasEnoughResources && hasEnoughCoinsForTrade;
+            var priceLeft = takeFromLeft * player.getTradingPriceLeft(manufacturedGood);
+            var priceRight = takeFromRight * player.getTradingPriceRight(manufacturedGood);
+
+            boolean hasEnoughCoinsForTrade = (priceLeft + priceRight) <= player.getCoins();
+            if (hasEnoughCoinsForTrade) {
+                log.info("Player {} has {}/{} {}. Buying {}x{} from left and {}x{} from right.",
+                        player.getName(),
+                        currentCount,
+                        requiredCount,
+                        manufacturedGood.name(),
+                        takeFromLeft,
+                        player.getTradingPriceLeft(manufacturedGood),
+                        takeFromRight,
+                        player.getTradingPriceRight(manufacturedGood)
+                );
+            }
             return CostReport.builder()
-                    .affordable(isAffordable)
+                    .affordable(hasEnoughCoinsForTrade)
                     .resourcesIncluded(manufacturedGood.name())
-                    .toPayLeft(takeFromLeft * 2)
-                    .toPayRight(takeFromRight * 2)
+                    .toPayLeft(priceLeft)
+                    .toPayRight(priceRight)
                     .build();
         };
     }

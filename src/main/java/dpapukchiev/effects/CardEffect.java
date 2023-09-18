@@ -42,27 +42,47 @@ public class CardEffect {
     protected List<ScienceSymbol>    providedScienceSymbols   = new ArrayList<>();
     @Builder.Default
     protected List<Card>             freeCards                = new ArrayList<>();
+    protected PreferentialTrading    preferentialTrading;
 
     public boolean canBeUsed() {
         return (maxUsages == null) || usedCount < maxUsages;
     }
 
     public String report() {
-        return "E($%.1f V%.1f X%.1f RM:%s MG:%s S:%s)"
-                .formatted(
-                        coinReward,
-                        pointsAward,
-                        shieldsAward,
-                        providedRawMaterials.stream()
-                                .map(rm -> rm.name().substring(0, 1))
-                                .collect(Collectors.joining()),
-                        providedManufacturedGood.stream()
-                                .map(rm -> rm.name().substring(0, 1))
-                                .collect(Collectors.joining()),
-                        providedScienceSymbols.stream()
-                                .map(rm -> rm.name().substring(0, 1))
-                                .collect(Collectors.joining())
-                );
+        var report = new ArrayList<String>();
+        if (coinReward > 0) {
+            report.add("C: " + coinReward);
+        }
+        if (pointsAward > 0) {
+            report.add("V: " + pointsAward);
+        }
+        if (shieldsAward > 0) {
+            report.add("X: " + shieldsAward);
+        }
+        if (!providedRawMaterials.isEmpty()) {
+            report.add("RM: " + providedRawMaterials.stream()
+                    .map(rm -> rm.name().substring(0, 1))
+                    .collect(Collectors.joining("-")));
+        }
+        if (!providedManufacturedGood.isEmpty()) {
+            report.add("MG: " + providedManufacturedGood.stream()
+                    .map(rm -> rm.name().substring(0, 1))
+                    .collect(Collectors.joining("-")));
+        }
+        if (!providedScienceSymbols.isEmpty()) {
+            report.add("S: " + providedScienceSymbols.stream()
+                    .map(rm -> rm.name().substring(0, 2))
+                    .collect(Collectors.joining("-")));
+        }
+        if (!freeCards.isEmpty()) {
+            report.add("FC: " + freeCards.stream()
+                    .map(Card::getName)
+                    .collect(Collectors.joining("-")));
+        }
+        if (preferentialTrading != null) {
+            report.add("PT: " + preferentialTrading.type().name());
+        }
+        return "E(%s)".formatted(String.join(" ", report));
     }
 
     public void applyEffect(Player player) {
