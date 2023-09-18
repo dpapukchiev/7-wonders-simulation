@@ -57,18 +57,6 @@ public class RawMaterialCost implements Cost {
             boolean hasEnoughResources = (currentCount + leftCount + rightCount) >= requiredCount;
 
             boolean isAffordable = hasEnoughResources && hasEnoughCoinsForTrade;
-            if (isAffordable) {
-                log.info("Player {} has {}/{} {}. Buying {}x{} from left and {}x{} from right.",
-                        player.getName(),
-                        currentCount,
-                        requiredCount,
-                        neededMaterial.name(),
-                        takeFromLeft,
-                        player.getTradingPriceLeft(neededMaterial),
-                        takeFromRight,
-                        player.getTradingPriceRight(neededMaterial)
-                );
-            }
             return CostReport.builder()
                     .affordable(isAffordable)
                     .resourcesIncluded(neededMaterial.name())
@@ -84,9 +72,24 @@ public class RawMaterialCost implements Cost {
         var leftPlayer = player.getLeftPlayer();
         var rightPlayer = player.getRightPlayer();
 
+        if (costReport.getToPayLeft() == 0 && costReport.getToPayRight() == 0) {
+            return;
+        }
+
         player.removeCoins(costReport.getToPayLeft() + costReport.getToPayRight());
         leftPlayer.rewardCoins(costReport.getToPayLeft());
         rightPlayer.rewardCoins(costReport.getToPayRight());
+
+        log.info("{} {} Player {} has paid ${} coins total. ${} => {}, ${} => {}",
+                turnContext.getAge(),
+                turnContext.getTurnCountAge(),
+                player.getName(),
+                costReport.getToPayLeft() + costReport.getToPayRight(),
+                costReport.getToPayLeft(),
+                player.getLeftPlayer().getName(),
+                costReport.getToPayRight(),
+                player.getRightPlayer().getName()
+        );
     }
 
     @Override

@@ -66,18 +66,6 @@ public class ManufacturedGoodCost implements Cost {
             var priceRight = takeFromRight * player.getTradingPriceRight(manufacturedGood);
 
             boolean hasEnoughCoinsForTrade = (priceLeft + priceRight) <= player.getCoins();
-            if (hasEnoughCoinsForTrade) {
-                log.info("Player {} has {}/{} {}. Buying {}x{} from left and {}x{} from right.",
-                        player.getName(),
-                        currentCount,
-                        requiredCount,
-                        manufacturedGood.name(),
-                        takeFromLeft,
-                        player.getTradingPriceLeft(manufacturedGood),
-                        takeFromRight,
-                        player.getTradingPriceRight(manufacturedGood)
-                );
-            }
             return CostReport.builder()
                     .affordable(hasEnoughCoinsForTrade)
                     .resourcesIncluded(manufacturedGood.name())
@@ -93,9 +81,24 @@ public class ManufacturedGoodCost implements Cost {
         var leftPlayer = player.getLeftPlayer();
         var rightPlayer = player.getRightPlayer();
 
+        if (costReport.getToPayLeft() == 0 && costReport.getToPayRight() == 0) {
+            return;
+        }
+
         player.removeCoins(costReport.getToPayLeft() + costReport.getToPayRight());
         leftPlayer.rewardCoins(costReport.getToPayLeft());
         rightPlayer.rewardCoins(costReport.getToPayRight());
+
+        log.info("{} {} Player {} has paid ${} coins total. ${} => {}, ${} => {}",
+                turnContext.getAge(),
+                turnContext.getTurnCountAge(),
+                player.getName(),
+                costReport.getToPayLeft() + costReport.getToPayRight(),
+                costReport.getToPayLeft(),
+                player.getLeftPlayer().getName(),
+                costReport.getToPayRight(),
+                player.getRightPlayer().getName()
+        );
     }
 
     @Override
