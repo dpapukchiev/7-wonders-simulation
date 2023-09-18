@@ -14,10 +14,10 @@ public class SevenWondersSimulationRun {
     @PostConstruct
     public void run() {
         var simulation = new Simulation();
-        simulation.setNumberOfReplications(3);
+        simulation.setNumberOfReplications(1);
 
         var gameOptions = GameOptions.builder()
-                .numberOfPlayers(3)
+                .numberOfPlayers(5)
                 .build();
 
         var game = new SevenWondersGame(

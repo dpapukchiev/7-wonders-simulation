@@ -3,6 +3,7 @@ package dpapukchiev.effects;
 import dpapukchiev.cards.Card;
 import dpapukchiev.cards.ManufacturedGood;
 import dpapukchiev.cards.RawMaterial;
+import dpapukchiev.cards.ScienceSymbol;
 import dpapukchiev.player.Player;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +37,9 @@ public class CardEffect {
     protected boolean                wildcardRawMaterial;
     @Builder.Default
     protected List<RawMaterial>      providedRawMaterials     = new ArrayList<>();
+    protected boolean                wildcardScienceSymbol;
+    @Builder.Default
+    protected List<ScienceSymbol>    providedScienceSymbols   = new ArrayList<>();
     @Builder.Default
     protected List<Card>             freeCards                = new ArrayList<>();
 
@@ -44,7 +48,7 @@ public class CardEffect {
     }
 
     public String report() {
-        return "E($%.1f V%.1f X%.1f R:%s G:%s)"
+        return "E($%.1f V%.1f X%.1f RM:%s MG:%s S:%s)"
                 .formatted(
                         coinReward,
                         pointsAward,
@@ -54,12 +58,15 @@ public class CardEffect {
                                 .collect(Collectors.joining()),
                         providedManufacturedGood.stream()
                                 .map(rm -> rm.name().substring(0, 1))
+                                .collect(Collectors.joining()),
+                        providedScienceSymbols.stream()
+                                .map(rm -> rm.name().substring(0, 1))
                                 .collect(Collectors.joining())
                 );
     }
 
     public void applyEffect(Player player) {
-        if (!canBeUsed()){
+        if (!canBeUsed()) {
             return;
         }
 

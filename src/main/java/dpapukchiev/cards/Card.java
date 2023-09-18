@@ -21,6 +21,7 @@ import java.util.List;
 public class Card {
     @ToString.Include
     protected String       name;
+    @Builder.Default
     protected List<String> freeUpgrades = new ArrayList<>();
     protected int          requiredPlayersCount;
     protected int          age;
@@ -28,6 +29,11 @@ public class Card {
     protected CardType     type;
     @ToString.Include
     protected CardEffect   effect;
+
+    public Card withFreeUpgrades(List<String> freeUpgrades) {
+        this.freeUpgrades = freeUpgrades;
+        return this;
+    }
 
     public String report() {
         return "%s %s C(%s) %s".formatted(name, type.name(), cost.report(), effect.report());

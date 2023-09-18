@@ -46,7 +46,8 @@ public class SevenWondersGame extends SchedulingElement {
         dealHands(gameOptions);
 
         var currentOffset = 1;
-        for (int i = 1; i <= 3; i++) {
+        int agesToSchedule = 1;
+        for (int i = 1; i <= agesToSchedule; i++) {
             currentOffset = scheduleTurns(currentOffset, i);
             currentOffset = scheduleAgeTransition(currentOffset + 1, i);
         }
