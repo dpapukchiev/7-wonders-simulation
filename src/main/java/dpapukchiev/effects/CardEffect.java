@@ -10,11 +10,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Getter
 @Builder
 @ToString
@@ -95,5 +97,6 @@ public class CardEffect {
         player.rewardCoins(coinReward);
 
         usedCount++;
+        log.info("Player {} rewarded with {} coins", player.getName(), coinReward);
     }
 }

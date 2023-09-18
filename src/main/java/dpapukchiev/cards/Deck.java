@@ -4,6 +4,7 @@ import dpapukchiev.cost.AggregateCost;
 import dpapukchiev.cost.FreeToPlayCost;
 import dpapukchiev.cost.ManufacturedGoodCost;
 import dpapukchiev.cost.RawMaterialCost;
+import dpapukchiev.effects.CoinRewardDynamicEffect;
 import dpapukchiev.effects.PreferentialTrading;
 import dpapukchiev.effects.RawMaterialEffect;
 import jsl.modeling.elements.variable.RandomVariable;
@@ -178,6 +179,15 @@ public class Deck {
         allCards.add(new CommercialTradingCard(2, "Karawanserei", 5, wildCardRawMaterial, twoWood));
         allCards.add(new CommercialTradingCard(2, "Karawanserei", 3, wildCardRawMaterial, twoWood));
         allCards.add(new CommercialTradingCard(2, "Forum", 3, wildCardManufacturedGood, twoClay));
+
+        allCards.add(new CommercialTradingCard(2, "Weinberg", 3, new CoinRewardDynamicEffect(1,
+                CoinRewardDynamicEffect.DirectionModifier.ALL,
+                CoinRewardDynamicEffect.CardTypeModifier.RAW_MATERIAL
+        ), new FreeToPlayCost()));
+        allCards.add(new CommercialTradingCard(2, "Basar", 4, new CoinRewardDynamicEffect(1,
+                CoinRewardDynamicEffect.DirectionModifier.ALL,
+                CoinRewardDynamicEffect.CardTypeModifier.MANUFACTURED_GOOD
+        ), new FreeToPlayCost()));
     }
 
     private void addAge1() {

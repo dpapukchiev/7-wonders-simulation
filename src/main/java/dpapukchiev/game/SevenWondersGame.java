@@ -11,12 +11,16 @@ import jsl.simulation.SchedulingElement;
 import jsl.utilities.random.rvariable.NormalRV;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Log4j2
 public class SevenWondersGame extends SchedulingElement {
-    private Deck deck;
+    private Deck        deck;
     private GameOptions gameOptions;
 
     private PlayersFactory playersFactory;
@@ -53,7 +57,6 @@ public class SevenWondersGame extends SchedulingElement {
         }
     }
 
-
     class ExecutePlayerTurn implements EventActionIfc<TurnContext> {
 
         @Override
@@ -87,7 +90,6 @@ public class SevenWondersGame extends SchedulingElement {
         });
     }
 
-
     private int scheduleAgeTransition(int currentOffset, int age) {
         scheduleEvent(new ExecuteAgeTransitionTurn(), currentOffset, 0, age);
         currentOffset++;
@@ -107,14 +109,14 @@ public class SevenWondersGame extends SchedulingElement {
 
                 int newOffset = ageStartingOffset + j;
                 lastOffset = newOffset;
-                scheduleEvent(new ExecutePlayerTurn(), newOffset, i, TurnContext.builder()
+                var turnContext = TurnContext.builder()
                         .turnCountAge(j + 1)
                         .simulationStep(newOffset)
                         .age(age)
                         .player(player)
                         .handOfCards(handToAssign)
-                        .build()
-                );
+                        .build();
+                scheduleEvent(new ExecutePlayerTurn(), newOffset, i, turnContext);
             }
         }
         return lastOffset;
@@ -127,7 +129,6 @@ public class SevenWondersGame extends SchedulingElement {
         int currentHandIndex = Optional.ofNullable(currentIndexPerPlayer.get(player))
                 .orElse(i);
         var handToAssign = handsPerAge.get(currentHandIndex);
-
 
         // CARD ROTATION PER AGE
         if (age == 2) {
