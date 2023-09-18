@@ -18,4 +18,8 @@ public class Card {
     protected CardType type;
     @ToString.Include
     protected CardEffect effect;
+
+    public String report() {
+        return "%s %s C(%s) %s".formatted(name, type.name(), cost.report(), effect.report());
+    }
 }

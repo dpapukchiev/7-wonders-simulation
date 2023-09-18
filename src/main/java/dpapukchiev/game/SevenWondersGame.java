@@ -2,7 +2,6 @@ package dpapukchiev.game;
 
 import dpapukchiev.cards.Deck;
 import dpapukchiev.cards.HandOfCards;
-import dpapukchiev.city.CityName;
 import dpapukchiev.player.Player;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.EventActionIfc;
@@ -14,16 +13,13 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
 @Log4j2
 public class SevenWondersGame extends SchedulingElement {
     private Deck deck;
-    private List<Player> players = new ArrayList<>();
-    private RandomVariable cityDistribution;
     private GameOptions gameOptions;
+
+    private PlayersFactory playersFactory;
 
     private Map<Integer, List<HandOfCards>> handsOfCardsPerAge = new HashMap<>();
 
@@ -32,6 +28,8 @@ public class SevenWondersGame extends SchedulingElement {
             GameOptions gameOptions
     ) {
         super(parent);
+        this.playersFactory = new PlayersFactory(new RandomVariable(parent, new NormalRV()));
+
         this.gameOptions = gameOptions.toBuilder()
                 .playerRandomVariables(
                         IntStream.rangeClosed(1, gameOptions.numberOfPlayers())
@@ -39,14 +37,12 @@ public class SevenWondersGame extends SchedulingElement {
                                 .toList()
                 )
                 .build();
-
-        this.cityDistribution = new RandomVariable(parent, new NormalRV());
         this.deck = new Deck(getParentModelElement());
     }
 
     @Override
     public void initialize() {
-        initialisePlayers(gameOptions);
+        playersFactory.initialisePlayers(gameOptions);
         dealHands(gameOptions);
 
         var currentOffset = 1;
@@ -70,37 +66,11 @@ public class SevenWondersGame extends SchedulingElement {
 
         @Override
         public void action(JSLEvent<Integer> event) {
-            log.info("{} ExecuteAgeTransitionTurn {}", getTime(), event.getMessage());
+            var age = event.getMessage();
+            log.info("{} ExecuteAgeTransitionTurn {}", getTime(), age);
+            playersFactory.getPlayers().forEach(player -> player.executeWar(age));
+            playersFactory.getPlayers().forEach(player -> log.info(player.report(age)));
         }
-    }
-
-
-    public void initialisePlayers(GameOptions options) {
-        players.clear();
-
-        var cities = selectRandomCities(options);
-        for (int i = 0; i < options.numberOfPlayers(); i++) {
-            players.add(Player.builder()
-                    .name("Player-" + i)
-                    .city(cities.get(i))
-                    .pickACard(gameOptions.playerRandomVariables().get(i))
-                    .build());
-        }
-
-        for (int i = 0; i < players.size(); i++) {
-            var player = players.get(i);
-            var previousPlayer = i == 0 ? players.size() - 1 : i - 1;
-            var nextPlayer = i == (players.size() - 1) ? 0 : i + 1;
-
-            player.setLeftPlayer(players.get(previousPlayer));
-            player.setRightPlayer(players.get(nextPlayer));
-            log.info("{} left: {}, right: {}",
-                    player.getName(),
-                    player.getLeftPlayer().getName(),
-                    player.getRightPlayer().getName()
-            );
-        }
-        log.info("Initialised Players {}", players);
     }
 
     public void dealHands(GameOptions options) {
@@ -114,24 +84,8 @@ public class SevenWondersGame extends SchedulingElement {
                 hands.add(handOfCards);
             }
         });
-
     }
 
-    private List<CityName> selectRandomCities(GameOptions options) {
-        var usedCities = new ArrayList<CityName>();
-
-        for (int i = 0; i < options.numberOfPlayers(); i++) {
-
-            var cityName = randomlySelect(Stream.of(CityName.values())
-                            .filter(city -> !usedCities.contains(city))
-                            .toList(),
-                    cityDistribution.getStreamNumber()
-            );
-            usedCities.add(cityName);
-        }
-
-        return usedCities;
-    }
 
     private int scheduleAgeTransition(int currentOffset, int age) {
         scheduleEvent(new ExecuteAgeTransitionTurn(), currentOffset, 0, age);
@@ -142,6 +96,7 @@ public class SevenWondersGame extends SchedulingElement {
     private int scheduleTurns(int ageStartingOffset, int age) {
         int lastOffset = ageStartingOffset;
         var currentHandIndexPerPlayer = new HashMap<Player, Integer>();
+        var players = playersFactory.getPlayers();
 
         // Every age starts with 7 cards and ends with 1 discarded
         for (int j = 0; j < 6; j++) {
@@ -165,6 +120,7 @@ public class SevenWondersGame extends SchedulingElement {
     }
 
     private HandOfCards getHandOfCards(int age, HashMap<Player, Integer> currentIndexPerPlayer, int i, Player player) {
+        var playerCount = playersFactory.getPlayers().size();
         var handsPerAge = handsOfCardsPerAge.get(age);
 
         int currentHandIndex = Optional.ofNullable(currentIndexPerPlayer.get(player))
@@ -175,12 +131,12 @@ public class SevenWondersGame extends SchedulingElement {
         // CARD ROTATION PER AGE
         if (age == 2) {
             if (currentHandIndex - 1 < 0) {
-                currentIndexPerPlayer.put(player, players.size() - 1);
+                currentIndexPerPlayer.put(player, playerCount - 1);
             } else {
                 currentIndexPerPlayer.put(player, currentHandIndex - 1);
             }
         } else {
-            if (currentHandIndex + 1 > (players.size() - 1)) {
+            if (currentHandIndex + 1 > (playerCount - 1)) {
                 currentIndexPerPlayer.put(player, 0);
             } else {
                 currentIndexPerPlayer.put(player, currentHandIndex + 1);

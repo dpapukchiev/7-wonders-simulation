@@ -7,4 +7,14 @@ public class FreeToPlayCost implements Cost {
     public boolean canBuild(TurnContext turnContext) {
         return true;
     }
+
+    @Override
+    public void applyCost(TurnContext turnContext) {
+
+    }
+
+    @Override
+    public String report() {
+        return "Free";
+    }
 }

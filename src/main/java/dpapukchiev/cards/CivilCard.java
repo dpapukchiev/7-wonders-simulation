@@ -1,7 +1,7 @@
 package dpapukchiev.cards;
 
 import dpapukchiev.cost.FreeToPlayCost;
-import dpapukchiev.cost.ResourceCost;
+import dpapukchiev.cost.RawMaterialCost;
 import dpapukchiev.effects.VictoryPointEffect;
 
 import java.util.List;
@@ -18,9 +18,6 @@ public class CivilCard extends Card {
         this.name = name;
         this.age = 1;
         this.effect = new VictoryPointEffect(points);
-        this.cost = requiredMaterials.isEmpty() ? new FreeToPlayCost() : new ResourceCost(
-                List.of(),
-                requiredMaterials
-        );
+        this.cost = requiredMaterials.isEmpty() ? new FreeToPlayCost() : new RawMaterialCost(requiredMaterials);
     }
 }

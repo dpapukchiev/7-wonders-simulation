@@ -1,7 +1,6 @@
 package dpapukchiev.cards;
 
 import dpapukchiev.cost.CoinCost;
-import dpapukchiev.cost.FreeToPlayCost;
 import dpapukchiev.effects.RawMaterialEffect;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
@@ -53,12 +52,19 @@ public class Deck {
         allCards.add(new SingleManufacturedGoodCard("Webstuhl", ManufacturedGood.TEXTILE, 3));
 
         // CIVIL
-        allCards.add(new CivilCard("Theater",2, 3));
-        allCards.add(new CivilCard("Altar",2, 3));
-        allCards.add(new CivilCard("Altar",2, 5));
-        allCards.add(new CivilCard("Bader",3, 3, List.of(RawMaterial.STONE)));
-        allCards.add(new CivilCard("Pfandhouse",3, 4));
-        allCards.add(new CivilCard("Webstuhl",2, 3));
+        allCards.add(new CivilCard("Theater", 2, 3));
+        allCards.add(new CivilCard("Altar", 2, 3));
+        allCards.add(new CivilCard("Altar", 2, 5));
+        allCards.add(new CivilCard("Bader", 3, 3, List.of(RawMaterial.STONE)));
+        allCards.add(new CivilCard("Pfandhouse", 3, 4));
+        allCards.add(new CivilCard("Webstuhl", 2, 3));
+
+        // MILITARY
+        allCards.add(new WarCard("Wachturm", 1, 4, List.of(RawMaterial.CLAY)));
+        allCards.add(new WarCard("Wachturm", 1, 3, List.of(RawMaterial.CLAY)));
+        allCards.add(new WarCard("Kaserne", 1, 3, List.of(RawMaterial.METAL_ORE)));
+        allCards.add(new WarCard("Kaserne", 1, 5, List.of(RawMaterial.METAL_ORE)));
+        allCards.add(new WarCard("Befestigunsanlage", 1, 3, List.of(RawMaterial.WOOD)));
 
         var totalCardsPerAge = 7 * 7;
 
@@ -70,7 +76,7 @@ public class Deck {
                         .requiredPlayersCount(3)
                         .type(CardType.RAW_MATERIAL)
                         .effect(new RawMaterialEffect(List.of(RawMaterial.STONE), false))
-                        .cost(new CoinCost(1000))
+                        .cost(new CoinCost(10))
                         .age(age)
                         .build()
                 );

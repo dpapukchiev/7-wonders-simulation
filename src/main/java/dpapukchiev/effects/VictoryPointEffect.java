@@ -2,7 +2,7 @@ package dpapukchiev.effects;
 
 public class VictoryPointEffect extends CardEffect {
     public VictoryPointEffect(
-            int points
+            double points
     ) {
         super();
         this.maxUsages = 1;
