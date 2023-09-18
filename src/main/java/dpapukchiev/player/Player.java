@@ -1,10 +1,13 @@
 package dpapukchiev.player;
 
 import dpapukchiev.cards.Card;
+import dpapukchiev.cards.HandOfCards;
 import dpapukchiev.cards.ManufacturedGood;
 import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.city.CityName;
+import dpapukchiev.cost.CostReport;
 import dpapukchiev.effects.CardEffect;
+import dpapukchiev.effects.EffectUsageType;
 import dpapukchiev.game.TurnContext;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
@@ -91,6 +94,16 @@ public class Player {
                 .sum();
     }
 
+    public void executeEndOfAge(int age) {
+        builtCards.stream()
+                .filter(c -> c.getAge() == age)
+                .filter(c -> !c.getEffect().canBeUsed())
+                .filter(c -> c.getEffect().getEffectUsageType().equals(EffectUsageType.END_OF_AGE))
+                .forEach(c -> c.getEffect().applyEffect(this));
+
+        executeWar(age);
+    }
+
     public void executeTurn(TurnContext turnContext) {
         var startingCoins = turnContext.getPlayer().getCoins();
         var handOfCards = turnContext.getHandOfCards();
@@ -103,18 +116,15 @@ public class Player {
             var cardToDiscard = randomlySelect(handOfCards.getCards(), pickACard.getStreamNumber());
             handOfCards.getCards().remove(cardToDiscard);
             turnContext.getPlayer().rewardCoins(3);
+
             discardedCards.add(cardToDiscard);
+            handOfCards.discard(cardToDiscard);
             return;
         }
 
         var card = randomlySelect(cardsToPickFrom, pickACard.getStreamNumber());
 
-        var costReport = card.getCost().generateCostReport(turnContext);
-        card.getCost().applyCost(turnContext, costReport);
-
-        builtCardNames.add(card.getName());
-        builtCards.add(card);
-        handOfCards.getCards().remove(card);
+        var costReport = processSelectedCard(turnContext, card, handOfCards);
 
         log.info(
                 """
@@ -136,6 +146,24 @@ public class Player {
                 costReport,
                 report(turnContext.getAge())
         );
+    }
+
+    private CostReport processSelectedCard(TurnContext turnContext, Card card, HandOfCards handOfCards) {
+        var costReport = card.getCost().generateCostReport(turnContext);
+        boolean isFreeUpgrade = builtCards.stream()
+                .anyMatch(c -> c.getFreeUpgrades().contains(card.getName()));
+        if (!isFreeUpgrade) {
+            card.getCost().applyCost(turnContext, costReport);
+        }
+
+        if (card.getEffect().getEffectUsageType().equals(EffectUsageType.DIRECT)) {
+            card.getEffect().applyEffect(turnContext.getPlayer());
+        }
+
+        builtCardNames.add(card.getName());
+        builtCards.add(card);
+        handOfCards.getCards().remove(card);
+        return costReport;
     }
 
     public void executeWar(int age) {

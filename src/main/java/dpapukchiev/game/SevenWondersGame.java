@@ -68,7 +68,7 @@ public class SevenWondersGame extends SchedulingElement {
         public void action(JSLEvent<Integer> event) {
             var age = event.getMessage();
             log.info("{} ExecuteAgeTransitionTurn {}", getTime(), age);
-            playersFactory.getPlayers().forEach(player -> player.executeWar(age));
+            playersFactory.getPlayers().forEach(player -> player.executeEndOfAge(age));
             playersFactory.getPlayers().forEach(player -> log.info(player.report(age)));
         }
     }

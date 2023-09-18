@@ -24,6 +24,10 @@ public class Deck {
         cardDistribution = new RandomVariable(parent, new NormalRV());
     }
 
+    public void discard(Card card) {
+        discardedCards.add(card);
+    }
+
     public void resetDeck(int playerCount) {
         allCards.clear();
         discardedCards.clear();
@@ -66,6 +70,10 @@ public class Deck {
         allCards.add(new WarCard("Kaserne", 1, 5, List.of(RawMaterial.METAL_ORE)));
         allCards.add(new WarCard("Befestigunsanlage", 1, 3, List.of(RawMaterial.WOOD)));
 
+         // COMMERCIAL
+        allCards.add(new CommercialCardCoinReward("Taverne", 5, 4));
+        allCards.add(new CommercialCardCoinReward("Taverne", 5, 5));
+
         var totalCardsPerAge = 7 * 7;
 
         var cardsPerAge = allCards.stream().collect(groupingBy(Card::getAge));
@@ -103,6 +111,6 @@ public class Deck {
         }
 
 
-        return new HandOfCards(UUID.randomUUID(), cards);
+        return new HandOfCards(UUID.randomUUID(), cards, this);
     }
 }
