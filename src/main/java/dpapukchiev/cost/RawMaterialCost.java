@@ -14,26 +14,41 @@ public class RawMaterialCost implements Cost {
     private final List<RawMaterial> rawMaterialsList;
 
     @Override
-    public boolean canBuild(TurnContext turnContext) {
+    public CostReport generateCostReport(TurnContext turnContext) {
         var materialsNeeded = rawMaterialsList.stream()
                 .collect(groupingBy(RawMaterial::name));
 
-        return materialsNeeded.entrySet().stream().allMatch(rm -> {
+        return materialsNeeded.entrySet().stream().map(rm -> {
             var requiredCount = rm.getValue().size();
-            var currentCount = turnContext.getPlayer().getRawMaterialCount(RawMaterial.valueOf(rm.getKey()));
-            return currentCount >= requiredCount;
-        });
+            var neededMaterial = RawMaterial.valueOf(rm.getKey());
+            var currentCount = turnContext.getPlayer().getRawMaterialCount(neededMaterial);
+            var diff = requiredCount - currentCount;
+
+            var leftCount = turnContext.getPlayer().getLeftPlayer().getRawMaterialCount(neededMaterial);
+            var takeFromLeft = Math.min(leftCount, diff);
+
+            var rightCount = turnContext.getPlayer().getRightPlayer().getRawMaterialCount(neededMaterial);
+            var takeFromRight = Math.min(rightCount, diff - takeFromLeft);
+
+            boolean isAffordable = (currentCount + leftCount + rightCount) >= requiredCount;
+            return CostReport.builder()
+                    .affordable(isAffordable)
+                    .missingResource(neededMaterial.name())
+                    .toPayLeft(takeFromLeft * 2)
+                    .toPayRight(takeFromRight * 2)
+                    .build();
+        }).reduce(CostReport.builder().affordable(true).build(), CostReport::merge);
     }
 
     @Override
-    public void applyCost(TurnContext turnContext) {
+    public void applyCost(TurnContext turnContext, CostReport costReport) {
 
     }
 
     @Override
     public String report() {
         return "RM: " + rawMaterialsList.stream().map(RawMaterial::name)
-                .map(rm -> rm.substring(0,1))
+                .map(rm -> rm.substring(0, 1))
                 .collect(Collectors.joining());
     }
 }

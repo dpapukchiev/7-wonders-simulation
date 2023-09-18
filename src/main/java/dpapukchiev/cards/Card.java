@@ -4,6 +4,7 @@ import dpapukchiev.cost.Cost;
 import dpapukchiev.effects.CardEffect;
 import lombok.*;
 
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor

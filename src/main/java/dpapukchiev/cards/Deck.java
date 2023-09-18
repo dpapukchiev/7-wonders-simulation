@@ -75,7 +75,7 @@ public class Deck {
                         .name("test-card-" + i)
                         .requiredPlayersCount(3)
                         .type(CardType.RAW_MATERIAL)
-                        .effect(new RawMaterialEffect(List.of(RawMaterial.STONE), false))
+                        .effect(new RawMaterialEffect(List.of(RawMaterial.STONE)))
                         .cost(new CoinCost(10))
                         .age(age)
                         .build()

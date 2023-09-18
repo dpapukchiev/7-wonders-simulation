@@ -8,13 +8,16 @@ public class CoinCost implements Cost {
     private final int cost;
 
     @Override
-    public boolean canBuild(TurnContext turnContext) {
-        return turnContext.getPlayer().getCoins() >= cost;
+    public CostReport generateCostReport(TurnContext turnContext) {
+        return CostReport.builder()
+                .affordable(turnContext.getPlayer().getCoins() >= cost)
+                .toPayBank(cost)
+                .build();
     }
 
     @Override
-    public void applyCost(TurnContext turnContext) {
-        turnContext.getPlayer().removeCoins(cost);
+    public void applyCost(TurnContext turnContext, CostReport costReport) {
+        turnContext.getPlayer().removeCoins(costReport.getToPayBank());
     }
 
     @Override

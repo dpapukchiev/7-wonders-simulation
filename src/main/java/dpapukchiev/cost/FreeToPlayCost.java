@@ -4,12 +4,14 @@ import dpapukchiev.game.TurnContext;
 
 public class FreeToPlayCost implements Cost {
     @Override
-    public boolean canBuild(TurnContext turnContext) {
-        return true;
+    public CostReport generateCostReport(TurnContext turnContext) {
+        return CostReport.builder()
+                .affordable(true)
+                .build();
     }
 
     @Override
-    public void applyCost(TurnContext turnContext) {
+    public void applyCost(TurnContext turnContext, CostReport costReport) {
 
     }
 

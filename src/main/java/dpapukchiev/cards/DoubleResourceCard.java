@@ -17,10 +17,7 @@ public class DoubleResourceCard extends Card {
         this.requiredPlayersCount = requiredPlayersCount;
         this.name = name;
         this.age = 1;
-        this.effect = new RawMaterialEffect(
-                List.of(rawMaterial1, rawMaterial2),
-                true
-        );
+        this.effect = new RawMaterialEffect(List.of(rawMaterial1, rawMaterial2));
         this.cost = new CoinCost(1);
     }
 }

@@ -12,10 +12,7 @@ public class SingleResourceCard extends Card {
         this.requiredPlayersCount = requiredPlayersCount;
         this.name = name;
         this.age = 1;
-        this.effect = new RawMaterialEffect(
-                List.of(rawMaterial),
-                false
-        );
+        this.effect = new RawMaterialEffect(List.of(rawMaterial));
         this.cost = new FreeToPlayCost();
     }
 }

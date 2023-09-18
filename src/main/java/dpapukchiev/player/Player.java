@@ -1,7 +1,6 @@
 package dpapukchiev.player;
 
 import dpapukchiev.cards.Card;
-import dpapukchiev.cards.CardType;
 import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.city.CityName;
 import dpapukchiev.effects.CardEffect;
@@ -13,10 +12,14 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.groupingBy;
 import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
 @Log4j2
@@ -26,44 +29,41 @@ import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 @ToString(exclude = {"leftPlayer", "rightPlayer"})
 public class Player {
     @Builder.Default
-    private double coins = 3;
-    private String name;
-    private CityName city;
+    private double         coins          = 3;
+    private String         name;
+    private CityName       city;
     private RandomVariable pickACard;
     @Builder.Default
-    private double warWinPoints = 0;
+    private double         warWinPoints   = 0;
     @Builder.Default
-    private double warLossPoints = 0;
+    private double         warLossPoints  = 0;
     @Builder.Default
-    private List<Card> builtCards = new ArrayList<>();
+    private List<Card>     builtCards     = new ArrayList<>();
     @Builder.Default
-    private Set<String> builtCardNames = new HashSet<>();
-    private Player leftPlayer;
-    private Player rightPlayer;
+    private Set<String>    builtCardNames = new HashSet<>();
+    private Player         leftPlayer;
+    private Player         rightPlayer;
 
-    public void rewardCoins(int coins) {
+    public void rewardCoins(double coins) {
         this.coins += coins;
     }
 
-    public void removeCoins(int coins) {
+    public void removeCoins(double coins) {
         this.coins -= coins;
     }
 
-    public Map<CardType, List<Card>> getBuiltCardsByType() {
-        return builtCards.stream().collect(groupingBy(Card::getType));
+    public double getRawMaterialCount(RawMaterial rawMaterial) {
+        var validEffects = builtCards.stream()
+                .map(Card::getEffect)
+                .filter(effect -> !effect.isWildcardRawMaterial());
+        return countMaterial(rawMaterial, validEffects);
     }
 
-    public double getRawMaterialCount(RawMaterial rawMaterial) {
-        return builtCards.stream()
+    public double getRawMaterialCountWildcard(RawMaterial rawMaterial) {
+        var validEffects = builtCards.stream()
                 .map(Card::getEffect)
-                .filter(effect -> effect.getProvidedRawMaterials().contains(rawMaterial))
-                .map(effect -> effect.getProvidedRawMaterials()
-                        .stream()
-                        .filter(m -> m.equals(rawMaterial))
-                        .count()
-                )
-                .mapToInt(Long::intValue)
-                .sum();
+                .filter(CardEffect::isWildcardRawMaterial);
+        return countMaterial(rawMaterial, validEffects);
     }
 
     public double getShieldCount() {
@@ -79,10 +79,7 @@ public class Player {
 
         // buy resources
         // free upgrades
-        var cardsToPickFrom = handOfCards.getCards().stream()
-                .filter(c -> c.getCost().canBuild(turnContext))
-                .filter(c -> !builtCardNames.contains(c.getName()))
-                .toList();
+        var cardsToPickFrom = handOfCards.getBuildableCards(turnContext);
 
         if (cardsToPickFrom.isEmpty()) {
             var cardToDiscard = randomlySelect(handOfCards.getCards(), pickACard.getStreamNumber());
@@ -92,7 +89,7 @@ public class Player {
         }
 
         var card = randomlySelect(cardsToPickFrom, pickACard.getStreamNumber());
-        card.getCost().applyCost(turnContext);
+//        card.getCost().applyCost(turnContext, card.getCost().generateCostReport(turnContext));
 
         builtCardNames.add(card.getName());
         builtCards.add(card);
@@ -120,7 +117,7 @@ public class Player {
         var pointsForAge = age != 1 ? (age != 2 ? 5 : 3) : 1;
         var myShields = getShieldCount();
         var leftShields = getLeftPlayer().getShieldCount();
-        var rightShields = getLeftPlayer().getShieldCount();
+        var rightShields = getRightPlayer().getShieldCount();
 
         if (myShields > leftShields) {
             warWinPoints += pointsForAge;
@@ -135,20 +132,20 @@ public class Player {
         }
     }
 
-    public String report(int age){
+    public String report(int age) {
         var cards = builtCards.stream()
                 .map(Card::report)
                 .collect(Collectors.joining("\n"));
         return String.format("""
-                
-                %s (age %d)
-                coins: %.1f
-                war loss: %.1f
-                war win: %.1f
-                shields: %.1f
-                built cards (%d):
-                %s
-                """,
+                                        
+                        %s (age %d)
+                        coins: %.1f
+                        war loss: %.1f
+                        war win: %.1f
+                        shields: %.1f
+                        built cards (%d):
+                        %s
+                        """,
                 getName(),
                 age,
                 getCoins(),
@@ -158,6 +155,18 @@ public class Player {
                 builtCards.size(),
                 cards
         );
+    }
+
+    private static int countMaterial(RawMaterial rawMaterial, Stream<CardEffect> validEffects) {
+        return validEffects
+                .filter(effect -> effect.getProvidedRawMaterials().contains(rawMaterial))
+                .map(effect -> effect.getProvidedRawMaterials()
+                        .stream()
+                        .filter(m -> m.equals(rawMaterial))
+                        .count()
+                )
+                .mapToInt(Long::intValue)
+                .sum();
     }
 
 }
