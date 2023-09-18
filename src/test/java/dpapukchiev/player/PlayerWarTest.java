@@ -21,8 +21,8 @@ class PlayerWarTest extends BasePlayerTest {
     @Test
     void calculateShields() {
         player1.setBuiltCards(List.of(
-                new WarCard("1", 1, 3, List.of(RawMaterial.WOOD)),
-                new WarCard("2", 1, 3, List.of(RawMaterial.WOOD))
+                new WarCard(1, "1", 1, 3, List.of(RawMaterial.WOOD)),
+                new WarCard(1, "2", 1, 3, List.of(RawMaterial.WOOD))
         ));
 
         assertEquals(2, player1.getShieldCount());
@@ -85,7 +85,7 @@ class PlayerWarTest extends BasePlayerTest {
     private void setShieldsCount(Player player, int shieldsCount) {
         if (shieldsCount != 0) {
             player.setBuiltCards(List.of(
-                    new WarCard("1", shieldsCount, 3, List.of(RawMaterial.WOOD))
+                    new WarCard(1, "1", shieldsCount, 3, List.of(RawMaterial.WOOD))
             ));
             return;
         }

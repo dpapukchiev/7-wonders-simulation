@@ -187,7 +187,7 @@ class RawMaterialCostTest extends BaseCostTest {
 
     private void setRawMaterialCount(Player player, RawMaterial material, int count) {
         for (int i = 0; i < count; i++) {
-            var card = new SingleResourceCard("test-" + i, material, 1);
+            var card = new SingleResourceCard(1, "test-" + i, material, 1);
             player.getBuiltCards().add(card);
         }
     }

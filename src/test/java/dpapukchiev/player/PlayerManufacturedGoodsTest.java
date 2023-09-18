@@ -20,7 +20,7 @@ class PlayerManufacturedGoodsTest extends BasePlayerTest {
     @Test
     void getRawMaterialCountSingle() {
         player1.setBuiltCards(List.of(
-                new SingleManufacturedGoodCard("1", ManufacturedGood.GLASS, 3)
+                new SingleManufacturedGoodCard(1, "1", ManufacturedGood.GLASS, 3)
         ));
 
         assertEquals(1, player1.getManufacturedGoodCount(ManufacturedGood.GLASS));
@@ -29,8 +29,8 @@ class PlayerManufacturedGoodsTest extends BasePlayerTest {
     @Test
     void getRawMaterialCountTwoCards() {
         player1.setBuiltCards(List.of(
-                new SingleManufacturedGoodCard("1", ManufacturedGood.GLASS, 3),
-                new SingleManufacturedGoodCard("2", ManufacturedGood.GLASS, 3)
+                new SingleManufacturedGoodCard(1, "1", ManufacturedGood.GLASS, 3),
+                new SingleManufacturedGoodCard(1, "2", ManufacturedGood.GLASS, 3)
         ));
 
         assertEquals(2, player1.getManufacturedGoodCount(ManufacturedGood.GLASS));
@@ -40,9 +40,9 @@ class PlayerManufacturedGoodsTest extends BasePlayerTest {
     @Test
     void getRawMaterialCountMixed() {
         player1.setBuiltCards(List.of(
-                new SingleManufacturedGoodCard("1", ManufacturedGood.SCRIPTS, 3),
-                new SingleManufacturedGoodCard("2", ManufacturedGood.GLASS, 3),
-                new SingleManufacturedGoodCard("3", ManufacturedGood.TEXTILE, 3)
+                new SingleManufacturedGoodCard(1, "1", ManufacturedGood.SCRIPTS, 3),
+                new SingleManufacturedGoodCard(1, "2", ManufacturedGood.GLASS, 3),
+                new SingleManufacturedGoodCard(1, "3", ManufacturedGood.TEXTILE, 3)
         ));
 
         assertEquals(1, player1.getManufacturedGoodCount(ManufacturedGood.SCRIPTS));
@@ -56,8 +56,8 @@ class PlayerManufacturedGoodsTest extends BasePlayerTest {
                 // +2
                 new ManufacturedGoodCard("1", List.of(ManufacturedGood.GLASS, ManufacturedGood.GLASS), 3),
                 // +1
-                new SingleManufacturedGoodCard("3", ManufacturedGood.GLASS, 3),
-                new SingleManufacturedGoodCard("3", ManufacturedGood.SCRIPTS, 3)
+                new SingleManufacturedGoodCard(1, "3", ManufacturedGood.GLASS, 3),
+                new SingleManufacturedGoodCard(1, "3", ManufacturedGood.SCRIPTS, 3)
         ));
 
         assertEquals(3, player1.getManufacturedGoodCount(ManufacturedGood.GLASS));

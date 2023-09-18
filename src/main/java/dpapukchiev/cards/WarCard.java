@@ -7,12 +7,18 @@ import java.util.List;
 
 public class WarCard extends Card {
 
-    public WarCard(String name, int shield, int requiredPlayersCount, List<RawMaterial> requiredMaterials) {
+    public WarCard(
+            int age,
+            String name,
+            int shield,
+            int requiredPlayersCount,
+            List<RawMaterial> requiredMaterials
+    ) {
         super();
         this.type = CardType.MILITARY;
         this.requiredPlayersCount = requiredPlayersCount;
         this.name = name;
-        this.age = 1;
+        this.age = age;
         this.effect = new WarShieldEffect(shield);
         this.cost = new RawMaterialCost(requiredMaterials);
     }

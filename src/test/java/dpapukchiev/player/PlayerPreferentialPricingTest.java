@@ -32,7 +32,7 @@ class PlayerPreferentialPricingTest extends BasePlayerTest {
     @Test
     void preferentialBothManufacturedGood() {
         player1.setBuiltCards(List.of(
-                new CommercialTradingCard("test", 1, new PreferentialTrading(
+                new CommercialTradingCard(1, "test", 1, new PreferentialTrading(
                         PreferentialTrading.PreferentialTradingType.BOTH,
                         List.of(ManufacturedGood.GLASS),
                         List.of()
@@ -52,7 +52,7 @@ class PlayerPreferentialPricingTest extends BasePlayerTest {
     @Test
     void preferentialLeftManufacturedGood() {
         player1.setBuiltCards(List.of(
-                new CommercialTradingCard("test", 1, new PreferentialTrading(
+                new CommercialTradingCard(1, "test", 1, new PreferentialTrading(
                         PreferentialTrading.PreferentialTradingType.LEFT,
                         List.of(ManufacturedGood.GLASS),
                         List.of()
@@ -72,7 +72,7 @@ class PlayerPreferentialPricingTest extends BasePlayerTest {
     @Test
     void preferentialRightManufacturedGood() {
         player1.setBuiltCards(List.of(
-                new CommercialTradingCard("test", 1, new PreferentialTrading(
+                new CommercialTradingCard(1, "test", 1, new PreferentialTrading(
                         PreferentialTrading.PreferentialTradingType.RIGHT,
                         List.of(ManufacturedGood.GLASS),
                         List.of()
@@ -92,7 +92,7 @@ class PlayerPreferentialPricingTest extends BasePlayerTest {
     @Test
     void preferentialBothRawMaterial() {
         player1.setBuiltCards(List.of(
-                new CommercialTradingCard("test", 1, new PreferentialTrading(
+                new CommercialTradingCard(1, "test", 1, new PreferentialTrading(
                         PreferentialTrading.PreferentialTradingType.BOTH,
                         List.of(),
                         List.of(WOOD)
@@ -112,7 +112,7 @@ class PlayerPreferentialPricingTest extends BasePlayerTest {
     @Test
     void preferentialLeftRawMaterial() {
         player1.setBuiltCards(List.of(
-                new CommercialTradingCard("test", 1, new PreferentialTrading(
+                new CommercialTradingCard(1, "test", 1, new PreferentialTrading(
                         PreferentialTrading.PreferentialTradingType.LEFT,
                         List.of(),
                         List.of(WOOD)
@@ -132,7 +132,7 @@ class PlayerPreferentialPricingTest extends BasePlayerTest {
     @Test
     void preferentialRightRawMaterial() {
         player1.setBuiltCards(List.of(
-                new CommercialTradingCard("test", 1, new PreferentialTrading(
+                new CommercialTradingCard(1, "test", 1, new PreferentialTrading(
                         PreferentialTrading.PreferentialTradingType.RIGHT,
                         List.of(),
                         List.of(WOOD)

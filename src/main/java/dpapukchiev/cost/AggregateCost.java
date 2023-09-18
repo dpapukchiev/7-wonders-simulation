@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 @AllArgsConstructor
@@ -34,6 +35,6 @@ public class AggregateCost implements Cost {
 
     @Override
     public String report() {
-        return innerCosts.stream().map(Cost::report).reduce("\n", (s, s2) -> s + s2);
+        return innerCosts.stream().map(Cost::report).collect(Collectors.joining(", "));
     }
 }

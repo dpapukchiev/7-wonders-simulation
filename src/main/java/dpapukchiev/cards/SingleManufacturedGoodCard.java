@@ -6,12 +6,12 @@ import dpapukchiev.effects.ManufacturedGoodEffect;
 import java.util.List;
 
 public class SingleManufacturedGoodCard extends Card {
-    public SingleManufacturedGoodCard(String name, ManufacturedGood manufacturedGood, int requiredPlayersCount) {
+    public SingleManufacturedGoodCard(int age, String name, ManufacturedGood manufacturedGood, int requiredPlayersCount) {
         super();
         this.type = CardType.MANUFACTURED_GOOD;
         this.requiredPlayersCount = requiredPlayersCount;
         this.name = name;
-        this.age = 1;
+        this.age = age;
         this.effect = new ManufacturedGoodEffect(List.of(manufacturedGood));
         this.cost = new FreeToPlayCost();
     }

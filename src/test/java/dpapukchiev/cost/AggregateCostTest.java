@@ -111,7 +111,7 @@ class AggregateCostTest extends BaseCostTest {
         // player 3 on the right
         player1.setCoins(4);
         player1.setBuiltCards(Collections.singletonList(new CommercialTradingCard(
-                "test", 1, new PreferentialTrading(
+                1, "test", 1, new PreferentialTrading(
                 PreferentialTrading.PreferentialTradingType.LEFT,
                 List.of(ManufacturedGood.GLASS),
                 List.of()
@@ -150,7 +150,7 @@ class AggregateCostTest extends BaseCostTest {
         // player 3 on the right
         player1.setCoins(playerCoins);
         player1.setBuiltCards(Collections.singletonList(new CommercialTradingCard(
-                "test", 1, new PreferentialTrading(
+                1, "test", 1, new PreferentialTrading(
                 PreferentialTrading.PreferentialTradingType.LEFT,
                 List.of(ManufacturedGood.GLASS),
                 List.of()
@@ -187,14 +187,14 @@ class AggregateCostTest extends BaseCostTest {
 
     private void setManufacturedGoodCount(Player player, ManufacturedGood good, int count) {
         for (int i = 0; i < count; i++) {
-            var card = new SingleManufacturedGoodCard("test-" + i, good, 1);
+            var card = new SingleManufacturedGoodCard(1, "test-" + i, good, 1);
             player.getBuiltCards().add(card);
         }
     }
 
     private void setRawMaterialCount(Player player, RawMaterial material, int count) {
         for (int i = 0; i < count; i++) {
-            var card = new SingleResourceCard("test-" + i, material, 1);
+            var card = new SingleResourceCard(1, "test-" + i, material, 1);
             player.getBuiltCards().add(card);
         }
     }

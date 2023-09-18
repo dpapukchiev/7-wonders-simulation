@@ -36,10 +36,10 @@ class HandOfCardsTest extends BasePlayerTest {
 
     @Test
     void getBuildableCards() {
-        var card1 = new SingleResourceCard("1", RawMaterial.WOOD, 3);
-        var card2 = new SingleResourceCard("2", RawMaterial.METAL_ORE, 3);
-        var card3 = new SingleResourceCard("3", RawMaterial.CLAY, 3);
-        var card4 = new SingleResourceCard("3", RawMaterial.STONE, 3);
+        var card1 = new SingleResourceCard(1, "1", RawMaterial.WOOD, 3);
+        var card2 = new SingleResourceCard(1, "2", RawMaterial.METAL_ORE, 3);
+        var card3 = new SingleResourceCard(1, "3", RawMaterial.CLAY, 3);
+        var card4 = new SingleResourceCard(1, "3", RawMaterial.STONE, 3);
 
         card1.setCost(costCovered);
         card2.setCost(costCovered);
