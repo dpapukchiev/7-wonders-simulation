@@ -1,7 +1,7 @@
 package dpapukchiev.cost;
 
-import dpapukchiev.cards.RawMaterial;
-import dpapukchiev.cards.SingleResourceCard;
+import dpapukchiev.cards.ManufacturedGood;
+import dpapukchiev.cards.SingleManufacturedGoodCard;
 import dpapukchiev.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,16 +15,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-class RawMaterialCostTest extends BaseCostTest {
-    private RawMaterialCost testInstance;
+class ManufacturedGoodCostTest extends BaseCostTest {
+    private ManufacturedGoodCost testInstance;
 
     @BeforeEach
     void init() {
         initPlayers();
-        testInstance = new RawMaterialCost(List.of(
-                RawMaterial.WOOD,
-                RawMaterial.WOOD,
-                RawMaterial.WOOD
+        testInstance = new ManufacturedGoodCost(List.of(
+                ManufacturedGood.GLASS,
+                ManufacturedGood.GLASS,
+                ManufacturedGood.GLASS
         ));
     }
 
@@ -36,7 +36,7 @@ class RawMaterialCostTest extends BaseCostTest {
 
     @Test
     void canBuildNotEnoughFalse() {
-        setRawMaterialCount(player1, RawMaterial.WOOD, 2);
+        setManufacturedGoodCount(player1, ManufacturedGood.GLASS, 2);
 
         var result = testInstance.generateCostReport(getTurnContext());
         assertFalse(result.isAffordable());
@@ -44,9 +44,9 @@ class RawMaterialCostTest extends BaseCostTest {
 
     @Test
     void canBuildOffOwnResourcesFalse() {
-        setRawMaterialCount(player1, RawMaterial.CLAY, 1);
-        setRawMaterialCount(player1, RawMaterial.STONE, 3);
-        setRawMaterialCount(player1, RawMaterial.METAL_ORE, 2);
+        setManufacturedGoodCount(player1, ManufacturedGood.GLASS, 1);
+        setManufacturedGoodCount(player1, ManufacturedGood.SCRIPTS, 3);
+        setManufacturedGoodCount(player1, ManufacturedGood.TEXTILE, 2);
 
         var result = testInstance.generateCostReport(getTurnContext());
         assertFalse(result.isAffordable());
@@ -54,7 +54,7 @@ class RawMaterialCostTest extends BaseCostTest {
 
     @Test
     void canBuildOffOwnResources() {
-        setRawMaterialCount(player1, RawMaterial.WOOD, 3);
+        setManufacturedGoodCount(player1, ManufacturedGood.GLASS, 3);
 
         var result = testInstance.generateCostReport(getTurnContext());
         assertTrue(result.isAffordable());
@@ -62,8 +62,8 @@ class RawMaterialCostTest extends BaseCostTest {
 
     @Test
     void canBuildOffOwnResourcesAndTradeLeft() {
-        setRawMaterialCount(player1, RawMaterial.WOOD, 2);
-        setRawMaterialCount(player2, RawMaterial.WOOD, 1);
+        setManufacturedGoodCount(player1, ManufacturedGood.GLASS, 2);
+        setManufacturedGoodCount(player2, ManufacturedGood.GLASS, 1);
 
         var result = testInstance.generateCostReport(getTurnContext());
         assertTrue(result.isAffordable());
@@ -72,8 +72,8 @@ class RawMaterialCostTest extends BaseCostTest {
 
     @Test
     void canBuildOffOwnResourcesAndTradeRight() {
-        setRawMaterialCount(player1, RawMaterial.WOOD, 2);
-        setRawMaterialCount(player3, RawMaterial.WOOD, 1);
+        setManufacturedGoodCount(player1, ManufacturedGood.GLASS, 2);
+        setManufacturedGoodCount(player3, ManufacturedGood.GLASS, 1);
 
         var result = testInstance.generateCostReport(getTurnContext());
         assertTrue(result.isAffordable());
@@ -84,13 +84,13 @@ class RawMaterialCostTest extends BaseCostTest {
     void canBuildOffTradeLeftRight() {
         player1.setCoins(6);
 
-        setRawMaterialCount(player3, RawMaterial.WOOD, 1);
-        setRawMaterialCount(player2, RawMaterial.WOOD, 2);
+        setManufacturedGoodCount(player3, ManufacturedGood.GLASS, 1);
+        setManufacturedGoodCount(player2, ManufacturedGood.GLASS, 2);
 
         var result = testInstance.generateCostReport(getTurnContext());
 
         assertTrue(result.isAffordable());
-        assertEquals(RawMaterial.WOOD.name(), result.getResourcesIncluded());
+        assertEquals(ManufacturedGood.GLASS.name(), result.getResourcesIncluded());
         assertEquals(2, result.getToPayRight());
         assertEquals(4, result.getToPayLeft());
     }
@@ -99,8 +99,8 @@ class RawMaterialCostTest extends BaseCostTest {
     void canBuildOffTradeLeftRightNotEnoughCoins() {
         player1.setCoins(2);
 
-        setRawMaterialCount(player3, RawMaterial.WOOD, 1);
-        setRawMaterialCount(player2, RawMaterial.WOOD, 2);
+        setManufacturedGoodCount(player3, ManufacturedGood.GLASS, 1);
+        setManufacturedGoodCount(player2, ManufacturedGood.GLASS, 2);
 
         var result = testInstance.generateCostReport(getTurnContext());
 
@@ -111,83 +111,64 @@ class RawMaterialCostTest extends BaseCostTest {
     void canBuildOffTradeLeftRightComplex() {
         player1.setCoins(6);
 
-        testInstance = new RawMaterialCost(List.of(
-                RawMaterial.WOOD,
-                RawMaterial.WOOD,
-                RawMaterial.CLAY
+        testInstance = new ManufacturedGoodCost(List.of(
+                ManufacturedGood.GLASS,
+                ManufacturedGood.GLASS,
+                ManufacturedGood.SCRIPTS
         ));
 
-        setRawMaterialCount(player3, RawMaterial.CLAY, 1);
-        setRawMaterialCount(player2, RawMaterial.WOOD, 2);
+        setManufacturedGoodCount(player3, ManufacturedGood.SCRIPTS, 1);
+        setManufacturedGoodCount(player2, ManufacturedGood.GLASS, 2);
 
         var result = testInstance.generateCostReport(getTurnContext());
 
         assertTrue(result.isAffordable());
-        assertEquals(RawMaterial.WOOD.name() + "," + RawMaterial.CLAY.name(), result.getResourcesIncluded());
+        assertEquals(ManufacturedGood.GLASS.name() + "," + ManufacturedGood.SCRIPTS.name(), result.getResourcesIncluded());
         assertEquals(2, result.getToPayRight());
         assertEquals(4, result.getToPayLeft());
     }
 
     @Test
-    void canBuildOffTradeLeftRightComplexNotEnough() {
-        player1.setCoins(6);
-
-        testInstance = new RawMaterialCost(List.of(
-                RawMaterial.WOOD,
-                RawMaterial.WOOD,
-                RawMaterial.CLAY
-        ));
-
-        setRawMaterialCount(player3, RawMaterial.CLAY, 1);
-        setRawMaterialCount(player2, RawMaterial.WOOD, 1);
-
-        var result = testInstance.generateCostReport(getTurnContext());
-
-        assertFalse(result.isAffordable());
-        assertEquals(RawMaterial.WOOD.name() + "," + RawMaterial.CLAY.name(), result.getResourcesIncluded());
-    }
-
-    @Test
     void canBuildOffOwnComplex() {
-        testInstance = new RawMaterialCost(List.of(
-                RawMaterial.WOOD,
-                RawMaterial.WOOD,
-                RawMaterial.CLAY
+        testInstance = new ManufacturedGoodCost(List.of(
+                ManufacturedGood.GLASS,
+                ManufacturedGood.GLASS,
+                ManufacturedGood.SCRIPTS
         ));
 
-        setRawMaterialCount(player1, RawMaterial.CLAY, 1);
-        setRawMaterialCount(player1, RawMaterial.WOOD, 2);
+        setManufacturedGoodCount(player1, ManufacturedGood.SCRIPTS, 1);
+        setManufacturedGoodCount(player1, ManufacturedGood.GLASS, 2);
 
         var result = testInstance.generateCostReport(getTurnContext());
 
         assertTrue(result.isAffordable());
-        assertEquals(RawMaterial.WOOD.name() + "," + RawMaterial.CLAY.name(), result.getResourcesIncluded());
+        assertEquals(ManufacturedGood.GLASS.name() + "," + ManufacturedGood.SCRIPTS.name(), result.getResourcesIncluded());
         assertEquals(0, result.getToPayRight());
         assertEquals(0, result.getToPayLeft());
     }
 
     @Test
     void canBuildOffOwnComplexFalse() {
-        testInstance = new RawMaterialCost(List.of(
-                RawMaterial.WOOD,
-                RawMaterial.WOOD,
-                RawMaterial.CLAY
+        testInstance = new ManufacturedGoodCost(List.of(
+                ManufacturedGood.GLASS,
+                ManufacturedGood.GLASS,
+                ManufacturedGood.SCRIPTS
         ));
 
-        setRawMaterialCount(player1, RawMaterial.STONE, 1);
-        setRawMaterialCount(player1, RawMaterial.METAL_ORE, 2);
+        setManufacturedGoodCount(player1, ManufacturedGood.TEXTILE, 1);
+        setManufacturedGoodCount(player1, ManufacturedGood.GLASS,1);
 
         var result = testInstance.generateCostReport(getTurnContext());
 
         assertFalse(result.isAffordable());
-        assertEquals(RawMaterial.WOOD.name() + "," + RawMaterial.CLAY.name(), result.getResourcesIncluded());
+        assertEquals(ManufacturedGood.GLASS.name() + "," + ManufacturedGood.SCRIPTS.name(), result.getResourcesIncluded());
         assertEquals(0, result.getToPayRight());
         assertEquals(0, result.getToPayLeft());
     }
 
-    private void setRawMaterialCount(Player player, RawMaterial material, int count) {
+    private void setManufacturedGoodCount(Player player, ManufacturedGood good, int count) {
         for (int i = 0; i < count; i++) {
-            var card = new SingleResourceCard("test-" + i, material, 1);
+            var card = new SingleManufacturedGoodCard("test-" + i, good, 1);
             player.getBuiltCards().add(card);
         }
     }

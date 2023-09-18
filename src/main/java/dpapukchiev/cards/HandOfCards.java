@@ -18,8 +18,8 @@ public class HandOfCards {
 
     public List<Card> getBuildableCards(TurnContext turnContext) {
         return getCards().stream()
-                .filter(c -> c.getCost().generateCostReport(turnContext).isAffordable())
                 .filter(c -> !turnContext.getPlayer().getBuiltCardNames().contains(c.getName()))
+                .filter(c -> c.getCost().generateCostReport(turnContext).isAffordable())
                 .toList();
     }
 }

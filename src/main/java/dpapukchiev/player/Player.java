@@ -1,6 +1,7 @@
 package dpapukchiev.player;
 
 import dpapukchiev.cards.Card;
+import dpapukchiev.cards.ManufacturedGood;
 import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.city.CityName;
 import dpapukchiev.effects.CardEffect;
@@ -59,6 +60,20 @@ public class Player {
         return countMaterial(rawMaterial, validEffects);
     }
 
+    public double getManufacturedGoodCount(ManufacturedGood manufacturedGood) {
+        var validEffects = builtCards.stream()
+                .map(Card::getEffect)
+                .filter(effect -> !effect.isWildcardManufacturedGood());
+        return countMaterial(manufacturedGood, validEffects);
+    }
+
+    public double getManufacturedGoodCountWildcard(ManufacturedGood manufacturedGood) {
+        var validEffects = builtCards.stream()
+                .map(Card::getEffect)
+                .filter(CardEffect::isWildcardManufacturedGood);
+        return countMaterial(manufacturedGood, validEffects);
+    }
+
     public double getRawMaterialCountWildcard(RawMaterial rawMaterial) {
         var validEffects = builtCards.stream()
                 .map(Card::getEffect)
@@ -89,7 +104,7 @@ public class Player {
         }
 
         var card = randomlySelect(cardsToPickFrom, pickACard.getStreamNumber());
-//        card.getCost().applyCost(turnContext, card.getCost().generateCostReport(turnContext));
+        card.getCost().applyCost(turnContext, card.getCost().generateCostReport(turnContext));
 
         builtCardNames.add(card.getName());
         builtCards.add(card);
@@ -163,6 +178,18 @@ public class Player {
                 .map(effect -> effect.getProvidedRawMaterials()
                         .stream()
                         .filter(m -> m.equals(rawMaterial))
+                        .count()
+                )
+                .mapToInt(Long::intValue)
+                .sum();
+    }
+
+    private static int countMaterial(ManufacturedGood manufacturedGood, Stream<CardEffect> validEffects) {
+        return validEffects
+                .filter(effect -> effect.getProvidedManufacturedGood().contains(manufacturedGood))
+                .map(effect -> effect.getProvidedManufacturedGood()
+                        .stream()
+                        .filter(m -> m.equals(manufacturedGood))
                         .count()
                 )
                 .mapToInt(Long::intValue)

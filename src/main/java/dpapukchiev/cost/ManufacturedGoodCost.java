@@ -1,5 +1,6 @@
 package dpapukchiev.cost;
 
+import dpapukchiev.cards.ManufacturedGood;
 import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.game.TurnContext;
 import lombok.AllArgsConstructor;
@@ -12,32 +13,32 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 
 @AllArgsConstructor
-public class RawMaterialCost implements Cost {
-    private final List<RawMaterial> rawMaterialsList;
+public class ManufacturedGoodCost implements Cost {
+    private final List<ManufacturedGood> manufacturedGoodList;
 
     @Override
     public CostReport generateCostReport(TurnContext turnContext) {
-        var materialsNeeded = rawMaterialsList.stream()
-                .collect(groupingBy(RawMaterial::name));
+        var materialsNeeded = manufacturedGoodList.stream()
+                .collect(groupingBy(ManufacturedGood::name));
 
         return materialsNeeded.entrySet().stream()
                 .map(createCostReport(turnContext))
                 .reduce(CostReport.builder().affordable(true).build(), CostReport::merge);
     }
 
-    private static Function<Map.Entry<String, List<RawMaterial>>, CostReport> createCostReport(TurnContext turnContext) {
+    private static Function<Map.Entry<String, List<ManufacturedGood>>, CostReport> createCostReport(TurnContext turnContext) {
         return rm -> {
             var requiredCount = rm.getValue().size();
-            var neededMaterial = RawMaterial.valueOf(rm.getKey());
-            var currentCount = turnContext.getPlayer().getRawMaterialCount(neededMaterial) +
-                    turnContext.getPlayer().getRawMaterialCountWildcard(neededMaterial);
+            var manufacturedGood = ManufacturedGood.valueOf(rm.getKey());
+            var currentCount = turnContext.getPlayer().getManufacturedGoodCount(manufacturedGood) +
+                    turnContext.getPlayer().getManufacturedGoodCountWildcard(manufacturedGood);
             var diff = requiredCount - currentCount;
 
-            var leftCount = turnContext.getPlayer().getLeftPlayer().getRawMaterialCount(neededMaterial);
+            var leftCount = turnContext.getPlayer().getLeftPlayer().getManufacturedGoodCount(manufacturedGood);
             var takeFromLeft = Math.min(leftCount, diff);
             var priceLeft = takeFromLeft * 2; // TODO: preferential
 
-            var rightCount = turnContext.getPlayer().getRightPlayer().getRawMaterialCount(neededMaterial);
+            var rightCount = turnContext.getPlayer().getRightPlayer().getManufacturedGoodCount(manufacturedGood);
             var takeFromRight = Math.min(rightCount, diff - takeFromLeft);
             var priceRight = takeFromRight * 2; // TODO: preferential
 
@@ -47,7 +48,7 @@ public class RawMaterialCost implements Cost {
             boolean isAffordable = hasEnoughResources && hasEnoughCoinsForTrade;
             return CostReport.builder()
                     .affordable(isAffordable)
-                    .resourcesIncluded(neededMaterial.name())
+                    .resourcesIncluded(manufacturedGood.name())
                     .toPayLeft(takeFromLeft * 2)
                     .toPayRight(takeFromRight * 2)
                     .build();
@@ -61,7 +62,7 @@ public class RawMaterialCost implements Cost {
 
     @Override
     public String report() {
-        return "RM: " + rawMaterialsList.stream().map(RawMaterial::name)
+        return "RM: " + manufacturedGoodList.stream().map(ManufacturedGood::name)
                 .map(rm -> rm.substring(0, 1))
                 .collect(Collectors.joining());
     }

@@ -9,9 +9,9 @@ import java.util.Objects;
 @Builder
 public class CostReport {
     @Builder.Default
-    private String  missingResource = "";
+    private String  resourcesIncluded = "";
     @Builder.Default
-    private boolean affordable      = false;
+    private boolean affordable        = false;
     @Builder.Default
     private double  toPayBank       = 0d;
     @Builder.Default
@@ -23,14 +23,14 @@ public class CostReport {
         if (costReport == null) {
             return this;
         }
-        if(missingResource.isEmpty()) {
-            missingResource = costReport.missingResource;
+        if(resourcesIncluded.isEmpty()) {
+            resourcesIncluded = costReport.resourcesIncluded;
         }
-        if (!Objects.equals(costReport.getMissingResource(), missingResource)) {
-           missingResource += "," + costReport.missingResource;
+        if (!Objects.equals(costReport.getResourcesIncluded(), resourcesIncluded)) {
+            resourcesIncluded += "," + costReport.resourcesIncluded;
         }
         return CostReport.builder()
-                .missingResource(missingResource)
+                .resourcesIncluded(resourcesIncluded)
                 .affordable(affordable && costReport.affordable)
                 .toPayBank(toPayBank + costReport.toPayBank)
                 .toPayLeft(toPayLeft + costReport.toPayLeft)
