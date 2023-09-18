@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -60,12 +61,71 @@ class RawMaterialCostTest extends BaseCostTest {
     }
 
     @Test
-    void canBuildOffOwnResourcesAndTrade() {
+    void canBuildOffOwnResourcesAndTradeLeft() {
         setRawMaterialCount(player1, RawMaterial.WOOD, 2);
         setRawMaterialCount(player2, RawMaterial.WOOD, 1);
 
         var result = testInstance.generateCostReport(getTurnContext());
         assertTrue(result.isAffordable());
+        assertEquals(2, result.getToPayLeft());
+    }
+
+    @Test
+    void canBuildOffOwnResourcesAndTradeRight() {
+        setRawMaterialCount(player1, RawMaterial.WOOD, 2);
+        setRawMaterialCount(player3, RawMaterial.WOOD, 1);
+
+        var result = testInstance.generateCostReport(getTurnContext());
+        assertTrue(result.isAffordable());
+        assertEquals(2, result.getToPayRight());
+    }
+
+    @Test
+    void canBuildOffTradeLeftRight() {
+        player1.setCoins(6);
+
+        setRawMaterialCount(player3, RawMaterial.WOOD, 1);
+        setRawMaterialCount(player2, RawMaterial.WOOD, 2);
+
+        var result = testInstance.generateCostReport(getTurnContext());
+
+        assertTrue(result.isAffordable());
+        assertEquals(RawMaterial.WOOD.name(), result.getMissingResource());
+        assertEquals(2, result.getToPayRight());
+        assertEquals(4, result.getToPayLeft());
+    }
+
+    @Test
+    void canBuildOffTradeLeftRightNotEnoughCoins() {
+        player1.setCoins(2);
+
+        setRawMaterialCount(player3, RawMaterial.WOOD, 1);
+        setRawMaterialCount(player2, RawMaterial.WOOD, 2);
+
+        var result = testInstance.generateCostReport(getTurnContext());
+
+        assertFalse(result.isAffordable());
+    }
+
+    @Test
+    void canBuildOffTradeLeftRightComplex() {
+        player1.setCoins(6);
+
+        testInstance = new RawMaterialCost(List.of(
+                RawMaterial.WOOD,
+                RawMaterial.WOOD,
+                RawMaterial.CLAY
+        ));
+
+        setRawMaterialCount(player3, RawMaterial.CLAY, 1);
+        setRawMaterialCount(player2, RawMaterial.WOOD, 2);
+
+        var result = testInstance.generateCostReport(getTurnContext());
+
+        assertTrue(result.isAffordable());
+        assertEquals(RawMaterial.WOOD.name() + "," + RawMaterial.CLAY.name(), result.getMissingResource());
+        assertEquals(2, result.getToPayRight());
+        assertEquals(4, result.getToPayLeft());
     }
 
     private void setRawMaterialCount(Player player, RawMaterial material, int count) {

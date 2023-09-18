@@ -26,11 +26,16 @@ public class RawMaterialCost implements Cost {
 
             var leftCount = turnContext.getPlayer().getLeftPlayer().getRawMaterialCount(neededMaterial);
             var takeFromLeft = Math.min(leftCount, diff);
+            var priceLeft = takeFromLeft * 2; // TODO: preferential
 
             var rightCount = turnContext.getPlayer().getRightPlayer().getRawMaterialCount(neededMaterial);
             var takeFromRight = Math.min(rightCount, diff - takeFromLeft);
+            var priceRight = takeFromRight * 2; // TODO: preferential
 
-            boolean isAffordable = (currentCount + leftCount + rightCount) >= requiredCount;
+            boolean hasEnoughCoinsForTrade = (priceLeft + priceRight) <= turnContext.getPlayer().getCoins();
+            boolean hasEnoughResources = (currentCount + leftCount + rightCount) >= requiredCount;
+
+            boolean isAffordable = hasEnoughResources && hasEnoughCoinsForTrade;
             return CostReport.builder()
                     .affordable(isAffordable)
                     .missingResource(neededMaterial.name())

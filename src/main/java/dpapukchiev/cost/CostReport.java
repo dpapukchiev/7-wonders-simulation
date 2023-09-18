@@ -3,6 +3,8 @@ package dpapukchiev.cost;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 @Builder
 public class CostReport {
@@ -21,7 +23,14 @@ public class CostReport {
         if (costReport == null) {
             return this;
         }
+        if(missingResource.isEmpty()) {
+            missingResource = costReport.missingResource;
+        }
+        if (!Objects.equals(costReport.getMissingResource(), missingResource)) {
+           missingResource += "," + costReport.missingResource;
+        }
         return CostReport.builder()
+                .missingResource(missingResource)
                 .affordable(affordable && costReport.affordable)
                 .toPayBank(toPayBank + costReport.toPayBank)
                 .toPayLeft(toPayLeft + costReport.toPayLeft)
