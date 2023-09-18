@@ -1,6 +1,5 @@
 package dpapukchiev.cost;
 
-import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.game.TurnContext;
 import dpapukchiev.player.Player;
 import lombok.AllArgsConstructor;
@@ -79,54 +78,18 @@ public abstract class BaseResourceCost<T extends Enum<?>> implements Cost {
     }
 
     public abstract double getTradingPriceRight(Player player, String neededMaterial);
-//    {
-//        return player.getTradingPriceRight(neededMaterial);
-//    }
 
     public abstract double getTradingPriceLeft(Player player, String neededMaterial);
-//    {
-//        return player.getTradingPriceLeft(neededMaterial);
-//    }
 
     public abstract double getAvailableResourcesRight(Player player, String neededMaterial);
-//    {
-//        return player.getRightPlayer().getRawMaterialCount(neededMaterial);
-//    }
 
     public abstract double getAvailableResourcesLeft(Player player, String neededMaterial);
-//    {
-//        return player.getLeftPlayer().getRawMaterialCount(neededMaterial);
-//    }
 
     public abstract double getCurrentCount(Player player, String neededMaterial);
-//        return player.getRawMaterialCount(neededMaterial) +
-//                player.getRawMaterialCountWildcard(neededMaterial);
-//    }
 
     @Override
     public void applyCost(TurnContext turnContext, CostReport costReport) {
-        var player = turnContext.getPlayer();
-        var leftPlayer = player.getLeftPlayer();
-        var rightPlayer = player.getRightPlayer();
-
-        if (costReport.getToPayLeft() == 0 && costReport.getToPayRight() == 0) {
-            return;
-        }
-
-        player.removeCoins(costReport.getToPayLeft() + costReport.getToPayRight());
-        leftPlayer.rewardCoins(costReport.getToPayLeft());
-        rightPlayer.rewardCoins(costReport.getToPayRight());
-
-        log.info("{} {} Player {} has paid ${} coins total. ${} => L:{}, R:${} => {}",
-                turnContext.getAge(),
-                turnContext.getTurnCountAge(),
-                player.getName(),
-                costReport.getToPayLeft() + costReport.getToPayRight(),
-                costReport.getToPayLeft(),
-                player.getLeftPlayer().getName(),
-                costReport.getToPayRight(),
-                player.getRightPlayer().getName()
-        );
+        CostExecution.applyCost(turnContext, costReport);
     }
 
     @Override
