@@ -9,6 +9,8 @@ import dpapukchiev.cost.CostReport;
 import dpapukchiev.effects.CardEffect;
 import dpapukchiev.effects.EffectUsageType;
 import dpapukchiev.effects.PreferentialTrading;
+import dpapukchiev.effects.v2.EffectExecutionContext;
+import dpapukchiev.effects.v2.ResourceContext;
 import dpapukchiev.game.TurnContext;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
@@ -38,22 +40,28 @@ import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 @ToString(exclude = {"leftPlayer", "rightPlayer"})
 public class Player {
     @Builder.Default
-    private double         coins          = 3;
-    private String         name;
-    private CityName       city;
-    private RandomVariable pickACard;
+    private double                 coins                  = 3;
+    private String                 name;
+    private CityName               city;
+    private RandomVariable         pickACard;
     @Builder.Default
-    private double         warWinPoints   = 0;
+    private EffectExecutionContext effectExecutionContext = new EffectExecutionContext();
     @Builder.Default
-    private double         warLossPoints  = 0;
+    private double                 warWinPoints           = 0;
     @Builder.Default
-    private List<Card>     builtCards     = new ArrayList<>();
+    private double                 warLossPoints          = 0;
     @Builder.Default
-    private List<Card>     discardedCards = new ArrayList<>();
+    private List<Card>             builtCards             = new ArrayList<>();
     @Builder.Default
-    private Set<String>    builtCardNames = new HashSet<>();
-    private Player         leftPlayer;
-    private Player         rightPlayer;
+    private List<Card>             discardedCards         = new ArrayList<>();
+    @Builder.Default
+    private Set<String>            builtCardNames         = new HashSet<>();
+    private Player                 leftPlayer;
+    private Player                 rightPlayer;
+
+    public ResourceContext getResourceContext() {
+        return new ResourceContext(this);
+    }
 
     public void rewardCoins(double coins) {
         this.coins += coins;

@@ -15,6 +15,7 @@ public class CoinRewardDynamicEffect extends CardEffect {
         LEFT,
         RIGHT,
         ALL,
+        NEIGHBOURS,
         SELF
     }
 

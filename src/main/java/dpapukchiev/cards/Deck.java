@@ -7,6 +7,7 @@ import dpapukchiev.cost.RawMaterialCost;
 import dpapukchiev.effects.CoinRewardDynamicEffect;
 import dpapukchiev.effects.PreferentialTrading;
 import dpapukchiev.effects.RawMaterialEffect;
+import dpapukchiev.effects.VictoryRewardDynamicEffect;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
 import jsl.utilities.random.rvariable.NormalRV;
@@ -50,6 +51,8 @@ public class Deck {
 
         addAge1();
         addAge2();
+        addAge3();
+
 
         // TODO: fix this with all cards
         var totalCardsPerAge = 5 * 7;
@@ -75,6 +78,68 @@ public class Deck {
         allCards = allCards.stream()
                 .filter(card -> card.getRequiredPlayersCount() <= playerCount)
                 .collect(Collectors.toList());
+    }
+
+    private void addAge1() {
+        // Resources and goods
+        allCards.add(new SingleResourceCard(1, "Erzbergwerk", METAL_ORE, 3));
+        allCards.add(new SingleResourceCard(1, "Ziegelei", CLAY, 3));
+        allCards.add(new SingleResourceCard(1, "Steinbruch", STONE, 3));
+        allCards.add(new SingleResourceCard(1, "Holzplatz", WOOD, 3));
+        allCards.add(new DoubleResourceCard(1, "Forstwirtschaft", STONE, WOOD, 3));
+        allCards.add(new DoubleResourceCard(1, "Tongrube", METAL_ORE, CLAY, 3));
+        allCards.add(new SingleManufacturedGoodCard(1, "Glashutte", GLASS, 3));
+        allCards.add(new SingleManufacturedGoodCard(1, "Presse", SCRIPTS, 3));
+        allCards.add(new SingleManufacturedGoodCard(1, "Webstuhl", TEXTILE, 3));
+
+        allCards.add(new SingleResourceCard(1, "Erzbergwerk", METAL_ORE, 4));
+        allCards.add(new SingleResourceCard(1, "Holzplatz", WOOD, 4));
+        allCards.add(new DoubleResourceCard(1, "Ausgrabungsttatte", STONE, CLAY, 4));
+
+        allCards.add(new SingleResourceCard(1, "Ziegelei", CLAY, 5));
+        allCards.add(new SingleResourceCard(1, "Steinbruch", STONE, 5));
+
+        allCards.add(new DoubleResourceCard(1, "Waldhole", METAL_ORE, WOOD, 5));
+
+        // CIVIL
+        allCards.add(new CivilCard(1, "Theater", 2, 3));
+        allCards.add(new CivilCard(1, "Altar", 2, 3));
+        allCards.add(new CivilCard(1, "Altar", 2, 5));
+        allCards.add(new CivilCard(1, "Bader", 3, 3, List.of(STONE)));
+        allCards.add(new CivilCard(1, "Pfandhouse", 3, 4));
+
+        // MILITARY
+        allCards.add(new WarCard(1, "Wachturm", 1, 4, List.of(CLAY)));
+        allCards.add(new WarCard(1, "Wachturm", 1, 3, List.of(CLAY)));
+        allCards.add(new WarCard(1, "Kaserne", 1, 3, List.of(METAL_ORE)));
+        allCards.add(new WarCard(1, "Kaserne", 1, 5, List.of(METAL_ORE)));
+        allCards.add(new WarCard(1, "Befestigunsanlage", 1, 3, List.of(WOOD)));
+
+        // COMMERCIAL
+        allCards.add(new CommercialCardCoinReward(1, "Taverne", 5, 4));
+        allCards.add(new CommercialCardCoinReward(1, "Taverne", 5, 5));
+        allCards.add(new CommercialTradingCard(1, "Kontor Ost", 0, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.RIGHT,
+                List.of(),
+                List.of(CLAY, METAL_ORE, STONE, WOOD)
+        )));
+        allCards.add(new CommercialTradingCard(1, "Kontor West", 0, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.LEFT,
+                List.of(),
+                List.of(CLAY, METAL_ORE, STONE, WOOD)
+        )));
+        allCards.add(new CommercialTradingCard(1, "Markt", 0, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.BOTH,
+                List.of(GLASS, SCRIPTS, TEXTILE),
+                List.of()
+        )));
+
+        // SCIENCE
+        allCards.add(new ScienceCard(1, "Aphoteke", 3, List.of(ScienceSymbol.COMPASS), List.of(TEXTILE)));
+        allCards.add(new ScienceCard(1, "Aphoteke", 5, List.of(ScienceSymbol.COMPASS), List.of(TEXTILE)));
+        allCards.add(new ScienceCard(1, "Werkstat", 3, List.of(ScienceSymbol.COGWHEEL), List.of(GLASS)));
+        allCards.add(new ScienceCard(1, "Skriptorium", 3, List.of(ScienceSymbol.TABLET), List.of(SCRIPTS)));
+        allCards.add(new ScienceCard(1, "Skriptorium", 4, List.of(ScienceSymbol.TABLET), List.of(SCRIPTS)));
     }
 
     private void addAge2() {
@@ -190,66 +255,23 @@ public class Deck {
         ), new FreeToPlayCost()));
     }
 
-    private void addAge1() {
-        // Resources and goods
-        allCards.add(new SingleResourceCard(1, "Erzbergwerk", METAL_ORE, 3));
-        allCards.add(new SingleResourceCard(1, "Ziegelei", CLAY, 3));
-        allCards.add(new SingleResourceCard(1, "Steinbruch", STONE, 3));
-        allCards.add(new SingleResourceCard(1, "Holzplatz", WOOD, 3));
-        allCards.add(new DoubleResourceCard(1, "Forstwirtschaft", STONE, WOOD, 3));
-        allCards.add(new DoubleResourceCard(1, "Tongrube", METAL_ORE, CLAY, 3));
-        allCards.add(new SingleManufacturedGoodCard(1, "Glashutte", GLASS, 3));
-        allCards.add(new SingleManufacturedGoodCard(1, "Presse", SCRIPTS, 3));
-        allCards.add(new SingleManufacturedGoodCard(1, "Webstuhl", TEXTILE, 3));
-
-        allCards.add(new SingleResourceCard(1, "Erzbergwerk", METAL_ORE, 4));
-        allCards.add(new SingleResourceCard(1, "Holzplatz", WOOD, 4));
-        allCards.add(new DoubleResourceCard(1, "Ausgrabungsttatte", STONE, CLAY, 4));
-
-        allCards.add(new SingleResourceCard(1, "Ziegelei", CLAY, 5));
-        allCards.add(new SingleResourceCard(1, "Steinbruch", STONE, 5));
-
-        allCards.add(new DoubleResourceCard(1, "Waldhole", METAL_ORE, WOOD, 5));
-
-        // CIVIL
-        allCards.add(new CivilCard(1, "Theater", 2, 3));
-        allCards.add(new CivilCard(1, "Altar", 2, 3));
-        allCards.add(new CivilCard(1, "Altar", 2, 5));
-        allCards.add(new CivilCard(1, "Bader", 3, 3, List.of(STONE)));
-        allCards.add(new CivilCard(1, "Pfandhouse", 3, 4));
-
-        // MILITARY
-        allCards.add(new WarCard(1, "Wachturm", 1, 4, List.of(CLAY)));
-        allCards.add(new WarCard(1, "Wachturm", 1, 3, List.of(CLAY)));
-        allCards.add(new WarCard(1, "Kaserne", 1, 3, List.of(METAL_ORE)));
-        allCards.add(new WarCard(1, "Kaserne", 1, 5, List.of(METAL_ORE)));
-        allCards.add(new WarCard(1, "Befestigunsanlage", 1, 3, List.of(WOOD)));
-
-        // COMMERCIAL
-        allCards.add(new CommercialCardCoinReward(1, "Taverne", 5, 4));
-        allCards.add(new CommercialCardCoinReward(1, "Taverne", 5, 5));
-        allCards.add(new CommercialTradingCard(1, "Kontor Ost", 0, new PreferentialTrading(
-                PreferentialTrading.PreferentialTradingType.RIGHT,
-                List.of(),
-                List.of(CLAY, METAL_ORE, STONE, WOOD)
-        )));
-        allCards.add(new CommercialTradingCard(1, "Kontor West", 0, new PreferentialTrading(
-                PreferentialTrading.PreferentialTradingType.LEFT,
-                List.of(),
-                List.of(CLAY, METAL_ORE, STONE, WOOD)
-        )));
-        allCards.add(new CommercialTradingCard(1, "Markt", 0, new PreferentialTrading(
-                PreferentialTrading.PreferentialTradingType.BOTH,
-                List.of(GLASS, SCRIPTS, TEXTILE),
-                List.of()
+    private void addAge3(){
+        allCards.add(new GuildCard(3, "Gilde Der Strategien", 3,  new AggregateCost(
+                List.of(
+                        new RawMaterialCost(List.of(METAL_ORE, METAL_ORE, STONE)),
+                        new ManufacturedGoodCost(List.of(TEXTILE))
+                )
+        ), new VictoryRewardDynamicEffect(1,
+                VictoryRewardDynamicEffect.DirectionModifier.NEIGHBOURS,
+                VictoryRewardDynamicEffect.CardTypeModifier.WAR_LOSS
         )));
 
-        // SCIENCE
-        allCards.add(new ScienceCard(1, "Aphoteke", 3, List.of(ScienceSymbol.COMPASS), List.of(TEXTILE)));
-        allCards.add(new ScienceCard(1, "Aphoteke", 5, List.of(ScienceSymbol.COMPASS), List.of(TEXTILE)));
-        allCards.add(new ScienceCard(1, "Werkstat", 3, List.of(ScienceSymbol.COGWHEEL), List.of(GLASS)));
-        allCards.add(new ScienceCard(1, "Skriptorium", 3, List.of(ScienceSymbol.TABLET), List.of(SCRIPTS)));
-        allCards.add(new ScienceCard(1, "Skriptorium", 4, List.of(ScienceSymbol.TABLET), List.of(SCRIPTS)));
+        allCards.add(new CivilCard(3, "Palast", 8, 3, new AggregateCost(
+                List.of(
+                        new RawMaterialCost(RawMaterial.all()),
+                        new ManufacturedGoodCost(ManufacturedGood.all())
+                )
+        )));
     }
 
     public HandOfCards prepareHandOfCards(int age) {
