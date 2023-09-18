@@ -161,6 +161,62 @@ class ManufacturedGoodCostTest extends BaseCostTest {
     }
 
     @Test
+    void canBuildOffTradeLeftRightComplexWithPreferentialRight() {
+        // player 2 on the left
+        // player 3 on the right
+        player1.setCoins(4);
+        player1.setBuiltCards(Collections.singletonList(new CommercialTradingCard(
+                "test", 1, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.RIGHT,
+                List.of(ManufacturedGood.GLASS),
+                List.of()
+        ))));
+
+        testInstance = new ManufacturedGoodCost(List.of(
+                ManufacturedGood.GLASS,
+                ManufacturedGood.GLASS,
+                ManufacturedGood.SCRIPTS
+        ));
+
+        setManufacturedGoodCount(player2, ManufacturedGood.SCRIPTS, 1);
+        setManufacturedGoodCount(player3, ManufacturedGood.GLASS, 2);
+
+        var result = testInstance.generateCostReport(getTurnContext());
+
+        assertTrue(result.isAffordable());
+        assertEquals(ManufacturedGood.GLASS.name() + "," + ManufacturedGood.SCRIPTS.name(), result.getResourcesIncluded());
+        assertEquals(2, result.getToPayRight());
+        assertEquals(2, result.getToPayLeft());
+    }
+
+    @Test
+    void canBuildOffTradeLeftRightComplexWithPreferentialLeft() {
+        // player 2 on the left
+        // player 3 on the right
+        player1.setCoins(4);
+        player1.setBuiltCards(Collections.singletonList(new CommercialTradingCard(
+                "test", 1, new PreferentialTrading(
+                PreferentialTrading.PreferentialTradingType.LEFT,
+                List.of(ManufacturedGood.GLASS),
+                List.of()
+        ))));
+
+        testInstance = new ManufacturedGoodCost(List.of(
+                ManufacturedGood.GLASS,
+                ManufacturedGood.GLASS,
+                ManufacturedGood.SCRIPTS
+        ));
+
+        setManufacturedGoodCount(player2, ManufacturedGood.SCRIPTS, 1);
+        setManufacturedGoodCount(player3, ManufacturedGood.GLASS, 2);
+
+        var result = testInstance.generateCostReport(getTurnContext());
+
+        assertFalse(result.isAffordable());
+        assertEquals(ManufacturedGood.GLASS.name() + "," + ManufacturedGood.SCRIPTS.name(), result.getResourcesIncluded());
+    }
+
+    @Test
     void canBuildOffOwnComplex() {
         testInstance = new ManufacturedGoodCost(List.of(
                 ManufacturedGood.GLASS,

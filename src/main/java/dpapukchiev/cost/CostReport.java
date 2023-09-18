@@ -7,8 +7,8 @@ import lombok.ToString;
 import java.util.Objects;
 
 @Getter
-@Builder
 @ToString
+@Builder(toBuilder = true)
 public class CostReport {
     @Builder.Default
     private String  resourcesIncluded = "";

@@ -51,7 +51,7 @@ public class CardEffect {
     public String report() {
         var report = new ArrayList<String>();
         if (coinReward > 0) {
-            report.add("C: " + coinReward);
+            report.add("$: " + coinReward);
         }
         if (pointsAward > 0) {
             report.add("V: " + pointsAward);
@@ -80,7 +80,9 @@ public class CardEffect {
                     .collect(Collectors.joining("-")));
         }
         if (preferentialTrading != null) {
-            report.add("PT: " + preferentialTrading.type().name());
+            report.add("PT: %s".formatted(
+                    preferentialTrading.report()
+            ));
         }
         return "E(%s)".formatted(String.join(" ", report));
     }
