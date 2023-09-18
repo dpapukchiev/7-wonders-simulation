@@ -3,6 +3,7 @@ package dpapukchiev.cost;
 import dpapukchiev.cards.ManufacturedGood;
 import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.game.TurnContext;
+import dpapukchiev.player.Player;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -32,6 +33,14 @@ public class ManufacturedGoodCost implements Cost {
             var manufacturedGood = ManufacturedGood.valueOf(rm.getKey());
             var currentCount = turnContext.getPlayer().getManufacturedGoodCount(manufacturedGood) +
                     turnContext.getPlayer().getManufacturedGoodCountWildcard(manufacturedGood);
+
+            if(currentCount >= requiredCount){
+                return CostReport.builder()
+                        .affordable(true)
+                        .resourcesIncluded(manufacturedGood.name())
+                        .build();
+            }
+
             var diff = requiredCount - currentCount;
 
             var leftCount = turnContext.getPlayer().getLeftPlayer().getManufacturedGoodCount(manufacturedGood);
@@ -57,7 +66,13 @@ public class ManufacturedGoodCost implements Cost {
 
     @Override
     public void applyCost(TurnContext turnContext, CostReport costReport) {
+        var player = turnContext.getPlayer();
+        var leftPlayer = player.getLeftPlayer();
+        var rightPlayer = player.getRightPlayer();
 
+        player.removeCoins(costReport.getToPayLeft() + costReport.getToPayRight());
+        leftPlayer.rewardCoins(costReport.getToPayLeft());
+        rightPlayer.rewardCoins(costReport.getToPayRight());
     }
 
     @Override

@@ -31,6 +31,14 @@ public class RawMaterialCost implements Cost {
             var neededMaterial = RawMaterial.valueOf(rm.getKey());
             var currentCount = turnContext.getPlayer().getRawMaterialCount(neededMaterial) +
                     turnContext.getPlayer().getRawMaterialCountWildcard(neededMaterial);
+
+            if(currentCount >= requiredCount){
+                return CostReport.builder()
+                        .affordable(true)
+                        .resourcesIncluded(neededMaterial.name())
+                        .build();
+            }
+
             var diff = requiredCount - currentCount;
 
             var leftCount = turnContext.getPlayer().getLeftPlayer().getRawMaterialCount(neededMaterial);
@@ -56,7 +64,13 @@ public class RawMaterialCost implements Cost {
 
     @Override
     public void applyCost(TurnContext turnContext, CostReport costReport) {
+        var player = turnContext.getPlayer();
+        var leftPlayer = player.getLeftPlayer();
+        var rightPlayer = player.getRightPlayer();
 
+        player.removeCoins(costReport.getToPayLeft() + costReport.getToPayRight());
+        leftPlayer.rewardCoins(costReport.getToPayLeft());
+        rightPlayer.rewardCoins(costReport.getToPayRight());
     }
 
     @Override

@@ -2,11 +2,13 @@ package dpapukchiev.cost;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @Getter
 @Builder
+@ToString
 public class CostReport {
     @Builder.Default
     private String  resourcesIncluded = "";
@@ -37,4 +39,5 @@ public class CostReport {
                 .toPayRight(toPayRight + costReport.toPayRight)
                 .build();
     }
+
 }

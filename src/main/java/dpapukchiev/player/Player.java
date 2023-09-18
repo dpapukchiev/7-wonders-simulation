@@ -41,6 +41,8 @@ public class Player {
     @Builder.Default
     private List<Card>     builtCards     = new ArrayList<>();
     @Builder.Default
+    private List<Card>     discardedCards = new ArrayList<>();
+    @Builder.Default
     private Set<String>    builtCardNames = new HashSet<>();
     private Player         leftPlayer;
     private Player         rightPlayer;
@@ -90,6 +92,7 @@ public class Player {
     }
 
     public void executeTurn(TurnContext turnContext) {
+        var startingCoins = turnContext.getPlayer().getCoins();
         var handOfCards = turnContext.getHandOfCards();
 
         // buy resources
@@ -100,11 +103,14 @@ public class Player {
             var cardToDiscard = randomlySelect(handOfCards.getCards(), pickACard.getStreamNumber());
             handOfCards.getCards().remove(cardToDiscard);
             turnContext.getPlayer().rewardCoins(3);
+            discardedCards.add(cardToDiscard);
             return;
         }
 
         var card = randomlySelect(cardsToPickFrom, pickACard.getStreamNumber());
-        card.getCost().applyCost(turnContext, card.getCost().generateCostReport(turnContext));
+
+        var costReport = card.getCost().generateCostReport(turnContext);
+        card.getCost().applyCost(turnContext, costReport);
 
         builtCardNames.add(card.getName());
         builtCards.add(card);
@@ -114,16 +120,20 @@ public class Player {
                 """
                         Step: {}
                         Executed turn => age: {}, turn: {}
+                        Starting coins: {}
                         From hand: {}
                         Selected card: {}
+                        Cost: {}
                         Player info:
                         {}
                         """,
                 turnContext.getSimulationStep(),
                 turnContext.getAge(),
                 turnContext.getTurnCountAge(),
+                startingCoins,
                 handOfCards.getUuid(),
                 card.report(),
+                costReport,
                 report(turnContext.getAge())
         );
     }
