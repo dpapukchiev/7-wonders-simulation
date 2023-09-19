@@ -8,7 +8,10 @@ import lombok.Getter;
 @Getter
 @Builder
 public class Player {
-    private EffectExecutionContext effectExecutionContext;
+    @Builder.Default
+    private EffectExecutionContext effectExecutionContext = new EffectExecutionContext();
+    @Builder.Default
+    private Vault                  vault                  = new Vault();
 
     public ResourceContext resourceContext() {
         return new ResourceContext(this);
