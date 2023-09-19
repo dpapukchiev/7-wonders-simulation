@@ -5,7 +5,7 @@ import dpapukchiev.v2.effects.EffectState;
 import dpapukchiev.v2.player.Player;
 import lombok.RequiredArgsConstructor;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class ResourceContext {
@@ -27,13 +27,16 @@ public class ResourceContext {
         return countMaterial(rawMaterial, getPermanentEffects(), true);
     }
 
-    private Stream<Effect> getPermanentEffects() {
+    private List<Effect> getPermanentEffects() {
         return player.getEffectExecutionContext().getPermanentEffects()
-                .filter(effect -> effect.getState().equals(EffectState.AVAILABLE));
+                .stream()
+                .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
+                .toList();
     }
 
-    private int countMaterial(RawMaterial rawMaterial, Stream<Effect> validEffects, boolean wildCardRawMaterial) {
+    private int countMaterial(RawMaterial rawMaterial, List<Effect> validEffects, boolean wildCardRawMaterial) {
         var resourceBundles = validEffects
+                .stream()
                 .map(effect -> effect.getResourceBundle(player))
                 .filter(bundle -> bundle.getRawMaterials().contains(rawMaterial))
                 .filter(bundle -> (wildCardRawMaterial && bundle.isWildcardRawMaterial()) || (!wildCardRawMaterial && !bundle.isWildcardRawMaterial()))
@@ -48,8 +51,9 @@ public class ResourceContext {
                 .sum();
     }
 
-    private int countMaterial(ManufacturedGood manufacturedGood, Stream<Effect> validEffects, boolean wildcardManufacturedGood) {
+    private int countMaterial(ManufacturedGood manufacturedGood, List<Effect> validEffects, boolean wildcardManufacturedGood) {
         var resourceBundles = validEffects
+                .stream()
                 .map(effect -> effect.getResourceBundle(player))
                 .filter(bundle -> bundle.getManufacturedGoods().contains(manufacturedGood))
                 .filter(bundle -> (wildcardManufacturedGood && bundle.isWildcardManufacturedGood()) || (!wildcardManufacturedGood && !bundle.isWildcardManufacturedGood()))

@@ -1,5 +1,6 @@
 package dpapukchiev.v2.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public enum RawMaterial {
@@ -9,10 +10,6 @@ public enum RawMaterial {
     STONE;
 
     public static List<RawMaterial> all() {
-        return List.of(METAL_ORE, CLAY, WOOD, STONE);
-    }
-
-    public static List<RawMaterial> twoOf(RawMaterial material) {
-        return List.of(material, material);
+        return new ArrayList<>(List.of(METAL_ORE, CLAY, WOOD, STONE));
     }
 }

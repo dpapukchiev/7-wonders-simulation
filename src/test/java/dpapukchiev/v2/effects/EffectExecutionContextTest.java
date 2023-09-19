@@ -96,7 +96,7 @@ class EffectExecutionContextTest {
         when(effect1.getState()).thenReturn(EffectState.AVAILABLE);
         when(effect2.getState()).thenReturn(EffectState.EXHAUSTED);
 
-        var result = executionContext.getPermanentEffects().toList();
+        var result = executionContext.getPermanentEffects();
         assertEquals(1, result.size());
         assertEquals(effect1, result.get(0));
     }

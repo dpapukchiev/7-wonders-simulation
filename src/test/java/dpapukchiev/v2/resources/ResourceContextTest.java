@@ -2,7 +2,6 @@ package dpapukchiev.v2.resources;
 
 import dpapukchiev.v2.effects.Effect;
 import dpapukchiev.v2.effects.EffectExecutionContext;
-import dpapukchiev.v2.effects.EffectState;
 import dpapukchiev.v2.player.Player;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static dpapukchiev.v2.effects.EffectState.AVAILABLE;
+import static dpapukchiev.v2.resources.ManufacturedGood.SCRIPTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +24,8 @@ class ResourceContextTest {
     private Effect                 effect1;
     @Mock
     private Effect                 effect2;
+    @Mock
+    private Effect                 effect3;
     @Mock
     private EffectExecutionContext effectExecutionContext;
     private Player                 player;
@@ -87,11 +89,28 @@ class ResourceContextTest {
     }
 
     @Test
-    void getManufacturedGoodCount() {
-    }
+    void getCountWildcard() {
+        init(List.of(effect1, effect2, effect3));
+        initEffect(effect1, ResourceBundle.builder()
+                .manufacturedGoods(ManufacturedGood.all())
+                .build());
+        initEffect(effect2, ResourceBundle.builder()
+                .manufacturedGoods(List.of(SCRIPTS, SCRIPTS))
+                .build());
+        initEffect(effect3, ResourceBundle.builder()
+                .rawMaterials(RawMaterial.all())
+                .build());
 
-    @Test
-    void getManufacturedGoodCountWildcard() {
+        ManufacturedGood.all().forEach(manufacturedGood -> {
+            double result = player.resourceContext().getManufacturedGoodCountWildcard(manufacturedGood);
+
+            assertEquals(1, result);
+        });
+        RawMaterial.all().forEach(rawMaterial -> {
+            double result = player.resourceContext().getRawMaterialCountWildcard(rawMaterial);
+
+            assertEquals(1, result);
+        });
     }
 
     @Test
@@ -110,6 +129,6 @@ class ResourceContextTest {
                 .effectExecutionContext(effectExecutionContext)
                 .build();
         when(effectExecutionContext.getPermanentEffects())
-                .thenReturn(permanentEffects.stream());
+                .thenReturn(permanentEffects);
     }
 }

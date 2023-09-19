@@ -4,7 +4,6 @@ import dpapukchiev.v2.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class EffectExecutionContext {
     private final List<Effect> effectsEndOfTurn = new ArrayList<>();
@@ -12,9 +11,10 @@ public class EffectExecutionContext {
     private final List<Effect> effectsEndOfGame = new ArrayList<>();
     private final List<Effect> permanentEffects = new ArrayList<>();
 
-    public Stream<Effect> getPermanentEffects() {
+    public List<Effect> getPermanentEffects() {
         return permanentEffects.stream()
-                .filter(effect -> effect.getState().equals(EffectState.AVAILABLE));
+                .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
+                .toList();
     }
 
     public void addEffect(Effect effect, EffectTiming timing) {
