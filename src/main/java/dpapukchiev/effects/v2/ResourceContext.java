@@ -13,28 +13,32 @@ public class ResourceContext {
 
     public double getRawMaterialCount(RawMaterial rawMaterial) {
         var validEffects = player.getEffectExecutionContext().getPermanentEffects();
-        return countMaterial(rawMaterial, validEffects);
+        return countMaterial(rawMaterial, validEffects, false);
     }
 
     public double getManufacturedGoodCount(ManufacturedGood manufacturedGood) {
         var validEffects = player.getEffectExecutionContext().getPermanentEffects();
-        return countMaterial(manufacturedGood, validEffects);
+        return countMaterial(manufacturedGood, validEffects, false);
     }
 
     public double getManufacturedGoodCountWildcard(ManufacturedGood manufacturedGood) {
         var validEffects = player.getEffectExecutionContext().getPermanentEffects();
-        return countMaterial(manufacturedGood, validEffects);
+        return countMaterial(manufacturedGood, validEffects, true);
     }
 
     public double getRawMaterialCountWildcard(RawMaterial rawMaterial) {
         var validEffects = player.getEffectExecutionContext().getPermanentEffects();
-        return countMaterial(rawMaterial, validEffects);
+        return countMaterial(rawMaterial, validEffects, true);
     }
 
-    private int countMaterial(RawMaterial rawMaterial, Stream<Effect> validEffects) {
-        return validEffects
-                .filter(effect -> effect.getResourceBundle(player).getRawMaterials().contains(rawMaterial))
-                .map(effect -> effect.getResourceBundle(player).getRawMaterials()
+    private int countMaterial(RawMaterial rawMaterial, Stream<Effect> validEffects, boolean wildCardRawMaterial) {
+        var resourceBundles = validEffects
+                .map(effect -> effect.getResourceBundle(player))
+                .filter(bundle -> bundle.getRawMaterials().contains(rawMaterial))
+                .filter(bundle -> (wildCardRawMaterial && bundle.isWildcardRawMaterial()) || (!wildCardRawMaterial && !bundle.isWildcardRawMaterial()))
+                .toList();
+        return resourceBundles.stream()
+                .map(bundle -> bundle.getRawMaterials()
                         .stream()
                         .filter(m -> m.equals(rawMaterial))
                         .count()
@@ -43,10 +47,14 @@ public class ResourceContext {
                 .sum();
     }
 
-    private int countMaterial(ManufacturedGood manufacturedGood, Stream<Effect> validEffects) {
-        return validEffects
-                .filter(effect -> effect.getResourceBundle(player).getManufacturedGoods().contains(manufacturedGood))
-                .map(effect -> effect.getResourceBundle(player).getManufacturedGoods()
+    private int countMaterial(ManufacturedGood manufacturedGood, Stream<Effect> validEffects, boolean wildcardManufacturedGood) {
+        var resourceBundles = validEffects
+                .map(effect -> effect.getResourceBundle(player))
+                .filter(bundle -> bundle.getManufacturedGoods().contains(manufacturedGood))
+                .filter(bundle -> (wildcardManufacturedGood && bundle.isWildcardManufacturedGood()) || (!wildcardManufacturedGood && !bundle.isWildcardManufacturedGood()))
+                .toList();
+        return resourceBundles.stream()
+                .map(bundle -> bundle.getManufacturedGoods()
                         .stream()
                         .filter(m -> m.equals(manufacturedGood))
                         .count()

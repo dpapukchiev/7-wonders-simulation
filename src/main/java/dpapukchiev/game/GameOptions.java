@@ -8,6 +8,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 public record GameOptions(
         int numberOfPlayers,
+        int agesToSchedule,
         List<RandomVariable> playerRandomVariables
 ) {
 }

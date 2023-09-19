@@ -36,6 +36,6 @@ public class Card {
     }
 
     public String report() {
-        return "%s %s C(%s) %s".formatted(name, type.name(), cost.report(), effect.report());
+        return "%s %s C(%s) %s".formatted(type.name(), name, cost.report(), effect.report());
     }
 }

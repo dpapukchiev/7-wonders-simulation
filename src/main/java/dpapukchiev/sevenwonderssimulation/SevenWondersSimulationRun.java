@@ -18,6 +18,7 @@ public class SevenWondersSimulationRun {
 
         var gameOptions = GameOptions.builder()
                 .numberOfPlayers(5)
+                .agesToSchedule(2)
                 .build();
 
         var game = new SevenWondersGame(

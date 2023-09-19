@@ -1,5 +1,6 @@
 package dpapukchiev.effects.v2;
 
+import dpapukchiev.cards.ManufacturedGood;
 import dpapukchiev.cards.RawMaterial;
 import dpapukchiev.effects.RawMaterialEffect;
 import dpapukchiev.player.BasePlayerTest;
@@ -43,6 +44,27 @@ class ResourceContextTest extends BasePlayerTest {
         assertEquals(3, player1.getResourceContext().getRawMaterialCount(CLAY));
         assertEquals(2, player1.getResourceContext().getRawMaterialCount(METAL_ORE));
         assertEquals(1, player1.getResourceContext().getRawMaterialCount(STONE));
+    }
+
+    @Test
+    void testWildcard() {
+        new ManufacturedGoodEffect(ManufacturedGood.all()).applyTo(player1);
+        new ManufacturedGoodEffect(List.of(SCRIPTS, SCRIPTS)).applyTo(player1);
+        new ManufacturedGoodEffect(List.of(GLASS)).applyTo(player1);
+
+        new RawMaterialGoodEffect(RawMaterial.all()).applyTo(player1);
+        new RawMaterialGoodEffect(List.of(CLAY, CLAY, CLAY)).applyTo(player1);
+        new RawMaterialGoodEffect(List.of(METAL_ORE, METAL_ORE)).applyTo(player1);
+        new RawMaterialGoodEffect(List.of(STONE)).applyTo(player1);
+
+        assertEquals(1, player1.getResourceContext().getManufacturedGoodCountWildcard(SCRIPTS));
+        assertEquals(1, player1.getResourceContext().getManufacturedGoodCountWildcard(TEXTILE));
+        assertEquals(1, player1.getResourceContext().getManufacturedGoodCountWildcard(GLASS));
+
+        assertEquals(1, player1.getResourceContext().getRawMaterialCountWildcard(WOOD));
+        assertEquals(1, player1.getResourceContext().getRawMaterialCountWildcard(CLAY));
+        assertEquals(1, player1.getResourceContext().getRawMaterialCountWildcard(METAL_ORE));
+        assertEquals(1, player1.getResourceContext().getRawMaterialCountWildcard(STONE));
     }
 
 }
