@@ -4,12 +4,31 @@ import dpapukchiev.v2.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EffectExecutionContext {
     private final List<Effect> effectsEndOfTurn = new ArrayList<>();
     private final List<Effect> effectsEndOfAge  = new ArrayList<>();
     private final List<Effect> effectsEndOfGame = new ArrayList<>();
     private final List<Effect> permanentEffects = new ArrayList<>();
+
+    public double getTradingPrice(EffectDirectionConstraint direction, PreferentialTradingContract.Type contractType) {
+        if (!List.of(EffectDirectionConstraint.LEFT, EffectDirectionConstraint.RIGHT).contains(direction)) {
+            throw new IllegalArgumentException("Direction must be LEFT or RIGHT");
+        }
+
+        return getPermanentEffects().stream()
+                .map(Effect::getPreferentialTrading)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(contract -> contract.type().equals(contractType))
+                .filter(contract -> contract.directionConstraint().equals(direction) ||
+                        contract.directionConstraint().equals(EffectDirectionConstraint.BOTH)
+                )
+                .map(c -> 1)
+                .findFirst()
+                .orElse(2);
+    }
 
     public List<Effect> getPermanentEffects() {
         return permanentEffects.stream()
@@ -34,26 +53,35 @@ public class EffectExecutionContext {
         }
     }
 
-    public EffectReward executeEffectsEndOfTurn(Player player) {
+    public Optional<EffectReward> executeEffectsEndOfTurn(Player player) {
         return getEffectReward(player, effectsEndOfTurn);
     }
 
-    public EffectReward executeEffectsEndOfGame(Player player) {
+    public Optional<EffectReward> executeEffectsEndOfGame(Player player) {
         return getEffectReward(player, effectsEndOfGame);
     }
 
-    public EffectReward executeEffectsEndOfAge(Player player) {
+    public Optional<EffectReward> executeEffectsEndOfAge(Player player) {
         return getEffectReward(player, effectsEndOfAge);
     }
 
-    private EffectReward getEffectReward(Player player, List<Effect> effectsToEvaluate) {
+    public String report() {
+        // TODO: implement
+        return "";
+    }
+
+    private Optional<EffectReward> getEffectReward(Player player, List<Effect> effectsToEvaluate) {
         return effectsToEvaluate.stream()
                 .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
-                .map(effect -> effect.getReward(player))
-                .reduce((effectReward, effectReward2) -> EffectReward.builder()
-                        .coinReward(effectReward.getCoinReward() + effectReward2.getCoinReward())
-                        .victoryPointsReward(effectReward.getVictoryPointsReward() + effectReward2.getVictoryPointsReward())
-                        .build())
-                .orElse(EffectReward.builder().build());
+                .map(effect -> {
+                    var reward = effect.getReward(player);
+                    if (reward.isPresent()) {
+                        effect.markAsExhausted();
+                    }
+                    return reward;
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .reduce(EffectReward::merge);
     }
 }

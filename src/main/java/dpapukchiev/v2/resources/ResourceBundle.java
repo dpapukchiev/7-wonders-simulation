@@ -13,6 +13,8 @@ public class ResourceBundle {
     private List<ManufacturedGood> manufacturedGoods = new ArrayList<>();
     @Builder.Default
     private List<RawMaterial>      rawMaterials      = new ArrayList<>();
+    @Builder.Default
+    private List<ScienceSymbol>    scienceSymbols    = new ArrayList<>();
 
     public boolean isWildcardManufacturedGood() {
         return manufacturedGoods.stream().distinct().count() > 1;
@@ -20,5 +22,9 @@ public class ResourceBundle {
 
     public boolean isWildcardRawMaterial() {
         return rawMaterials.stream().distinct().count() > 1;
+    }
+
+    public boolean isWildcardScienceSymbol() {
+        return scienceSymbols.stream().distinct().count() > 1;
     }
 }

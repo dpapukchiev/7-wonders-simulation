@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static dpapukchiev.v2.effects.EffectState.AVAILABLE;
 import static dpapukchiev.v2.resources.ManufacturedGood.SCRIPTS;
@@ -121,7 +122,7 @@ class ResourceContextTest {
         when(effect.getState())
                 .thenReturn(AVAILABLE);
         when(effect.getResourceBundle(player))
-                .thenReturn(bundleToReturn);
+                .thenReturn(Optional.ofNullable(bundleToReturn));
     }
 
     private void init(List<Effect> permanentEffects) {

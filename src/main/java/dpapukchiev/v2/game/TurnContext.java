@@ -1,7 +1,7 @@
-package dpapukchiev.v1.game;
+package dpapukchiev.v2.game;
 
-import dpapukchiev.v1.cards.HandOfCards;
-import dpapukchiev.v1.player.Player;
+import dpapukchiev.v2.cards.HandOfCards;
+import dpapukchiev.v2.player.Player;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

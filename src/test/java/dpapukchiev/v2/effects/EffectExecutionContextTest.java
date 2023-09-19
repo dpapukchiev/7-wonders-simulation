@@ -8,8 +8,16 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
+import static dpapukchiev.v2.effects.EffectDirectionConstraint.BOTH;
+import static dpapukchiev.v2.effects.EffectDirectionConstraint.LEFT;
+import static dpapukchiev.v2.effects.EffectDirectionConstraint.RIGHT;
+import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
+import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.RAW_MATERIALS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +29,9 @@ class EffectExecutionContextTest {
 
     @Mock
     private Effect effect2;
+
+    @Mock
+    private Effect effect3;
 
     @CsvSource({
             "AVAILABLE,END_OF_AGE,1,AVAILABLE,END_OF_AGE,2,END_OF_AGE,1,2",
@@ -54,21 +65,21 @@ class EffectExecutionContextTest {
         lenient().when(effect1.getState())
                 .thenReturn(effect1State);
         lenient().when(effect1.getReward(player))
-                .thenReturn(EffectReward.builder()
+                .thenReturn(Optional.ofNullable(EffectReward.builder()
                         .coinReward(coinRewardEffect1)
-                        .build());
+                        .build()));
 
         lenient().when(effect2.getState())
                 .thenReturn(effect2State);
         lenient().when(effect2.getReward(player))
-                .thenReturn(EffectReward.builder()
+                .thenReturn(Optional.ofNullable(EffectReward.builder()
                         .victoryPointsReward(victoryPointsRewardEffect2)
-                        .build());
+                        .build()));
 
         executionContext.addEffect(effect1, effect1Timing);
         executionContext.addEffect(effect2, effect2Timing);
 
-        EffectReward result = null;
+        Optional<EffectReward> result = Optional.empty();
         switch (currentTiming) {
             case END_OF_TURN:
                 result = executionContext.executeEffectsEndOfTurn(player);
@@ -81,9 +92,15 @@ class EffectExecutionContextTest {
                 break;
         }
 
-        assertNotNull(result);
-        assertEquals(finalCoinReward, result.getCoinReward());
-        assertEquals(finalVictoryPointsReward, result.getVictoryPointsReward());
+        if (finalCoinReward + finalVictoryPointsReward == 0) {
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+            return;
+        }
+
+        assertTrue(result.isPresent());
+        assertEquals(finalCoinReward, result.get().getCoinReward());
+        assertEquals(finalVictoryPointsReward, result.get().getVictoryPointsReward());
     }
 
     @Test
@@ -99,5 +116,45 @@ class EffectExecutionContextTest {
         var result = executionContext.getPermanentEffects();
         assertEquals(1, result.size());
         assertEquals(effect1, result.get(0));
+    }
+
+    @Test
+    void preferentialTrading() {
+        var executionContext = new EffectExecutionContext();
+        assertEquals(2, executionContext.getTradingPrice(LEFT, RAW_MATERIALS));
+        assertEquals(2, executionContext.getTradingPrice(RIGHT, RAW_MATERIALS));
+
+        configurePreferentialTrading(effect1, LEFT, executionContext, RAW_MATERIALS);
+
+        assertEquals(1, executionContext.getTradingPrice(LEFT, RAW_MATERIALS));
+        assertEquals(2, executionContext.getTradingPrice(RIGHT, RAW_MATERIALS));
+
+        configurePreferentialTrading(effect2, RIGHT, executionContext, RAW_MATERIALS);
+
+        assertEquals(1, executionContext.getTradingPrice(LEFT, RAW_MATERIALS));
+        assertEquals(1, executionContext.getTradingPrice(RIGHT, RAW_MATERIALS));
+
+        assertEquals(2, executionContext.getTradingPrice(LEFT, MANUFACTURED_GOODS));
+        assertEquals(2, executionContext.getTradingPrice(RIGHT, MANUFACTURED_GOODS));
+
+        configurePreferentialTrading(effect3, BOTH, executionContext, MANUFACTURED_GOODS);
+
+        assertEquals(1, executionContext.getTradingPrice(LEFT, MANUFACTURED_GOODS));
+        assertEquals(1, executionContext.getTradingPrice(RIGHT, MANUFACTURED_GOODS));
+    }
+
+    private void configurePreferentialTrading(
+            Effect effect2,
+            EffectDirectionConstraint right,
+            EffectExecutionContext executionContext,
+            PreferentialTradingContract.Type type
+    ) {
+        when(effect2.getState()).thenReturn(EffectState.AVAILABLE);
+        when(effect2.getPreferentialTrading())
+                .thenReturn(Optional.ofNullable(PreferentialTradingContract.builder()
+                        .type(type)
+                        .directionConstraint(right)
+                        .build()));
+        executionContext.addEffect(effect2, EffectTiming.ANYTIME);
     }
 }
