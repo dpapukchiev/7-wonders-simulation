@@ -1,4 +1,4 @@
-package dpapukchiev.v2.effects;
+package dpapukchiev.v1.effects.v2;
 
 import dpapukchiev.v1.player.Player;
 import lombok.AllArgsConstructor;
@@ -8,24 +8,18 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class CoinRewardEffect implements Effect {
+public class VictoryPointEffect implements Effect {
 
-    private final double coinReward;
+    private final double victoryPoint;
 
     private EffectState  state        = EffectState.AVAILABLE;
-    private EffectTiming effectTiming = EffectTiming.END_OF_TURN;
-
-    @Override
-    public void applyTo(Player player) {
-        player.getEffectExecutionContext()
-                .addEffect(this, effectTiming);
-    }
+    private EffectTiming effectTiming = EffectTiming.END_OF_GAME;
 
     @Override
     public EffectReward getReward(Player player) {
         state = EffectState.EXHAUSTED;
         return EffectReward.builder()
-                .coinReward(coinReward)
+                .victoryPointsReward(victoryPoint)
                 .build();
     }
 
@@ -33,5 +27,11 @@ public class CoinRewardEffect implements Effect {
     public ResourceBundle getResourceBundle(Player player) {
         return ResourceBundle.builder()
                 .build();
+    }
+
+    @Override
+    public void applyTo(Player player) {
+        player.getEffectExecutionContext()
+                .addEffect(this, effectTiming);
     }
 }

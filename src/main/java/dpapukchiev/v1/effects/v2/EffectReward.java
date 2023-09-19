@@ -1,4 +1,4 @@
-package dpapukchiev.v2.effects;
+package dpapukchiev.v1.effects.v2;
 
 import lombok.Builder;
 import lombok.Getter;

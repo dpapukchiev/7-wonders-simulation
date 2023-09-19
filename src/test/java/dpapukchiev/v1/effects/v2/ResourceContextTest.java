@@ -1,10 +1,10 @@
-package dpapukchiev.v2.effects;
+package dpapukchiev.v1.effects.v2;
 
 import dpapukchiev.v1.cards.ManufacturedGood;
 import dpapukchiev.v1.cards.RawMaterial;
 import dpapukchiev.v1.player.BasePlayerTest;
-import dpapukchiev.v2.effects.ManufacturedGoodEffect;
-import dpapukchiev.v2.effects.RawMaterialGoodEffect;
+import dpapukchiev.v1.effects.v2.ManufacturedGoodEffect;
+import dpapukchiev.v1.effects.v2.RawMaterialGoodEffect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

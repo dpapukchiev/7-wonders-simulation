@@ -1,10 +1,10 @@
-package dpapukchiev.v2.effects;
+package dpapukchiev.v1.effects.v2;
 
 import dpapukchiev.v1.player.BasePlayerTest;
-import dpapukchiev.v2.effects.AggregateEffect;
-import dpapukchiev.v2.effects.CoinRewardEffect;
-import dpapukchiev.v2.effects.EffectState;
-import dpapukchiev.v2.effects.VictoryPointEffect;
+import dpapukchiev.v1.effects.v2.AggregateEffect;
+import dpapukchiev.v1.effects.v2.CoinRewardEffect;
+import dpapukchiev.v1.effects.v2.EffectState;
+import dpapukchiev.v1.effects.v2.VictoryPointEffect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
