@@ -1,7 +1,5 @@
-package dpapukchiev.v1.effects.v2;
+package dpapukchiev.v2.resources;
 
-import dpapukchiev.v1.cards.ManufacturedGood;
-import dpapukchiev.v1.cards.RawMaterial;
 import lombok.Builder;
 import lombok.Getter;
 

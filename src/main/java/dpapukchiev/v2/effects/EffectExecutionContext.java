@@ -1,6 +1,6 @@
-package dpapukchiev.v1.effects.v2;
+package dpapukchiev.v2.effects;
 
-import dpapukchiev.v1.player.Player;
+import dpapukchiev.v2.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +40,10 @@ public class EffectExecutionContext {
 
     public EffectReward executeEffectsEndOfGame(Player player) {
         return getEffectReward(player, effectsEndOfGame);
+    }
+
+    public EffectReward executeEffectsEndOfAge(Player player) {
+        return getEffectReward(player, effectsEndOfAge);
     }
 
     private EffectReward getEffectReward(Player player, List<Effect> effectsToEvaluate) {

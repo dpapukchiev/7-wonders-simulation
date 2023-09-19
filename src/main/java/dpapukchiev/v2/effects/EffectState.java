@@ -1,4 +1,4 @@
-package dpapukchiev.v1.effects.v2;
+package dpapukchiev.v2.effects;
 
 public enum EffectState {
     AVAILABLE,

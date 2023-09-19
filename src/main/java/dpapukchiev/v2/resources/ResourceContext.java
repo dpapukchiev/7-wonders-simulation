@@ -1,8 +1,8 @@
-package dpapukchiev.v1.effects.v2;
+package dpapukchiev.v2.resources;
 
-import dpapukchiev.v1.cards.ManufacturedGood;
-import dpapukchiev.v1.cards.RawMaterial;
-import dpapukchiev.v1.player.Player;
+import dpapukchiev.v2.effects.Effect;
+import dpapukchiev.v2.effects.EffectState;
+import dpapukchiev.v2.player.Player;
 import lombok.RequiredArgsConstructor;
 
 import java.util.stream.Stream;
@@ -12,23 +12,24 @@ public class ResourceContext {
     private final Player player;
 
     public double getRawMaterialCount(RawMaterial rawMaterial) {
-        var validEffects = player.getEffectExecutionContext().getPermanentEffects();
-        return countMaterial(rawMaterial, validEffects, false);
+        return countMaterial(rawMaterial, getPermanentEffects(), false);
     }
 
     public double getManufacturedGoodCount(ManufacturedGood manufacturedGood) {
-        var validEffects = player.getEffectExecutionContext().getPermanentEffects();
-        return countMaterial(manufacturedGood, validEffects, false);
+        return countMaterial(manufacturedGood, getPermanentEffects(), false);
     }
 
     public double getManufacturedGoodCountWildcard(ManufacturedGood manufacturedGood) {
-        var validEffects = player.getEffectExecutionContext().getPermanentEffects();
-        return countMaterial(manufacturedGood, validEffects, true);
+        return countMaterial(manufacturedGood, getPermanentEffects(), true);
     }
 
     public double getRawMaterialCountWildcard(RawMaterial rawMaterial) {
-        var validEffects = player.getEffectExecutionContext().getPermanentEffects();
-        return countMaterial(rawMaterial, validEffects, true);
+        return countMaterial(rawMaterial, getPermanentEffects(), true);
+    }
+
+    private Stream<Effect> getPermanentEffects() {
+        return player.getEffectExecutionContext().getPermanentEffects()
+                .filter(effect -> effect.getState().equals(EffectState.AVAILABLE));
     }
 
     private int countMaterial(RawMaterial rawMaterial, Stream<Effect> validEffects, boolean wildCardRawMaterial) {
