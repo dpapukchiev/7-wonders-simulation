@@ -12,6 +12,7 @@ public class EffectExecutionContext {
     private final List<Effect> effectsEndOfGame = new ArrayList<>();
     private final List<Effect> permanentEffects = new ArrayList<>();
 
+    // TODO: replace with separate enum
     public double getTradingPrice(EffectDirectionConstraint direction, PreferentialTradingContract.Type contractType) {
         if (!List.of(EffectDirectionConstraint.LEFT, EffectDirectionConstraint.RIGHT).contains(direction)) {
             throw new IllegalArgumentException("Direction must be LEFT or RIGHT");

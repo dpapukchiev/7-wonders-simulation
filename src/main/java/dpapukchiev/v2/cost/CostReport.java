@@ -21,6 +21,17 @@ public class CostReport {
     @Builder.Default
     private double  toPayRight      = 0d;
 
+    public void addToPayBank(double toPayBank) {
+        this.toPayBank += toPayBank;
+    }
+
+    public void addToPayLeft(double toPayLeft) {
+        this.toPayLeft += toPayLeft;
+    }
+
+    public void addToPayRight(double toPayRight) {
+        this.toPayRight += toPayRight;
+    }
     public double getToPayTotal() {
         return toPayBank + toPayLeft + toPayRight;
     }

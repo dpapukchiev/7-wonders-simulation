@@ -12,6 +12,10 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static dpapukchiev.v2.effects.EffectDirectionConstraint.LEFT;
+import static dpapukchiev.v2.effects.EffectDirectionConstraint.RIGHT;
+import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
+import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.RAW_MATERIALS;
 import static java.util.stream.Collectors.groupingBy;
 
 @RequiredArgsConstructor
@@ -23,29 +27,147 @@ public class ResourceContext {
         var coins = player.getVault().getCoins();
         var usedEffects = new ArrayList<ResourceBundle>();
 
+        var rawMaterialsReport = createReportForRawMaterials(rawMaterials, usedEffects, costReport);
+        if (rawMaterialsReport != null) return rawMaterialsReport;
+
+        var manufacturedGoodsReport = createReportForManufacturedGoods(manufacturedGoods, usedEffects, costReport);
+        if (manufacturedGoodsReport != null) return manufacturedGoodsReport;
+
+        if (costReport.getToPayTotal() <= coins) {
+            return costReport.toBuilder()
+                    .affordable(true)
+                    .build();
+        }
+        return costReport;
+    }
+
+    private CostReport createReportForRawMaterials(List<RawMaterial> rawMaterials, ArrayList<ResourceBundle> usedEffects, CostReport costReport) {
         var countPerRawMaterial = rawMaterials.stream().collect(groupingBy(Function.identity(), Collectors.counting()));
         for (var rawMaterial : countPerRawMaterial.entrySet()) {
             var count = getRawMaterialCount(rawMaterial.getKey());
             var requiredCount = rawMaterial.getValue();
             var missingCount = requiredCount - count;
-            if(missingCount == 0) {
+            if (missingCount == 0) {
                 continue;
             }
 
             var wildCardBundlesToUse = getWildcardRawMaterialResourceBundles().stream()
                     .filter(bundle -> !usedEffects.contains(bundle))
-                    .toList()
-                    .subList(0, (int) missingCount);
+                    .limit((long) missingCount)
+                    .toList();
+
             usedEffects.addAll(wildCardBundlesToUse);
             missingCount -= wildCardBundlesToUse.size();
-            if(missingCount == 0) {
+            if (missingCount == 0) {
                 continue;
             }
 
+            var priceLeft = player.getEffectExecutionContext()
+                    .getTradingPrice(LEFT, RAW_MATERIALS);
+            var priceRight = player.getEffectExecutionContext()
+                    .getTradingPrice(RIGHT, RAW_MATERIALS);
+
+            if (priceLeft < priceRight) {
+                missingCount = buyMissingFromLeft(missingCount, costReport, priceLeft, rawMaterial.getKey());
+                if (missingCount > 0) {
+                    missingCount = buyMissingFromRight(missingCount, costReport, priceRight, rawMaterial.getKey());
+                }
+            } else {
+                missingCount = buyMissingFromRight(missingCount, costReport, priceRight, rawMaterial.getKey());
+                if (missingCount > 0) {
+                    missingCount = buyMissingFromLeft(missingCount, costReport, priceLeft, rawMaterial.getKey());
+                }
+            }
+
+            if (missingCount > 0) {
+                return costReport;
+            }
 
         }
+        return null;
+    }
 
-        return costReport;
+    private CostReport createReportForManufacturedGoods(List<ManufacturedGood> manufacturedGoods, ArrayList<ResourceBundle> usedEffects, CostReport costReport) {
+        var countPerManufacturedGood = manufacturedGoods.stream().collect(groupingBy(Function.identity(), Collectors.counting()));
+
+        for (var manufacturedGood : countPerManufacturedGood.entrySet()) {
+            var count = getManufacturedGoodCount(manufacturedGood.getKey());
+            var requiredCount = manufacturedGood.getValue();
+            var missingCount = requiredCount - count;
+            if (missingCount == 0) {
+                continue;
+            }
+
+            var wildCardBundlesToUse = getPermanentWildcardManufacturedGoodResourceBundles().stream()
+                    .filter(bundle -> !usedEffects.contains(bundle))
+                    .limit((long) missingCount)
+                    .toList();
+
+            usedEffects.addAll(wildCardBundlesToUse);
+            missingCount -= wildCardBundlesToUse.size();
+            if (missingCount == 0) {
+                continue;
+            }
+
+            var priceLeft = player.getEffectExecutionContext()
+                    .getTradingPrice(LEFT, MANUFACTURED_GOODS);
+            var priceRight = player.getEffectExecutionContext()
+                    .getTradingPrice(RIGHT, MANUFACTURED_GOODS);
+
+            if (priceLeft < priceRight) {
+                missingCount = buyMissingFromLeft(missingCount, costReport, priceLeft, manufacturedGood.getKey());
+                if (missingCount > 0) {
+                    missingCount = buyMissingFromRight(missingCount, costReport, priceRight, manufacturedGood.getKey());
+                }
+            } else {
+                missingCount = buyMissingFromRight(missingCount, costReport, priceRight, manufacturedGood.getKey());
+                if (missingCount > 0) {
+                    missingCount = buyMissingFromLeft(missingCount, costReport, priceLeft, manufacturedGood.getKey());
+                }
+            }
+
+            if (missingCount > 0) {
+                return costReport;
+            }
+
+        }
+        return null;
+    }
+
+    private double buyMissingFromLeft(double missingCount, CostReport costReport, double priceLeft, RawMaterial rawMaterialKey) {
+        var availableInLeft = player.getLeftPlayer().resourceContext()
+                .getRawMaterialCount(rawMaterialKey);
+        var toTake = Math.min(availableInLeft, missingCount);
+        missingCount -= toTake;
+        costReport.addToPayLeft(toTake * priceLeft);
+        return missingCount;
+    }
+
+    private double buyMissingFromRight(double missingCount, CostReport costReport, double priceRight, RawMaterial rawMaterialKey) {
+        var availableInRight = player.getRightPlayer().resourceContext()
+                .getRawMaterialCount(rawMaterialKey);
+        var toTake = Math.min(availableInRight, missingCount);
+        missingCount -= toTake;
+        costReport.addToPayRight(toTake * priceRight);
+        return missingCount;
+    }
+
+    private double buyMissingFromLeft(double missingCount, CostReport costReport, double priceLeft, ManufacturedGood manufacturedGoodKey) {
+        var availableInLeft = player.getLeftPlayer().resourceContext()
+                .getManufacturedGoodCount(manufacturedGoodKey);
+        var toTake = Math.min(availableInLeft, missingCount);
+        missingCount -= toTake;
+        costReport.addToPayLeft(toTake * priceLeft);
+        return missingCount;
+    }
+
+    private double buyMissingFromRight(double missingCount, CostReport costReport, double priceRight, ManufacturedGood manufacturedGoodKey) {
+        var availableInRight = player.getRightPlayer().resourceContext()
+                .getManufacturedGoodCount(manufacturedGoodKey);
+        var toTake = Math.min(availableInRight, missingCount);
+        missingCount -= toTake;
+        costReport.addToPayRight(toTake * priceRight);
+        return missingCount;
     }
 
     public double getRawMaterialCount(RawMaterial rawMaterial) {
@@ -62,11 +184,6 @@ public class ResourceContext {
 
     public double getRawMaterialCountWildcard(RawMaterial rawMaterial) {
         return countMaterial(rawMaterial, getPermanentEffectsProvidingResources(), true);
-    }
-
-    public String report() {
-        // TODO: implement
-        return "";
     }
 
     public List<ResourceBundle> getWildcardRawMaterialResourceBundles() {
@@ -92,6 +209,11 @@ public class ResourceContext {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
+    }
+
+    public String report() {
+        // TODO: implement
+        return "";
     }
 
     private List<Effect> getPermanentEffectsProvidingResources() {

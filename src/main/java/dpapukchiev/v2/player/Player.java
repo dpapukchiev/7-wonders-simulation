@@ -1,26 +1,26 @@
 package dpapukchiev.v2.player;
 
 import dpapukchiev.v2.cards.Card;
-import dpapukchiev.v2.cost.CostReport;
 import dpapukchiev.v2.effects.EffectExecutionContext;
 import dpapukchiev.v2.game.TurnContext;
 import dpapukchiev.v2.resources.ResourceContext;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.math3.util.Pair;
+import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
 
 @Getter
 @Builder
 public class Player {
+    private String                 name;
+    @Setter
+    private Player                 leftPlayer;
+    @Setter
+    private Player                 rightPlayer;
     @Builder.Default
     private EffectExecutionContext effectExecutionContext = new EffectExecutionContext();
     @Builder.Default

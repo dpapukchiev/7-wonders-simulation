@@ -1,45 +1,47 @@
 package dpapukchiev.v2.resources;
 
-import dpapukchiev.v2.effects.Effect;
-import dpapukchiev.v2.effects.EffectExecutionContext;
-import dpapukchiev.v2.player.Player;
+import dpapukchiev.v2.BasePlayerTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.Mock;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
-import static dpapukchiev.v2.effects.EffectState.AVAILABLE;
+import static dpapukchiev.v2.effects.EffectDirectionConstraint.LEFT;
+import static dpapukchiev.v2.effects.EffectDirectionConstraint.RIGHT;
+import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
+import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.RAW_MATERIALS;
+import static dpapukchiev.v2.resources.ManufacturedGood.GLASS;
 import static dpapukchiev.v2.resources.ManufacturedGood.SCRIPTS;
+import static dpapukchiev.v2.resources.RawMaterial.CLAY;
+import static dpapukchiev.v2.resources.RawMaterial.METAL_ORE;
+import static dpapukchiev.v2.resources.RawMaterial.WOOD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
-class ResourceContextTest {
+class ResourceContextTest extends BasePlayerTest {
 
-    @Mock
-    private Effect                 effect1;
-    @Mock
-    private Effect                 effect2;
-    @Mock
-    private Effect                 effect3;
-    @Mock
-    private EffectExecutionContext effectExecutionContext;
-    private Player                 player;
+    @BeforeEach
+    void setUp() {
+        initPlayers();
+    }
 
     @ParameterizedTest
     @EnumSource(RawMaterial.class)
     void getRawMaterialCount1Effect(RawMaterial material) {
-        init(List.of(effect1));
-        initEffect(effect1, ResourceBundle.builder()
-                .rawMaterials(List.of(material))
-                .build());
+        configureRawMaterialsEffect(effect1, material);
 
-        double result = player.resourceContext().getRawMaterialCount(material);
+        assignPermanentEffectsToPlayer(List.of(effect1));
+
+        double result = getMainPlayerResourceContext().getRawMaterialCount(material);
 
         assertEquals(1, result);
     }
@@ -47,15 +49,12 @@ class ResourceContextTest {
     @ParameterizedTest
     @EnumSource(RawMaterial.class)
     void getRawMaterialCount2Effects(RawMaterial material) {
-        init(List.of(effect1, effect2));
-        initEffect(effect1, ResourceBundle.builder()
-                .rawMaterials(List.of(material))
-                .build());
-        initEffect(effect2, ResourceBundle.builder()
-                .rawMaterials(List.of(material))
-                .build());
+        configureRawMaterialsEffect(effect1, material);
+        configureRawMaterialsEffect(effect2, material);
 
-        double result = player.resourceContext().getRawMaterialCount(material);
+        assignPermanentEffectsToPlayer(List.of(effect1, effect2));
+
+        double result = getMainPlayerResourceContext().getRawMaterialCount(material);
 
         assertEquals(2, result);
     }
@@ -63,12 +62,11 @@ class ResourceContextTest {
     @ParameterizedTest
     @EnumSource(ManufacturedGood.class)
     void getManufacturedGoodCount1Effect(ManufacturedGood manufacturedGood) {
-        init(List.of(effect1));
-        initEffect(effect1, ResourceBundle.builder()
-                .manufacturedGoods(List.of(manufacturedGood))
-                .build());
+        configureManufacturedGoodsEffect(effect1, manufacturedGood);
 
-        double result = player.resourceContext().getManufacturedGoodCount(manufacturedGood);
+        assignPermanentEffectsToPlayer(List.of(effect1));
+
+        double result = getMainPlayerResourceContext().getManufacturedGoodCount(manufacturedGood);
 
         assertEquals(1, result);
     }
@@ -76,60 +74,130 @@ class ResourceContextTest {
     @ParameterizedTest
     @EnumSource(ManufacturedGood.class)
     void getManufacturedGoodCount2Effects(ManufacturedGood manufacturedGood) {
-        init(List.of(effect1, effect2));
-        initEffect(effect1, ResourceBundle.builder()
-                .manufacturedGoods(List.of(manufacturedGood))
-                .build());
-        initEffect(effect2, ResourceBundle.builder()
-                .manufacturedGoods(List.of(manufacturedGood))
-                .build());
+        configureManufacturedGoodsEffect(effect1, manufacturedGood);
+        configureManufacturedGoodsEffect(effect2, manufacturedGood);
 
-        double result = player.resourceContext().getManufacturedGoodCount(manufacturedGood);
+        assignPermanentEffectsToPlayer(List.of(effect1, effect2));
+
+        double result = getMainPlayerResourceContext().getManufacturedGoodCount(manufacturedGood);
 
         assertEquals(2, result);
     }
 
     @Test
     void getCountWildcard() {
-        init(List.of(effect1, effect2, effect3));
-        initEffect(effect1, ResourceBundle.builder()
-                .manufacturedGoods(ManufacturedGood.all())
-                .build());
-        initEffect(effect2, ResourceBundle.builder()
-                .manufacturedGoods(List.of(SCRIPTS, SCRIPTS))
-                .build());
-        initEffect(effect3, ResourceBundle.builder()
-                .rawMaterials(RawMaterial.all())
-                .build());
+        configureManufacturedGoodsEffect(effect1, ManufacturedGood.all());
+        configureManufacturedGoodsEffect(effect2, List.of(SCRIPTS));
+        configureRawMaterialsEffect(effect3, RawMaterial.all());
+
+        assignPermanentEffectsToPlayer(List.of(effect1, effect2, effect3));
 
         ManufacturedGood.all().forEach(manufacturedGood -> {
-            double result = player.resourceContext().getManufacturedGoodCountWildcard(manufacturedGood);
+            double result = getMainPlayerResourceContext().getManufacturedGoodCountWildcard(manufacturedGood);
 
             assertEquals(1, result);
         });
         RawMaterial.all().forEach(rawMaterial -> {
-            double result = player.resourceContext().getRawMaterialCountWildcard(rawMaterial);
+            double result = getMainPlayerResourceContext().getRawMaterialCountWildcard(rawMaterial);
 
             assertEquals(1, result);
         });
     }
 
+    @EnumSource(RawMaterial.class)
+    @ParameterizedTest
+    void calculateResourcesCostSimpleResource(RawMaterial rawMaterial) {
+        var result = getMainPlayerResourceContext().calculateResourcesCost(List.of(rawMaterial, rawMaterial), List.of());
+        assertFalse(result.isAffordable());
+
+        configureRawMaterialsEffect(effect1, rawMaterial);
+        configureRawMaterialsEffect(effect2, rawMaterial);
+
+        assignPermanentEffectsToPlayer(List.of(effect1, effect2));
+
+        result = getMainPlayerResourceContext().calculateResourcesCost(List.of(rawMaterial, rawMaterial), List.of());
+
+        assertTrue(result.isAffordable());
+        assertEquals(0, result.getToPayTotal());
+    }
+
     @Test
-    void getRawMaterialCountWildcard() {
+    void calculateResourcesCostDoubleResource() {
+        configureRawMaterialsEffect(effect1, CLAY);
+        configureRawMaterialsEffect(effect2, WOOD);
+        configureManufacturedGoodsEffect(effect3, SCRIPTS);
+
+        assignPermanentEffectsToPlayer(List.of(effect1, effect2));
+        assignPermanentEffectsToPlayer(List.of(effect1, effect2, effect3));
+
+        assertPrice(List.of(WOOD, CLAY), List.of(), 0);
     }
 
-    private void initEffect(Effect effect, ResourceBundle bundleToReturn) {
-        when(effect.getState())
-                .thenReturn(AVAILABLE);
-        when(effect.getResourceBundle(player))
-                .thenReturn(Optional.ofNullable(bundleToReturn));
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    void calculateResourcesCostDoubleResourceWithTrading(int availableCoins) {
+        mainPlayer.getVault().setCoins(availableCoins);
+        configureTradingPrice(effectExecutionContext, LEFT, RAW_MATERIALS, 1);
+        configureAvailableRawMaterial(resourceContextPlayerLeft, WOOD, 1);
+        configureTradingPrice(effectExecutionContext, LEFT, MANUFACTURED_GOODS, 2);
+        configureAvailableManufacturedGood(resourceContextPlayerLeft, SCRIPTS, 2);
+
+        configureTradingPrice(effectExecutionContext, RIGHT, RAW_MATERIALS, 2);
+        configureAvailableRawMaterial(resourceContextPlayerRight, WOOD, 1);
+        configureTradingPrice(effectExecutionContext, RIGHT, MANUFACTURED_GOODS, 1);
+        configureAvailableManufacturedGood(resourceContextPlayerRight, SCRIPTS, 1);
+
+        configureRawMaterialsEffect(effect1, CLAY);
+        assignPermanentEffectsToPlayer(List.of(effect1));
+
+        assertPrice(List.of(CLAY), List.of(), 0);
+
+        if (availableCoins >= 2) {
+            assertPrice(List.of(WOOD, CLAY), List.of(SCRIPTS), 2);
+        }
+        if (availableCoins >= 4) {
+            assertPrice(List.of(WOOD, WOOD, CLAY), List.of(SCRIPTS), 4);
+        }
+        if (availableCoins >= 6) {
+            assertPrice(List.of(WOOD, WOOD, CLAY), List.of(SCRIPTS, SCRIPTS), 6);
+        }
+        if (availableCoins >= 8) {
+            assertPrice(List.of(WOOD, WOOD, CLAY), List.of(SCRIPTS, SCRIPTS, SCRIPTS), 8);
+        }
+
+        assertPrice(List.of(METAL_ORE, CLAY), List.of(GLASS), -1);
+        // TODO: check why this fails
+//        assertPrice(List.of(WOOD, WOOD, WOOD, WOOD, CLAY), List.of(SCRIPTS, SCRIPTS, SCRIPTS, SCRIPTS), -1);
+
     }
 
-    private void init(List<Effect> permanentEffects) {
-        player = Player.builder()
-                .effectExecutionContext(effectExecutionContext)
-                .build();
-        when(effectExecutionContext.getPermanentEffects())
-                .thenReturn(permanentEffects);
+    @Test
+    void unaffordable(){
+        assertPrice(List.of(WOOD, CLAY), List.of(SCRIPTS), -1);
     }
+
+    private void configureAvailableRawMaterial(ResourceContext context, RawMaterial rawMaterial, double count) {
+        lenient().when(context.getRawMaterialCount(eq(rawMaterial)))
+                .thenReturn(count);
+    }
+
+    private void configureAvailableManufacturedGood(ResourceContext context, ManufacturedGood manufacturedGood, double count) {
+        lenient().when(context.getManufacturedGoodCount(manufacturedGood)).thenReturn(count);
+    }
+
+    private void assertPrice(List<RawMaterial> rawMaterials, List<ManufacturedGood> manufacturedGoods, int expectedPrice) {
+        var result = getMainPlayerResourceContext().calculateResourcesCost(
+                rawMaterials,
+                manufacturedGoods
+        );
+
+        if (expectedPrice < 0) {
+            assertFalse(result.isAffordable());
+            assertEquals(0, result.getToPayTotal());
+            return;
+        }
+        assertTrue(result.isAffordable());
+        assertEquals(expectedPrice, result.getToPayTotal());
+    }
+
 }

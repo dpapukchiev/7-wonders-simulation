@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 @Builder
 public record PreferentialTradingContract(
-        EffectDirectionConstraint directionConstraint,
+        EffectDirectionConstraint directionConstraint, // TODO: replace with separate enum
         Type type
 ) {
 
