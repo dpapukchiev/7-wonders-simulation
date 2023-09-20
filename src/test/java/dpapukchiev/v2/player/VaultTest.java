@@ -2,7 +2,7 @@ package dpapukchiev.v2.player;
 
 import dpapukchiev.v2.cards.Card;
 import dpapukchiev.v2.cards.CardType;
-import dpapukchiev.v2.effects.EffectMultiplierType;
+import dpapukchiev.v2.effects.core.EffectMultiplierType;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

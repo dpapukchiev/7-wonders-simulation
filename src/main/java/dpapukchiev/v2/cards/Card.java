@@ -1,7 +1,7 @@
 package dpapukchiev.v2.cards;
 
 import dpapukchiev.v2.cost.Cost;
-import dpapukchiev.v2.effects.Effect;
+import dpapukchiev.v2.effects.core.Effect;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

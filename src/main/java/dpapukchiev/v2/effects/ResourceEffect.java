@@ -1,5 +1,6 @@
 package dpapukchiev.v2.effects;
 
+import dpapukchiev.v2.effects.core.BaseEffect;
 import dpapukchiev.v2.player.Player;
 import dpapukchiev.v2.resources.ManufacturedGood;
 import dpapukchiev.v2.resources.RawMaterial;
@@ -13,6 +14,25 @@ import java.util.Optional;
 public class ResourceEffect extends BaseEffect {
     private final List<RawMaterial>      rawMaterialList;
     private final List<ManufacturedGood> manufacturedGoodList;
+    
+    public static ResourceEffect of(RawMaterial... rawMaterial){
+        return ResourceEffect.builder()
+                .rawMaterialList(List.of(rawMaterial))
+                .build();
+    }
+    
+    public static ResourceEffect of(ManufacturedGood... manufacturedGood){
+        return ResourceEffect.builder()
+                .manufacturedGoodList(List.of(manufacturedGood))
+                .build();
+    }
+    
+    public static ResourceEffect of(List<RawMaterial> materialList, List<ManufacturedGood> manufacturedGoodsList){
+        return ResourceEffect.builder()
+                .rawMaterialList(materialList)
+                .manufacturedGoodList(manufacturedGoodsList)
+                .build();
+    }
 
     public Optional<ResourceBundle> getResourceBundle(Player player) {
         return Optional.of(ResourceBundle.builder()

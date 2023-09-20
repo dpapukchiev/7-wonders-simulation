@@ -8,6 +8,10 @@ import lombok.Builder;
 @AllArgsConstructor
 public class FreeToPlayCost implements Cost {
 
+    public static FreeToPlayCost newInstance() {
+        return new FreeToPlayCost();
+    }
+
     @Override
     public CostReport generateCostReport(TurnContext turnContext) {
         return CostReport.builder()

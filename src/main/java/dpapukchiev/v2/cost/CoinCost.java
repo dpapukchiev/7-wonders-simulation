@@ -14,6 +14,12 @@ public class CoinCost implements Cost {
     @Builder.Default
     private double requiredCoins = 1d;
 
+    public static CoinCost of(double requiredCoins){
+        return CoinCost.builder()
+                .requiredCoins(requiredCoins)
+                .build();
+    }
+
     @Override
     public CostReport generateCostReport(TurnContext turnContext) {
         boolean affordable = turnContext.getPlayer().getVault().getCoins() >= requiredCoins;

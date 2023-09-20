@@ -8,10 +8,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
-import static dpapukchiev.v2.effects.EffectDirectionConstraint.LEFT;
-import static dpapukchiev.v2.effects.EffectDirectionConstraint.RIGHT;
-import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
-import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.RAW_MATERIALS;
+import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.LEFT;
+import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.RIGHT;
+import static dpapukchiev.v2.effects.core.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
+import static dpapukchiev.v2.effects.core.PreferentialTradingContract.Type.RAW_MATERIALS;
 import static dpapukchiev.v2.resources.ManufacturedGood.GLASS;
 import static dpapukchiev.v2.resources.ManufacturedGood.SCRIPTS;
 import static dpapukchiev.v2.resources.RawMaterial.CLAY;

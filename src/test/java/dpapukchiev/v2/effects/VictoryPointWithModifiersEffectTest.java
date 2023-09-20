@@ -3,6 +3,8 @@ package dpapukchiev.v2.effects;
 import dpapukchiev.v2.BasePlayerTest;
 import dpapukchiev.v2.cards.Card;
 import dpapukchiev.v2.cards.CardType;
+import dpapukchiev.v2.effects.core.EffectDirectionConstraint;
+import dpapukchiev.v2.effects.core.EffectMultiplierType;
 import dpapukchiev.v2.player.WarPoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

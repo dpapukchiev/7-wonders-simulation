@@ -3,7 +3,7 @@ package dpapukchiev.v2.player;
 import dpapukchiev.v2.cards.Card;
 import dpapukchiev.v2.cards.CardName;
 import dpapukchiev.v2.cards.CardType;
-import dpapukchiev.v2.effects.EffectMultiplierType;
+import dpapukchiev.v2.effects.core.EffectMultiplierType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

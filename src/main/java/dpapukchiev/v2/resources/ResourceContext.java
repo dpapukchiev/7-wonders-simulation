@@ -1,8 +1,8 @@
 package dpapukchiev.v2.resources;
 
 import dpapukchiev.v2.cost.CostReport;
-import dpapukchiev.v2.effects.Effect;
-import dpapukchiev.v2.effects.EffectState;
+import dpapukchiev.v2.effects.core.Effect;
+import dpapukchiev.v2.effects.core.EffectState;
 import dpapukchiev.v2.player.Player;
 import lombok.RequiredArgsConstructor;
 
@@ -12,10 +12,10 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static dpapukchiev.v2.effects.EffectDirectionConstraint.LEFT;
-import static dpapukchiev.v2.effects.EffectDirectionConstraint.RIGHT;
-import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
-import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.RAW_MATERIALS;
+import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.LEFT;
+import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.RIGHT;
+import static dpapukchiev.v2.effects.core.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
+import static dpapukchiev.v2.effects.core.PreferentialTradingContract.Type.RAW_MATERIALS;
 import static java.util.stream.Collectors.groupingBy;
 
 @RequiredArgsConstructor

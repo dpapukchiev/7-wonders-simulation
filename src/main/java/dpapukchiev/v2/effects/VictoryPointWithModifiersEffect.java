@@ -1,5 +1,10 @@
 package dpapukchiev.v2.effects;
 
+import dpapukchiev.v2.effects.core.BaseRewardWithModifiersEffect;
+import dpapukchiev.v2.effects.core.EffectDirectionConstraint;
+import dpapukchiev.v2.effects.core.EffectMultiplierType;
+import dpapukchiev.v2.effects.core.EffectReward;
+
 import java.util.Optional;
 
 public class VictoryPointWithModifiersEffect extends BaseRewardWithModifiersEffect {

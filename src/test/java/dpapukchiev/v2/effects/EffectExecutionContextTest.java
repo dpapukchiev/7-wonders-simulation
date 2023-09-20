@@ -1,6 +1,10 @@
 package dpapukchiev.v2.effects;
 
 import dpapukchiev.v2.BasePlayerTest;
+import dpapukchiev.v2.effects.core.EffectExecutionContext;
+import dpapukchiev.v2.effects.core.EffectReward;
+import dpapukchiev.v2.effects.core.EffectState;
+import dpapukchiev.v2.effects.core.EffectTiming;
 import dpapukchiev.v2.player.Player;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,11 +12,11 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Optional;
 
-import static dpapukchiev.v2.effects.EffectDirectionConstraint.BOTH;
-import static dpapukchiev.v2.effects.EffectDirectionConstraint.LEFT;
-import static dpapukchiev.v2.effects.EffectDirectionConstraint.RIGHT;
-import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
-import static dpapukchiev.v2.effects.PreferentialTradingContract.Type.RAW_MATERIALS;
+import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.BOTH;
+import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.LEFT;
+import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.RIGHT;
+import static dpapukchiev.v2.effects.core.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
+import static dpapukchiev.v2.effects.core.PreferentialTradingContract.Type.RAW_MATERIALS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

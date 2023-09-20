@@ -8,17 +8,17 @@ import lombok.AllArgsConstructor;
 import java.util.Optional;
 
 @AllArgsConstructor
-public class VictoryPointEffect extends BaseEffect {
-    private final double victoryPoints;
+public class WarShieldsEffect extends BaseEffect {
 
-    public static VictoryPointEffect of(double victoryPoints) {
-        return new VictoryPointEffect(victoryPoints);
+    private final int shields;
+    public static WarShieldsEffect of(int shields) {
+        return new WarShieldsEffect(shields);
     }
 
     @Override
     public Optional<EffectReward> getReward(Player player) {
         return Optional.of(EffectReward.builder()
-                .victoryPointsReward(victoryPoints)
+                .shields(shields)
                 .build());
     }
 }

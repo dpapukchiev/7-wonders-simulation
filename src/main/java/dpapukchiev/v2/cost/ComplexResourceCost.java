@@ -16,6 +16,25 @@ public class ComplexResourceCost implements Cost {
     @Builder.Default
     private List<ManufacturedGood> manufacturedGoodsList = new ArrayList<>();
 
+    public static ComplexResourceCost of(RawMaterial... rawMaterial){
+        return ComplexResourceCost.builder()
+                .rawMaterialList(List.of(rawMaterial))
+                .build();
+    }
+
+    public static ComplexResourceCost of(ManufacturedGood... manufacturedGood){
+        return ComplexResourceCost.builder()
+                .manufacturedGoodsList(List.of(manufacturedGood))
+                .build();
+    }
+
+    public static ComplexResourceCost of(RawMaterial rawMaterial, ManufacturedGood manufacturedGood){
+        return ComplexResourceCost.builder()
+                .rawMaterialList(List.of(rawMaterial))
+                .manufacturedGoodsList(List.of(manufacturedGood))
+                .build();
+    }
+
     @Override
     public CostReport generateCostReport(TurnContext turnContext) {
         return turnContext.getPlayer()

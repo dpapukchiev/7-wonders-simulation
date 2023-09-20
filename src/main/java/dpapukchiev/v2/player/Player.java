@@ -1,22 +1,11 @@
 package dpapukchiev.v2.player;
 
-import dpapukchiev.v2.cards.Card;
-import dpapukchiev.v2.cards.CardType;
-import dpapukchiev.v2.effects.EffectExecutionContext;
-import dpapukchiev.v2.effects.EffectMultiplierType;
+import dpapukchiev.v2.effects.core.EffectExecutionContext;
 import dpapukchiev.v2.game.TurnContext;
 import dpapukchiev.v2.resources.ResourceContext;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static dpapukchiev.v2.cards.CardType.MANUFACTURED_GOOD;
-import static dpapukchiev.v2.cards.CardType.RAW_MATERIAL;
 
 @Getter
 @Builder

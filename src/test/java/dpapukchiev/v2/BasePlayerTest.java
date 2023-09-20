@@ -1,11 +1,11 @@
 package dpapukchiev.v2;
 
-import dpapukchiev.v2.effects.Effect;
-import dpapukchiev.v2.effects.EffectDirectionConstraint;
-import dpapukchiev.v2.effects.EffectExecutionContext;
-import dpapukchiev.v2.effects.EffectState;
-import dpapukchiev.v2.effects.EffectTiming;
-import dpapukchiev.v2.effects.PreferentialTradingContract;
+import dpapukchiev.v2.effects.core.Effect;
+import dpapukchiev.v2.effects.core.EffectDirectionConstraint;
+import dpapukchiev.v2.effects.core.EffectExecutionContext;
+import dpapukchiev.v2.effects.core.EffectState;
+import dpapukchiev.v2.effects.core.EffectTiming;
+import dpapukchiev.v2.effects.core.PreferentialTradingContract;
 import dpapukchiev.v2.game.TurnContext;
 import dpapukchiev.v2.player.Player;
 import dpapukchiev.v2.player.Vault;
@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static dpapukchiev.v2.effects.EffectState.AVAILABLE;
+import static dpapukchiev.v2.effects.core.EffectState.AVAILABLE;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 

@@ -5,7 +5,9 @@ import dpapukchiev.v2.cost.CoinCost;
 import dpapukchiev.v2.cost.ComplexResourceCost;
 import dpapukchiev.v2.cost.Cost;
 import dpapukchiev.v2.cost.FreeToPlayCost;
-import dpapukchiev.v2.effects.Effect;
+import dpapukchiev.v2.effects.ScienceSymbolsEffect;
+import dpapukchiev.v2.effects.WarShieldsEffect;
+import dpapukchiev.v2.effects.core.Effect;
 import dpapukchiev.v2.effects.ResourceEffect;
 import dpapukchiev.v2.effects.VictoryPointEffect;
 import jsl.simulation.ModelElement;
@@ -114,6 +116,29 @@ class DeckTest extends BasePlayerTest {
 
         assertListContains(result, 15, FreeToPlayCost.class);
         assertListContains(result, 2, ComplexResourceCost.class);
+    }
+
+    @Test
+    void getAge1Group3() {
+        var deck = new Deck(modelElement);
+
+        var result = deck.getAge1Group3();
+
+        assertEquals(12, result.size());
+        assertTrue(result.stream().allMatch(card -> card.getAge() == 1));
+
+        assertListContains(result, 6, CardType.MILITARY);
+        assertListContains(result, 6, CardType.SCIENCE);
+
+        assertCardEffect(result, 6, WarShieldsEffect.class);
+        assertCardEffect(result, 6, ScienceSymbolsEffect.class);
+        assertListContains(result, 6, 3);
+        assertListContains(result, 2, 4);
+        assertListContains(result, 2, 5);
+        assertListContains(result, 0, 6);
+        assertListContains(result, 2, 7);
+
+        assertListContains(result, 12, ComplexResourceCost.class);
     }
 
     private void assertListContains(List<Card> result, int expected, CardType cardType) {
