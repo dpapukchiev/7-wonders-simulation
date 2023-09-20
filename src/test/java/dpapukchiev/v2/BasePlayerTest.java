@@ -8,6 +8,7 @@ import dpapukchiev.v2.effects.EffectTiming;
 import dpapukchiev.v2.effects.PreferentialTradingContract;
 import dpapukchiev.v2.game.TurnContext;
 import dpapukchiev.v2.player.Player;
+import dpapukchiev.v2.player.Vault;
 import dpapukchiev.v2.resources.ManufacturedGood;
 import dpapukchiev.v2.resources.RawMaterial;
 import dpapukchiev.v2.resources.ResourceBundle;
@@ -45,6 +46,10 @@ public class BasePlayerTest {
     protected ResourceContext        resourceContextPlayerRight;
     @Mock
     protected EffectExecutionContext effectExecutionContext;
+    @Mock
+    protected Vault                  leftPlayerVault;
+    @Mock
+    protected Vault                  rightPlayerVault;
 
     @BeforeEach
     void init() {
@@ -76,6 +81,10 @@ public class BasePlayerTest {
                 .thenReturn(resourceContextPlayerLeft);
         lenient().when(rightPlayer.resourceContext())
                 .thenReturn(resourceContextPlayerRight);
+        lenient().when(leftPlayer.getVault())
+                .thenReturn(leftPlayerVault);
+        lenient().when(rightPlayer.getVault())
+                .thenReturn(rightPlayerVault);
     }
 
     protected ResourceContext getMainPlayerResourceContext() {

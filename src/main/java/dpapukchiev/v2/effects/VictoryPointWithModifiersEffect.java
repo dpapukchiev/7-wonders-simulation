@@ -11,7 +11,7 @@ public class VictoryPointWithModifiersEffect extends BaseRewardWithModifiersEffe
     }
 
     @Override
-    protected Optional<EffectReward> getEffectReward(double reward) {
+    protected Optional<EffectReward> buildEffectReward(double reward) {
         markAsExhausted();
         return Optional.of(EffectReward.builder()
                 .victoryPointsReward(reward)

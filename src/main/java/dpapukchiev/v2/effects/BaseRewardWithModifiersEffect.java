@@ -28,10 +28,10 @@ public abstract class BaseRewardWithModifiersEffect extends BaseEffect {
             default -> reward;
         };
 
-        return getEffectReward(reward);
+        return buildEffectReward(reward);
     }
 
-    protected abstract Optional<EffectReward> getEffectReward(double reward);
+    protected abstract Optional<EffectReward> buildEffectReward(double reward);
 
     protected abstract double getReward();
 }

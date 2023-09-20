@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,11 +99,9 @@ public class Vault {
     }
 
     private long getCardCount(CardType cardType) {
-        var results = getBuiltCards().stream().collect(groupingBy(Card::getType))
-                .get(cardType);
-        if (results.isEmpty()) {
-            return 0;
-        }
-        return results.size();
+        return Optional.ofNullable(getBuiltCards().stream().collect(groupingBy(Card::getType))
+                        .get(cardType))
+                .map(List::size)
+                .orElse(0);
     }
 }
