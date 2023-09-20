@@ -80,7 +80,7 @@ public class ResourceContext {
             }
 
             if (missingCount > 0) {
-                return costReport;
+                return costReport.setUnaffordable();
             }
 
         }
@@ -127,7 +127,7 @@ public class ResourceContext {
             }
 
             if (missingCount > 0) {
-                return costReport;
+                return costReport.setUnaffordable();
             }
 
         }

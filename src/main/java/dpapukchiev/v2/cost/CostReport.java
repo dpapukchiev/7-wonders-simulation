@@ -21,6 +21,15 @@ public class CostReport {
     @Builder.Default
     private double  toPayRight      = 0d;
 
+
+    public CostReport setUnaffordable(){
+        affordable = false;
+        toPayBank = 0;
+        toPayLeft = 0;
+        toPayRight = 0;
+        return this;
+    }
+
     public void addToPayBank(double toPayBank) {
         this.toPayBank += toPayBank;
     }

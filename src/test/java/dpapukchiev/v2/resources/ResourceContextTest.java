@@ -153,21 +153,31 @@ class ResourceContextTest extends BasePlayerTest {
         assertPrice(List.of(CLAY), List.of(), 0);
 
         if (availableCoins >= 2) {
+            // buy from left: 1x$1 wood
+            // buy from right: 1x$1 scripts
             assertPrice(List.of(WOOD, CLAY), List.of(SCRIPTS), 2);
         }
         if (availableCoins >= 4) {
+            // buy from left: 1x$1 wood
+            // buy from right: 1x$2 wood 1x$1 scripts
             assertPrice(List.of(WOOD, WOOD, CLAY), List.of(SCRIPTS), 4);
         }
         if (availableCoins >= 6) {
+            // buy from left: 1x$1 wood 1x$2 scripts
+            // buy from right: 1x$2 wood 1x$1 scripts
             assertPrice(List.of(WOOD, WOOD, CLAY), List.of(SCRIPTS, SCRIPTS), 6);
         }
         if (availableCoins >= 8) {
+            // buy from left: 1x$1 wood 2x$2 scripts
+            // buy from right: 1x$2 wood 1x$1 scripts
             assertPrice(List.of(WOOD, WOOD, CLAY), List.of(SCRIPTS, SCRIPTS, SCRIPTS), 8);
         }
 
+        // anything else or more than provided is not affordable
         assertPrice(List.of(METAL_ORE, CLAY), List.of(GLASS), -1);
-        // TODO: check why this fails
-//        assertPrice(List.of(WOOD, WOOD, WOOD, WOOD, CLAY), List.of(SCRIPTS, SCRIPTS, SCRIPTS, SCRIPTS), -1);
+        assertPrice(List.of(WOOD, WOOD, WOOD, CLAY), List.of(SCRIPTS), -1);
+        assertPrice(List.of(WOOD, WOOD, CLAY), List.of(SCRIPTS, SCRIPTS, SCRIPTS, SCRIPTS), -1);
+        assertPrice(List.of(WOOD, WOOD, WOOD, WOOD, CLAY), List.of(SCRIPTS, SCRIPTS, SCRIPTS, SCRIPTS), -1);
 
     }
 
