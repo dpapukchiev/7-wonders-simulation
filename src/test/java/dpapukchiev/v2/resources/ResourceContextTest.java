@@ -1,13 +1,10 @@
 package dpapukchiev.v2.resources;
 
 import dpapukchiev.v2.BasePlayerTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
@@ -26,14 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 
-@ExtendWith(MockitoExtension.class)
 class ResourceContextTest extends BasePlayerTest {
-
-    @BeforeEach
-    void setUp() {
-        initPlayers();
-    }
-
     @ParameterizedTest
     @EnumSource(RawMaterial.class)
     void getRawMaterialCount1Effect(RawMaterial material) {
@@ -182,7 +172,7 @@ class ResourceContextTest extends BasePlayerTest {
     }
 
     @Test
-    void unaffordable(){
+    void unaffordable() {
         assertPrice(List.of(WOOD, CLAY), List.of(SCRIPTS), -1);
     }
 

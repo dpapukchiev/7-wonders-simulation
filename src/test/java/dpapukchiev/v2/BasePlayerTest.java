@@ -6,12 +6,16 @@ import dpapukchiev.v2.effects.EffectExecutionContext;
 import dpapukchiev.v2.effects.EffectState;
 import dpapukchiev.v2.effects.EffectTiming;
 import dpapukchiev.v2.effects.PreferentialTradingContract;
+import dpapukchiev.v2.game.TurnContext;
 import dpapukchiev.v2.player.Player;
 import dpapukchiev.v2.resources.ManufacturedGood;
 import dpapukchiev.v2.resources.RawMaterial;
 import dpapukchiev.v2.resources.ResourceBundle;
 import dpapukchiev.v2.resources.ResourceContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +24,7 @@ import static dpapukchiev.v2.effects.EffectState.AVAILABLE;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class BasePlayerTest {
 
     protected Player mainPlayer;
@@ -40,6 +45,17 @@ public class BasePlayerTest {
     protected ResourceContext        resourceContextPlayerRight;
     @Mock
     protected EffectExecutionContext effectExecutionContext;
+
+    @BeforeEach
+    void init() {
+        initPlayers();
+    }
+
+    protected TurnContext getTurnContext() {
+        return TurnContext.builder()
+                .player(mainPlayer)
+                .build();
+    }
 
     protected void initPlayers() {
         mainPlayer = Player.builder()
@@ -84,10 +100,15 @@ public class BasePlayerTest {
                 .build());
     }
 
-    protected void configureRawMaterialsEffect(Effect effect, RawMaterial rawMaterial) {
+    protected void configureRawMaterialsEffect(Effect effect, RawMaterial... rawMaterial) {
         configureResourceBundleEffect(effect, ResourceBundle.builder()
                 .rawMaterials(List.of(rawMaterial))
                 .build());
+    }
+
+    protected void assignPermanentEffectsToPlayer(Effect... permanentEffects) {
+        when(effectExecutionContext.getPermanentEffects())
+                .thenReturn(List.of(permanentEffects));
     }
 
     protected void assignPermanentEffectsToPlayer(List<Effect> permanentEffects) {

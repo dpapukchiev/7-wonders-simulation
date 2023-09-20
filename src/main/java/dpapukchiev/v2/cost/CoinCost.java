@@ -9,18 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-public class ComplexResourceCost implements Cost {
+public class CoinCost implements Cost {
 
     @Builder.Default
-    private List<RawMaterial>      rawMaterialList       = new ArrayList<>();
-    @Builder.Default
-    private List<ManufacturedGood> manufacturedGoodsList = new ArrayList<>();
+    private double requiredCoins = 1d;
 
     @Override
     public CostReport generateCostReport(TurnContext turnContext) {
-        return turnContext.getPlayer()
-                .resourceContext()
-                .calculateResourcesCost(rawMaterialList, manufacturedGoodsList);
+        boolean affordable = turnContext.getPlayer().getVault().getCoins() >= requiredCoins;
+        return CostReport.builder()
+                .affordable(affordable)
+                .toPayBank(affordable ? requiredCoins : 0d)
+                .build();
     }
 
     @Override

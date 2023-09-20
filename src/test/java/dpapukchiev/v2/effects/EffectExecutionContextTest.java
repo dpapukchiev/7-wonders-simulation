@@ -3,10 +3,8 @@ package dpapukchiev.v2.effects;
 import dpapukchiev.v2.BasePlayerTest;
 import dpapukchiev.v2.player.Player;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -21,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class EffectExecutionContextTest  extends BasePlayerTest{
+class EffectExecutionContextTest extends BasePlayerTest {
 
     @CsvSource({
             "AVAILABLE,END_OF_AGE,1,AVAILABLE,END_OF_AGE,2,END_OF_AGE,1,2",
@@ -133,6 +130,5 @@ class EffectExecutionContextTest  extends BasePlayerTest{
         assertEquals(1, executionContext.getTradingPrice(LEFT, MANUFACTURED_GOODS));
         assertEquals(1, executionContext.getTradingPrice(RIGHT, MANUFACTURED_GOODS));
     }
-
 
 }

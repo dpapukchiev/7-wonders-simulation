@@ -18,33 +18,33 @@ public class Vault {
     @Builder.Default
     private List<WarPoint> warPoints     = new ArrayList<>();
     @Builder.Default
-    private int            victoryPoints = 0;
+    private double            victoryPoints = 0;
     @Builder.Default
-    private int            shields       = 0;
+    private double            shields       = 0;
     @Builder.Default
-    private int            coins         = 3;
+    private double            coins         = 3;
 
     public void addWarPoint(WarPoint warPoint) {
         warPoints.add(warPoint);
     }
 
-    public int getWarPoints() {
+    public double getWarPoints() {
         return warPoints.stream().mapToInt(WarPoint::getValue).sum();
     }
 
-    public void addVictoryPoints(int victoryPoints) {
+    public void addVictoryPoints(double victoryPoints) {
         this.victoryPoints += victoryPoints;
     }
 
-    public void addShields(int shields) {
+    public void addShields(double shields) {
         this.shields += shields;
     }
 
-    public void addCoins(int coins) {
+    public void addCoins(double coins) {
         this.coins += coins;
     }
 
-    public void removeCoins(int coins) {
+    public void removeCoins(double coins) {
         this.coins -= coins;
     }
 }
