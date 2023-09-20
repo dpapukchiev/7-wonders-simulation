@@ -21,6 +21,6 @@ public class FreeToPlayCost implements Cost {
 
     @Override
     public String report() {
-        return null;
+        return "C(FREE)";
     }
 }

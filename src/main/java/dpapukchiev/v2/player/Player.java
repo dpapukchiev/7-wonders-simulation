@@ -3,6 +3,7 @@ package dpapukchiev.v2.player;
 import dpapukchiev.v2.effects.core.EffectExecutionContext;
 import dpapukchiev.v2.game.TurnContext;
 import dpapukchiev.v2.resources.ResourceContext;
+import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,8 @@ import lombok.Setter;
 @Builder
 public class Player {
     private String                 name;
+    private WonderContext          wonderContext;
+    private RandomVariable         pickACard;
     @Setter
     private Player                 leftPlayer;
     @Setter
@@ -40,5 +43,13 @@ public class Player {
         // apply the effect
     }
 
+    public String report() {
+        return String.format("%s: %s %s %s",
+                name,
+                vault.report(),
+                wonderContext.report(),
+                effectExecutionContext.report()
+        );
+    }
 
 }

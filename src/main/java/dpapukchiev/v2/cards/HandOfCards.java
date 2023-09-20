@@ -10,6 +10,7 @@ import org.apache.commons.math3.util.Pair;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -46,5 +47,11 @@ public class HandOfCards {
         return filterCards(turnContext, entry -> entry.getValue().getToPayTotal() > 0)
                 .stream().map(Pair::getFirst)
                 .toList();
+    }
+
+    public String report() {
+        return "\nHandOfCards: %s \n%s".formatted(uuid, cards.stream()
+                .map(Card::report)
+                .collect(Collectors.joining("\n")));
     }
 }

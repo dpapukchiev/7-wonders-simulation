@@ -15,4 +15,14 @@ public class TurnContext {
     private int         simulationStep;
     private int         age;
     private int         turnCountAge;
+
+    public String report() {
+        return String.format("\nTurnContext: player=%s simStep=%s age=%s turn=%s %s",
+                player.getName(),
+                simulationStep,
+                age,
+                turnCountAge,
+                handOfCards.report()
+        );
+    }
 }

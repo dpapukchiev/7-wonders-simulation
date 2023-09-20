@@ -27,4 +27,12 @@ public class PreferentialTradingEffect extends BaseEffect {
                 .type(contractType)
                 .build());
     }
+
+    @Override
+    public String report() {
+        return "PT(" +
+                effectDirectionConstraint.name() +
+                "," + contractType.name() +
+                ')';
+    }
 }

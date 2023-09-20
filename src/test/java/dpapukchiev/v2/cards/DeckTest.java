@@ -33,7 +33,7 @@ class DeckTest extends BasePlayerTest {
     @Test
     void getCardsByAge() {
         var deck = new Deck(modelElement);
-        deck.resetDeck();
+        deck.resetDeck(5);
 
         var result = deck.getCardsByAge();
 

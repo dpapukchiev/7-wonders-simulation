@@ -107,4 +107,16 @@ public class Vault {
                 .map(List::size)
                 .orElse(0);
     }
+
+    public String report() {
+        return "Vault{" +
+                "warPoints=" + warPoints +
+                ", VP=" + victoryPoints +
+                ", SHIELDS=" + shields +
+                ", $=" + coins +
+                ", builtCards=" + builtCards.stream()
+                .map(Card::report)
+                .collect(Collectors.joining()) +
+                '}';
+    }
 }

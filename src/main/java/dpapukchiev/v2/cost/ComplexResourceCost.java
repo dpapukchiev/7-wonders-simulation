@@ -7,6 +7,7 @@ import lombok.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 public class ComplexResourceCost implements Cost {
@@ -16,19 +17,19 @@ public class ComplexResourceCost implements Cost {
     @Builder.Default
     private List<ManufacturedGood> manufacturedGoodsList = new ArrayList<>();
 
-    public static ComplexResourceCost of(RawMaterial... rawMaterial){
+    public static ComplexResourceCost of(RawMaterial... rawMaterial) {
         return ComplexResourceCost.builder()
                 .rawMaterialList(List.of(rawMaterial))
                 .build();
     }
 
-    public static ComplexResourceCost of(ManufacturedGood... manufacturedGood){
+    public static ComplexResourceCost of(ManufacturedGood... manufacturedGood) {
         return ComplexResourceCost.builder()
                 .manufacturedGoodsList(List.of(manufacturedGood))
                 .build();
     }
 
-    public static ComplexResourceCost of(RawMaterial rawMaterial, ManufacturedGood manufacturedGood){
+    public static ComplexResourceCost of(RawMaterial rawMaterial, ManufacturedGood manufacturedGood) {
         return ComplexResourceCost.builder()
                 .rawMaterialList(List.of(rawMaterial))
                 .manufacturedGoodsList(List.of(manufacturedGood))
@@ -44,6 +45,21 @@ public class ComplexResourceCost implements Cost {
 
     @Override
     public String report() {
-        return null;
+        var report = new StringBuilder();
+        report.append("C(");
+        if (!rawMaterialList.isEmpty()) {
+            report.append("RM:");
+            report.append(rawMaterialList.stream().map(RawMaterial::name)
+                    .map(name -> name.substring(0, 2))
+                    .collect(Collectors.joining("-")));
+        }
+        if (!manufacturedGoodsList.isEmpty()) {
+            report.append("MG:");
+            report.append(manufacturedGoodsList.stream().map(ManufacturedGood::name)
+                    .map(name -> name.substring(0, 2))
+                    .collect(Collectors.joining("-")));
+        }
+        report.append(")");
+        return report.toString();
     }
 }

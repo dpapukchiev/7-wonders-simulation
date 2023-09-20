@@ -19,6 +19,7 @@ import lombok.Builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.BOTH;
@@ -36,6 +37,7 @@ import static dpapukchiev.v2.resources.RawMaterial.WOOD;
 import static dpapukchiev.v2.resources.ScienceSymbol.COGWHEEL;
 import static dpapukchiev.v2.resources.ScienceSymbol.COMPASS;
 import static dpapukchiev.v2.resources.ScienceSymbol.TABLET;
+import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
 @Builder
 @AllArgsConstructor
@@ -57,7 +59,7 @@ public class Deck {
         discardedCards.add(card);
     }
 
-    public void resetDeck() {
+    public void resetDeck(int numberOfPlayers) {
         discardedCards.clear();
         allCards.clear();
 
@@ -66,6 +68,10 @@ public class Deck {
         allCards.addAll(getAge1Group3());
 
         allCards.addAll(getAge2Group1());
+
+        allCards = new ArrayList<>(allCards.stream()
+                .filter(card -> card.getRequiredPlayersCount() <= numberOfPlayers)
+                .toList());
     }
 
     public Map<Integer, List<Card>> getCardsByAge() {
@@ -646,5 +652,21 @@ public class Deck {
                         .name(CardName.PRESSE)
                         .build()
         );
+    }
+
+    public HandOfCards prepareHandOfCards(int age) {
+        var cards = new ArrayList<Card>();
+        var availableCards = allCards.stream()
+                .filter(card -> card.getAge() == age)
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < 7; i++) {
+            var card = randomlySelect(availableCards, cardDistribution.getStreamNumber());
+            cards.add(card);
+            availableCards.remove(card);
+            allCards.remove(card);
+        }
+
+        return new HandOfCards(UUID.randomUUID(), cards, this);
     }
 }

@@ -31,6 +31,6 @@ public class CoinCost implements Cost {
 
     @Override
     public String report() {
-        return null;
+        return "C($%s)".formatted(requiredCoins);
     }
 }
