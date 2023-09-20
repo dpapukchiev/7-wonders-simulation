@@ -1,7 +1,9 @@
 package dpapukchiev.v2.player;
 
 import dpapukchiev.v2.cards.Card;
+import dpapukchiev.v2.cards.CardType;
 import dpapukchiev.v2.effects.EffectExecutionContext;
+import dpapukchiev.v2.effects.EffectMultiplierType;
 import dpapukchiev.v2.game.TurnContext;
 import dpapukchiev.v2.resources.ResourceContext;
 import lombok.Builder;
@@ -12,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static dpapukchiev.v2.cards.CardType.MANUFACTURED_GOOD;
+import static dpapukchiev.v2.cards.CardType.RAW_MATERIAL;
 
 @Getter
 @Builder
@@ -25,8 +30,6 @@ public class Player {
     private EffectExecutionContext effectExecutionContext = new EffectExecutionContext();
     @Builder.Default
     private Vault                  vault                  = new Vault();
-    @Builder.Default
-    private List<Card>             builtCards             = new ArrayList<>();
 
     public ResourceContext resourceContext() {
         return new ResourceContext(this);
@@ -48,7 +51,5 @@ public class Player {
         // apply the effect
     }
 
-    public Set<String> getBuiltCardNames() {
-        return builtCards.stream().map(Card::getName).collect(Collectors.toSet());
-    }
+
 }

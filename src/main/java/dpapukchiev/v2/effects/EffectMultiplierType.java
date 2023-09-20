@@ -1,5 +1,7 @@
 package dpapukchiev.v2.effects;
 
+import java.util.List;
+
 public enum EffectMultiplierType {
     RAW_MATERIAL_CARD,
     MANUFACTURED_GOOD_CARD,
@@ -7,9 +9,21 @@ public enum EffectMultiplierType {
     CIVIL_CARD,
     COMMERCIAL_CARD,
     MILITARY_CARD,
-    WONDER_STAGE,
+    WONDER_STAGE, // TODO: implement
     WAR_LOSS,
+    WAR_WIN,
     WAR_WIN_1,
     WAR_WIN_3,
-    WAR_WIN_5,
+    WAR_WIN_5;
+
+    public static List<EffectMultiplierType> getCardTypes() {
+        return List.of(
+                RAW_MATERIAL_CARD,
+                MANUFACTURED_GOOD_CARD,
+                SCIENCE_CARD,
+                CIVIL_CARD,
+                COMMERCIAL_CARD,
+                MILITARY_CARD
+        );
+    }
 }
