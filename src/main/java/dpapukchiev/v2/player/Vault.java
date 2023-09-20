@@ -1,6 +1,7 @@
 package dpapukchiev.v2.player;
 
 import dpapukchiev.v2.cards.Card;
+import dpapukchiev.v2.cards.CardName;
 import dpapukchiev.v2.cards.CardType;
 import dpapukchiev.v2.effects.EffectMultiplierType;
 import lombok.AllArgsConstructor;
@@ -88,7 +89,9 @@ public class Vault {
     }
 
     public Set<String> getBuiltCardNames() {
-        return getBuiltCards().stream().map(Card::getName).collect(Collectors.toSet());
+        return getBuiltCards().stream().map(Card::getName)
+                .map(CardName::getDisplayName)
+                .collect(Collectors.toSet());
     }
 
     private long getWarPointOfType(WarPoint warPointType) {

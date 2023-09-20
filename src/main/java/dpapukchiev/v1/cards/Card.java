@@ -24,9 +24,9 @@ public class Card {
     @Builder.Default
     protected List<String> freeUpgrades = new ArrayList<>();
     protected int          requiredPlayersCount;
-    protected int      age;
-    protected Cost     cost;
-    protected CardType type;
+    protected int          age;
+    protected Cost         cost;
+    protected CardType     type;
     @ToString.Include
     protected CardEffect   effect;
 

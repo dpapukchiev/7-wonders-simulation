@@ -20,10 +20,11 @@ import java.util.List;
 @ToString(onlyExplicitlyIncluded = true)
 public class Card {
     @ToString.Include
-    protected String       name;
+    protected CardName     name;
     @Builder.Default
     protected List<String> freeUpgrades = new ArrayList<>();
     protected int          age;
+    protected int          requiredPlayersCount;
     protected Cost         cost;
     protected CardType     type;
     @ToString.Include

@@ -1,9 +1,11 @@
 package dpapukchiev.v2.cost;
 
 import dpapukchiev.v2.game.TurnContext;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 @Builder
+@AllArgsConstructor
 public class FreeToPlayCost implements Cost {
 
     @Override
