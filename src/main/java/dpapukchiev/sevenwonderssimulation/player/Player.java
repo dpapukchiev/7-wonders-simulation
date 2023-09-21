@@ -6,6 +6,7 @@ import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceContext;
+import dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,9 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.Comparator;
 
+import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COGWHEEL;
+import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COMPASS;
+import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.TABLET;
 import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
 @Log4j2
@@ -136,6 +140,17 @@ public class Player {
                 getRightPlayer().getName(),
                 cost.getToPayTotal()
         );
+    }
+
+    public ScoreCard score() {
+        return ScoreCard.builder()
+                .coins(vault.getCoins())
+                .warPointsScore(vault.getWarPointsScore())
+                .victoryPoints(vault.getVictoryPoints())
+                .scienceTablets(resourceContext().getScienceSymbolCount(TABLET))
+                .scienceCompasses(resourceContext().getScienceSymbolCount(COMPASS))
+                .scienceCogwheels(resourceContext().getScienceSymbolCount(COGWHEEL))
+                .build();
     }
 
     public String report() {

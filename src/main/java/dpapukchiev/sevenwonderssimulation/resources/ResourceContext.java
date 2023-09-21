@@ -1,6 +1,7 @@
 package dpapukchiev.sevenwonderssimulation.resources;
 
 import dpapukchiev.sevenwonderssimulation.cost.CostReport;
+import dpapukchiev.sevenwonderssimulation.effects.ScienceSymbolsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectState;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,6 +51,33 @@ public class ResourceContext {
 
     public double getManufacturedGoodCount(ManufacturedGood manufacturedGood) {
         return countMaterial(manufacturedGood, getPermanentEffectsProvidingResources(), false);
+    }
+
+    public double getScienceSymbolCount(ScienceSymbol scienceSymbol) {
+        var scienceEffectBundles = getPermanentEffectsProvidingResources()
+                .stream()
+                .map(effect -> effect.getResourceBundle(player))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(bundle -> bundle.getScienceSymbols().contains(scienceSymbol))
+                .toList();
+        var symbolCount = scienceEffectBundles
+                .stream()
+                .filter(bundle -> !bundle.isWildcardScienceSymbol())
+                .count();
+        var wildCard = player.getEffectExecutionContext()
+                .getPermanentEffects()
+                .stream()
+                .filter(effect -> effect.getResourceBundle(player).isPresent() &&
+                        effect.getResourceBundle(player).get().isWildcardScienceSymbol())
+                .filter(effect -> effect instanceof ScienceSymbolsEffect)
+                .filter(effect -> Objects.equals(
+                        ((ScienceSymbolsEffect) effect).getChosenSymbol(),
+                        scienceSymbol
+                ))
+                .count();
+
+        return symbolCount + wildCard;
     }
 
     public double getManufacturedGoodCountWildcard(ManufacturedGood manufacturedGood) {

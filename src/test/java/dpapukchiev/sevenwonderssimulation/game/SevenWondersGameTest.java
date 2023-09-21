@@ -14,7 +14,7 @@ class SevenWondersGameTest {
 
         var gameOptions = GameOptions.builder()
                 .numberOfPlayers(7)
-                .agesToSchedule(2)
+                .agesToSchedule(3)
                 .build();
 
         var game = new SevenWondersGame(

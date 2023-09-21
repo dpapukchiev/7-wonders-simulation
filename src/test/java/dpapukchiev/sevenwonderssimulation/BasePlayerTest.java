@@ -13,6 +13,7 @@ import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
 import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceBundle;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceContext;
+import dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -115,9 +116,10 @@ public class BasePlayerTest {
                 .build());
     }
 
-    protected void assignPermanentEffectsToPlayer(Effect... permanentEffects) {
-        when(effectExecutionContext.getPermanentEffects())
-                .thenReturn(List.of(permanentEffects));
+    protected void configureScienceEffect(Effect effect, ScienceSymbol scienceSymbols) {
+        configureResourceBundleEffect(effect, ResourceBundle.builder()
+                .scienceSymbols(List.of(scienceSymbols))
+                .build());
     }
 
     protected void assignPermanentEffectsToPlayer(List<Effect> permanentEffects) {

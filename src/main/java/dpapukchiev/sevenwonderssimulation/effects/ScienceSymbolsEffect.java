@@ -5,7 +5,9 @@ import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceBundle;
 import dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ScienceSymbolsEffect extends BaseEffect {
 
+    @Getter
+    @Setter
     private       ScienceSymbol       chosenSymbol;
     private final List<ScienceSymbol> scienceSymbols;
 
