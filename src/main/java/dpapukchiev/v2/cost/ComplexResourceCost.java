@@ -1,13 +1,13 @@
 package dpapukchiev.v2.cost;
 
 import dpapukchiev.v2.game.TurnContext;
+import dpapukchiev.v2.reporting.Reporters;
 import dpapukchiev.v2.resources.ManufacturedGood;
 import dpapukchiev.v2.resources.RawMaterial;
 import lombok.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
 public class ComplexResourceCost implements Cost {
@@ -45,21 +45,6 @@ public class ComplexResourceCost implements Cost {
 
     @Override
     public String report() {
-        var report = new StringBuilder();
-        report.append("C(");
-        if (!rawMaterialList.isEmpty()) {
-            report.append("RM:");
-            report.append(rawMaterialList.stream().map(RawMaterial::name)
-                    .map(name -> name.substring(0, 2))
-                    .collect(Collectors.joining("-")));
-        }
-        if (!manufacturedGoodsList.isEmpty()) {
-            report.append("MG:");
-            report.append(manufacturedGoodsList.stream().map(ManufacturedGood::name)
-                    .map(name -> name.substring(0, 2))
-                    .collect(Collectors.joining("-")));
-        }
-        report.append(")");
-        return report.toString();
+        return Reporters.resourcesReport(rawMaterialList, manufacturedGoodsList);
     }
 }

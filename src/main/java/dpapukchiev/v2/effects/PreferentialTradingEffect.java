@@ -2,7 +2,9 @@ package dpapukchiev.v2.effects;
 
 import dpapukchiev.v2.effects.core.BaseEffect;
 import dpapukchiev.v2.effects.core.EffectDirectionConstraint;
+import dpapukchiev.v2.effects.core.EffectTiming;
 import dpapukchiev.v2.effects.core.PreferentialTradingContract;
+import dpapukchiev.v2.player.Player;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;
@@ -18,6 +20,12 @@ public class PreferentialTradingEffect extends BaseEffect {
             PreferentialTradingContract.Type contractType
     ) {
         return new PreferentialTradingEffect(effectDirectionConstraint, contractType);
+    }
+
+    @Override
+    public void scheduleEffect(Player player) {
+        player.getEffectExecutionContext()
+                .addEffect(this, EffectTiming.ANYTIME);
     }
 
     @Override

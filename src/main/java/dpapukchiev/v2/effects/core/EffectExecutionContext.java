@@ -68,7 +68,7 @@ public class EffectExecutionContext {
 
     public String report() {
         // TODO: implement
-        return "";
+        return "$EffectExecutionContext$";
     }
 
     private Optional<EffectReward> getEffectReward(Player player, List<Effect> effectsToEvaluate) {

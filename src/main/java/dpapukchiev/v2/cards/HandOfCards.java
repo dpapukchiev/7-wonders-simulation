@@ -33,6 +33,7 @@ public class HandOfCards {
 
     public List<Pair<Card, CostReport>> filterCards(TurnContext turnContext, Predicate<Pair<Card, CostReport>> filter) {
         return getCostReportsPerCard(turnContext).stream()
+                .filter(cardCostReportPair -> cardCostReportPair.getValue().isAffordable())
                 .filter(filter)
                 .toList();
     }
@@ -50,7 +51,7 @@ public class HandOfCards {
     }
 
     public String report() {
-        return "\nHandOfCards: %s \n%s".formatted(uuid, cards.stream()
+        return "\nHandOfCards(%s): %s \n%s".formatted(cards.size(), uuid, cards.stream()
                 .map(Card::report)
                 .collect(Collectors.joining("\n")));
     }

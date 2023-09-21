@@ -59,8 +59,20 @@ public class SevenWondersGame extends SchedulingElement {
         @Override
         public void action(JSLEvent<TurnContext> event) {
             var turnContext = event.getMessage();
-            log.info("{} ExecutePlayerTurn {}", getTime(), turnContext.report());
-            turnContext.getPlayer().executeTurn(turnContext);
+            var player = turnContext.getPlayer();
+            log.info("\n=>Start p({}) turn {}-{} {} {}",
+                    player.getName(),
+                    turnContext.getAge(),
+                    turnContext.getTurnCountAge(),
+                    turnContext.getHandOfCards().report(),
+                    player.report()
+            );
+            player.executeTurn(turnContext);
+            player.getEffectExecutionContext()
+                    .executeEffectsEndOfTurn(player)
+                    .ifPresent(player::applyEffectReward);
+
+            log.info("\n=>ExecutedPlayerTurn {}", player.report());
         }
     }
 
@@ -70,9 +82,13 @@ public class SevenWondersGame extends SchedulingElement {
         public void action(JSLEvent<Integer> event) {
             var age = event.getMessage();
             log.info("{} ExecuteAgeTransitionTurn {}", getTime(), age);
-            // TODO: fix
+            playersFactory.getPlayers()
+                    .forEach(player -> player
+                            .getEffectExecutionContext()
+                            .executeEffectsEndOfAge(player)
+                    );
 //            playersFactory.getPlayers().forEach(player -> player.executeEndOfAge(age));
-//            playersFactory.getPlayers().forEach(player -> log.info(player.report(age)));
+            playersFactory.getPlayers().forEach(player -> log.info(player.report()));
         }
     }
 

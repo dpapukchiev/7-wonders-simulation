@@ -17,12 +17,12 @@ public class TurnContext {
     private int         turnCountAge;
 
     public String report() {
-        return String.format("\nTurnContext: player=%s simStep=%s age=%s turn=%s %s",
-                player.getName(),
+        return String.format("\nTurnContext: simStep=%s age=%s turn=%s %s \n%s\n",
                 simulationStep,
                 age,
                 turnCountAge,
-                handOfCards.report()
+                handOfCards.report(),
+                player.report()
         );
     }
 }

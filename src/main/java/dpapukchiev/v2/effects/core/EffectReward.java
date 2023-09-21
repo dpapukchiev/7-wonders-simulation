@@ -24,4 +24,18 @@ public class EffectReward {
                 .victoryPointsReward(victoryPointsReward + other.victoryPointsReward)
                 .build();
     }
+
+    public String report() {
+        var report = new StringBuilder();
+        if (coinReward > 0) {
+            report.append("$:").append(coinReward);
+        }
+        if (shields > 0) {
+            report.append("S:").append(shields);
+        }
+        if (victoryPointsReward > 0) {
+            report.append("V:").append(victoryPointsReward);
+        }
+        return report.toString();
+    }
 }

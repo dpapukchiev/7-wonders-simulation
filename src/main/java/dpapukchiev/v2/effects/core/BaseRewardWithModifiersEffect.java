@@ -7,8 +7,8 @@ import java.util.Optional;
 
 @AllArgsConstructor
 public abstract class BaseRewardWithModifiersEffect extends BaseEffect {
-    private final EffectDirectionConstraint directionConstraint;
-    private final EffectMultiplierType      multiplierType;
+    protected final EffectDirectionConstraint directionConstraint;
+    protected final EffectMultiplierType      multiplierType;
 
     @Override
     public Optional<EffectReward> getReward(Player player) {

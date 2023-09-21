@@ -27,15 +27,17 @@ import static java.util.stream.Collectors.groupingBy;
 @AllArgsConstructor
 public class Vault {
     @Builder.Default
-    private List<WarPoint> warPoints     = new ArrayList<>();
+    private List<WarPoint> warPoints      = new ArrayList<>();
     @Builder.Default
-    private double         victoryPoints = 0;
+    private double         victoryPoints  = 0;
     @Builder.Default
-    private double         shields       = 0;
+    private double         shields        = 0;
     @Builder.Default
-    private double         coins         = 3;
+    private double         coins          = 3;
     @Builder.Default
-    private List<Card>     builtCards    = new ArrayList<>();
+    private List<Card>     builtCards     = new ArrayList<>();
+    @Builder.Default
+    private List<Card>     discardedCards = new ArrayList<>();
 
     public void addWarPoint(WarPoint warPoint) {
         warPoints.add(warPoint);
@@ -109,14 +111,30 @@ public class Vault {
     }
 
     public String report() {
-        return "Vault{" +
-                "warPoints=" + warPoints +
-                ", VP=" + victoryPoints +
-                ", SHIELDS=" + shields +
-                ", $=" + coins +
-                ", builtCards=" + builtCards.stream()
-                .map(Card::report)
-                .collect(Collectors.joining()) +
-                '}';
+        var report = new StringBuilder();
+        report.append("\nVault\n");
+        if (!warPoints.isEmpty()) {
+            report.append("W: ").append(warPoints.stream()
+                    .map(WarPoint::getValue)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining()));
+        }
+        if (victoryPoints > 0) {
+            report.append("V: ").append(victoryPoints);
+        }
+        if (shields > 0) {
+            report.append("X: ").append(shields);
+        }
+        if (coins > 0) {
+            report.append("$").append(coins);
+        }
+        if (!builtCards.isEmpty()) {
+            report.append("\nBuilt cards: ")
+                    .append("(%s)\n".formatted(builtCards.size()))
+                    .append(builtCards.stream()
+                    .map(Card::report)
+                    .collect(Collectors.joining("\n")));
+        }
+        return report.toString();
     }
 }

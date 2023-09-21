@@ -6,6 +6,8 @@ import dpapukchiev.v2.resources.ResourceBundle;
 import java.util.Optional;
 
 public interface Effect {
+    void scheduleEffect(Player player);
+
     default EffectDirectionConstraint getDirectionConstraint() {
         return EffectDirectionConstraint.SELF;
     }
@@ -30,8 +32,5 @@ public interface Effect {
 
     EffectState markAsExhausted();
 
-    default String report() {
-        // TODO: implement
-        return "";
-    }
+    String report();
 }
