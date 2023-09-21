@@ -19,7 +19,7 @@ public class WarShieldsEffect extends BaseEffect {
     @Override
     public void scheduleEffect(Player player) {
         player.getEffectExecutionContext()
-                .addEffect(this, EffectTiming.ANYTIME);
+                .addEffect(this, EffectTiming.END_OF_TURN);
     }
 
     @Override

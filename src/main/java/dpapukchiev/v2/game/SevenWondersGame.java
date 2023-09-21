@@ -60,7 +60,7 @@ public class SevenWondersGame extends SchedulingElement {
         public void action(JSLEvent<TurnContext> event) {
             var turnContext = event.getMessage();
             var player = turnContext.getPlayer();
-            log.info("\n=>Start p({}) turn {}-{} {} {}",
+            log.info("\n=>Start p({}) turn {}-{} {} \n{}",
                     player.getName(),
                     turnContext.getAge(),
                     turnContext.getTurnCountAge(),
@@ -87,7 +87,7 @@ public class SevenWondersGame extends SchedulingElement {
                             .getEffectExecutionContext()
                             .executeEffectsEndOfAge(player)
                     );
-//            playersFactory.getPlayers().forEach(player -> player.executeEndOfAge(age));
+            playersFactory.getPlayers().forEach(player -> player.executeWar(age));
             playersFactory.getPlayers().forEach(player -> log.info(player.report()));
         }
     }

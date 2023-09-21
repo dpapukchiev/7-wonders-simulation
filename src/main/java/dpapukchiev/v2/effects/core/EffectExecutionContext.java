@@ -67,8 +67,26 @@ public class EffectExecutionContext {
     }
 
     public String report() {
-        // TODO: implement
-        return "$EffectExecutionContext$";
+        var report = new ArrayList<String>();
+        if (!effectsEndOfTurn.isEmpty()) {
+            report.add("EOT:%s/%s".formatted(countAvailable(effectsEndOfTurn), effectsEndOfTurn.size()));
+        }
+        if (!effectsEndOfAge.isEmpty()) {
+            report.add("EOA:%s/%s".formatted(countAvailable(effectsEndOfAge), effectsEndOfAge.size()));
+        }
+        if (!effectsEndOfGame.isEmpty()) {
+            report.add("EOG:%s/%s".formatted(countAvailable(effectsEndOfGame), effectsEndOfGame.size()));
+        }
+        if (!permanentEffects.isEmpty()) {
+            report.add("P:%s".formatted(permanentEffects.size()));
+        }
+        return "Efx(%s)".formatted(String.join(" ", report));
+    }
+
+    private int countAvailable(List<Effect> effects) {
+        return (int) effects.stream()
+                .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
+                .count();
     }
 
     private Optional<EffectReward> getEffectReward(Player player, List<Effect> effectsToEvaluate) {

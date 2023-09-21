@@ -19,7 +19,7 @@ public class VictoryPointEffect extends BaseEffect {
     @Override
     public void scheduleEffect(Player player) {
         player.getEffectExecutionContext()
-                .addEffect(this, EffectTiming.END_OF_AGE);
+                .addEffect(this, EffectTiming.END_OF_TURN);
     }
 
     @Override

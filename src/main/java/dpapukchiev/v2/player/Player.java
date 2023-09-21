@@ -76,6 +76,27 @@ public class Player {
         // apply the effect
     }
 
+    public void executeWar(int age) {
+        var warPoint = age != 1 ? (age != 2 ? WarPoint.FIVE : WarPoint.THREE) : WarPoint.ONE;
+        var myShields = getVault().getShields();
+        var leftShields = getLeftPlayer().getVault().getShields();
+        var rightShields = getRightPlayer().getVault().getShields();
+        log.info("Evaluating war for player {} has {} shields, left {} and right {}",
+                name, myShields, leftShields, rightShields);
+
+        if (myShields > leftShields) {
+            getVault().addWarPoint(warPoint);
+        } else if (myShields < leftShields) {
+            getVault().addWarPoint(WarPoint.MINUS_ONE);
+        }
+
+        if (myShields > rightShields) {
+            getVault().addWarPoint(warPoint);
+        } else if (myShields < rightShields) {
+            getVault().addWarPoint(WarPoint.MINUS_ONE);
+        }
+    }
+
     private void playCard(TurnContext turnContext, HandOfCards handOfCards, Card card) {
         log.info("\nPlayer {} plays from hand {} card {}", turnContext.getPlayer().getName(), handOfCards.getUuid(), card.report());
         handOfCards.getCards().remove(card);

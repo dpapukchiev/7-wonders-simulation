@@ -9,7 +9,7 @@ class SevenWondersGameTest {
     void play() {
         var simulation = new Simulation();
         var gameOptions = GameOptions.builder()
-                .numberOfPlayers(3)
+                .numberOfPlayers(7)
                 .agesToSchedule(1)
                 .build();
 

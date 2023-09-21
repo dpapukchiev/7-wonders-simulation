@@ -90,12 +90,6 @@ public class Vault {
         };
     }
 
-    public Set<String> getBuiltCardNames() {
-        return getBuiltCards().stream().map(Card::getName)
-                .map(CardName::getDisplayName)
-                .collect(Collectors.toSet());
-    }
-
     private long getWarPointOfType(WarPoint warPointType) {
         return getWarPoints()
                 .stream()
@@ -111,30 +105,27 @@ public class Vault {
     }
 
     public String report() {
-        var report = new StringBuilder();
-        report.append("\nVault\n");
-        if (!warPoints.isEmpty()) {
-            report.append("W: ").append(warPoints.stream()
-                    .map(WarPoint::getValue)
-                    .map(String::valueOf)
-                    .collect(Collectors.joining()));
+        var report = new ArrayList<String>();
+        if (coins > 0) {
+            report.add("$" + coins);
         }
         if (victoryPoints > 0) {
-            report.append("V: ").append(victoryPoints);
+            report.add("V:" + victoryPoints);
         }
         if (shields > 0) {
-            report.append("X: ").append(shields);
+            report.add("SH:" + shields);
         }
-        if (coins > 0) {
-            report.append("$").append(coins);
+        if (!warPoints.isEmpty()) {
+            report.add("W:" + warPoints.stream()
+                    .map(WarPoint::name)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(",")));
         }
         if (!builtCards.isEmpty()) {
-            report.append("\nBuilt cards: ")
-                    .append("(%s)\n".formatted(builtCards.size()))
-                    .append(builtCards.stream()
+            report.add("\nBuilt cards(%s): \n".formatted(builtCards.size()) + builtCards.stream()
                     .map(Card::report)
                     .collect(Collectors.joining("\n")));
         }
-        return report.toString();
+        return "\nVault\n%s".formatted(String.join(" ", report));
     }
 }
