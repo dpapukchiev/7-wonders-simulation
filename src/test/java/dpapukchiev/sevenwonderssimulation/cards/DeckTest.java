@@ -197,6 +197,7 @@ class DeckTest extends BasePlayerTest {
         assertListContains(result, 19, ComplexResourceCost.class);
     }
 
+    // AGE 3
     @Test
     void getAge3Group2() {
         var deck = new Deck(modelElement);
@@ -209,7 +210,7 @@ class DeckTest extends BasePlayerTest {
         assertListContains(result, 9, CardType.CIVIL);
         assertListContains(result, 6, CardType.COMMERCIAL);
 
-        assertCardEffect(result,9, VictoryPointEffect.class);
+        assertCardEffect(result, 9, VictoryPointEffect.class);
         assertCardEffect(result, 6, CoinRewardAndVictoryPointWithModifiersEffect.class);
         assertListContains(result, 6, 3);
         assertListContains(result, 3, 4);
@@ -218,6 +219,33 @@ class DeckTest extends BasePlayerTest {
         assertListContains(result, 1, 7);
 
         assertListContains(result, 15, ComplexResourceCost.class);
+    }
+
+    @Test
+    void getAge3Group3() {
+        var deck = new Deck(modelElement);
+
+        var result = deck.getAge3Group3();
+
+        assertEquals(25, result.size());
+        assertTrue(result.stream().allMatch(card -> card.getAge() == 3));
+
+        assertListContains(result, 10, CardType.MILITARY);
+        assertListContains(result, 3, CardType.COMMERCIAL);
+        assertListContains(result, 2, CardType.CIVIL);
+        assertListContains(result, 10, CardType.SCIENCE);
+
+        assertCardEffect(result, 10, WarShieldsEffect.class);
+        assertCardEffect(result, 10, ScienceSymbolsEffect.class);
+        assertCardEffect(result, 2, VictoryPointEffect.class);
+        assertCardEffect(result, 3, CoinRewardAndVictoryPointWithModifiersEffect.class);
+        assertListContains(result, 10, 3);
+        assertListContains(result, 3, 4);
+        assertListContains(result, 5, 5);
+        assertListContains(result, 2, 6);
+        assertListContains(result, 5, 7);
+
+        assertListContains(result, 25, ComplexResourceCost.class);
     }
 
     private void assertListContains(List<Card> result, int expected, CardType cardType) {

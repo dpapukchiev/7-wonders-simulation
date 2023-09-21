@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.cards;
 
 import dpapukchiev.sevenwonderssimulation.cards.templates.CivilCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cards.templates.CommercialCardTemplate;
+import dpapukchiev.sevenwonderssimulation.cards.templates.MilitaryCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cards.templates.ScienceCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cost.CoinCost;
 import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
@@ -36,6 +37,7 @@ import static dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionCon
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.COMMERCIAL_CARD;
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.MANUFACTURED_GOOD_CARD;
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.RAW_MATERIAL_CARD;
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.WONDER_STAGE;
 import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.GLASS;
 import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.SCRIPTS;
 import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.TEXTILE;
@@ -1034,15 +1036,6 @@ public class Deck {
     }
 
     // AGE 3
-    public List<Card> getAge3Group1() {
-        var cards = new ArrayList<Card>();
-        var scienceCardTemplate = ScienceCardTemplate.create(3);
-        var commercialFactory = CommercialCardTemplate.create(3);
-
-
-
-        return cards;
-    }
     public List<Card> getAge3Group2() {
         var cards = new ArrayList<Card>();
         var civilFactory = CivilCardTemplate.create(3);
@@ -1116,6 +1109,109 @@ public class Deck {
                         2,
                         2
                 )
+        ));
+
+        return cards;
+    }
+
+    public List<Card> getAge3Group3() {
+        var cards = new ArrayList<Card>();
+        var scienceCardTemplate = ScienceCardTemplate.create(3);
+        var commercialCardTemplate = CommercialCardTemplate.create(3);
+        var civilCardTemplate = CivilCardTemplate.create(3);
+        var militaryCardTemplate = MilitaryCardTemplate.create(3);
+
+        cards.addAll(militaryCardTemplate.createCards(
+                CardName.VERTEIDIGUNGSANLAGE,
+                List.of(3, 7),
+                List.of(STONE, METAL_ORE, METAL_ORE, METAL_ORE),
+                List.of(),
+                3
+        ));
+
+        cards.addAll(militaryCardTemplate.createCards(
+                CardName.ZIRKUS,
+                List.of(4, 5, 6),
+                List.of(STONE, STONE, STONE, METAL_ORE),
+                List.of(),
+                3
+        ));
+
+        cards.addAll(militaryCardTemplate.createCards(
+                CardName.WAFFENLAGER,
+                List.of(3, 4, 7),
+                List.of(METAL_ORE, WOOD, WOOD),
+                List.of(TEXTILE),
+                3
+        ));
+
+        cards.addAll(commercialCardTemplate.createCards(
+                CardName.ARENA,
+                List.of(3, 5, 7),
+                List.of(METAL_ORE, STONE, STONE),
+                List.of(),
+                CoinRewardAndVictoryPointWithModifiersEffect.of(
+                        SELF,
+                        WONDER_STAGE,
+                        3,
+                        1
+                )
+        ));
+
+        cards.addAll(scienceCardTemplate.createCards(
+                CardName.LOGE,
+                List.of(3, 6),
+                List.of(CLAY, CLAY),
+                List.of(TEXTILE, SCRIPTS),
+                COMPASS
+        ));
+
+        cards.addAll(militaryCardTemplate.createCards(
+                CardName.BELAGERUNGSMASCHINEN,
+                List.of(3, 5),
+                List.of(WOOD, CLAY, CLAY, CLAY),
+                List.of(),
+                3
+        ));
+
+        cards.addAll(scienceCardTemplate.createCards(
+                CardName.OBSERVATORIUM,
+                List.of(3, 7),
+                List.of(METAL_ORE, METAL_ORE),
+                List.of(GLASS, TEXTILE),
+                COMPASS
+        ));
+
+        cards.addAll(civilCardTemplate.createCards(
+                CardName.SENAT,
+                List.of(3, 5),
+                List.of(METAL_ORE, STONE, WOOD, WOOD),
+                List.of(),
+                6
+        ));
+
+        cards.addAll(scienceCardTemplate.createCards(
+                CardName.UNIVERSTAT,
+                List.of(3, 4),
+                List.of(WOOD, WOOD),
+                List.of(SCRIPTS, GLASS),
+                TABLET
+        ));
+
+        cards.addAll(scienceCardTemplate.createCards(
+                CardName.AKADEMIE,
+                List.of(3, 7),
+                List.of(STONE, STONE, STONE),
+                List.of(GLASS),
+                COMPASS
+        ));
+
+        cards.addAll(scienceCardTemplate.createCards(
+                CardName.STUDIENZIMMER,
+                List.of(3, 5),
+                List.of(WOOD),
+                List.of(SCRIPTS, TEXTILE),
+                COGWHEEL
         ));
 
         return cards;
