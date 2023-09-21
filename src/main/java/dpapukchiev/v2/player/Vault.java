@@ -1,7 +1,6 @@
 package dpapukchiev.v2.player;
 
 import dpapukchiev.v2.cards.Card;
-import dpapukchiev.v2.cards.CardName;
 import dpapukchiev.v2.cards.CardType;
 import dpapukchiev.v2.effects.core.EffectMultiplierType;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static dpapukchiev.v2.cards.CardType.MANUFACTURED_GOOD;
@@ -38,6 +36,10 @@ public class Vault {
     private List<Card>     builtCards     = new ArrayList<>();
     @Builder.Default
     private List<Card>     discardedCards = new ArrayList<>();
+
+    public void discardCard(Card card) {
+        discardedCards.add(card);
+    }
 
     public void addWarPoint(WarPoint warPoint) {
         warPoints.add(warPoint);
@@ -106,9 +108,7 @@ public class Vault {
 
     public String report() {
         var report = new ArrayList<String>();
-        if (coins > 0) {
-            report.add("$" + coins);
-        }
+        report.add("$" + coins);
         if (victoryPoints > 0) {
             report.add("V:" + victoryPoints);
         }

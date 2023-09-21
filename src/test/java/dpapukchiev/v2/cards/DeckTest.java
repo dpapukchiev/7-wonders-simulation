@@ -34,13 +34,12 @@ class DeckTest extends BasePlayerTest {
     @Test
     void getCardsByAge() {
         var deck = new Deck(modelElement);
-        int numberOfPlayers = 5;
+        int numberOfPlayers = 7;
         deck.resetDeck(numberOfPlayers);
         var maxCardsPerAge = numberOfPlayers * 7;
 
         var result = deck.getCardsByAge();
 
-        assertEquals(2, result.size());
         IntStream.rangeClosed(1, 3)
                 .forEach(age -> System.out.printf("\nAge %d %d/%d %f%%\n",
                         age,
@@ -55,6 +54,7 @@ class DeckTest extends BasePlayerTest {
         );
     }
 
+    // AGE 1
     @Test
     void getAge1Group1() {
         var deck = new Deck(modelElement);
@@ -123,6 +123,7 @@ class DeckTest extends BasePlayerTest {
         assertListContains(result, 12, ComplexResourceCost.class);
     }
 
+    // AGE 2
     @Test
     void getAge2Group1() {
         var deck = new Deck(modelElement);
@@ -168,6 +169,31 @@ class DeckTest extends BasePlayerTest {
 
         assertListContains(result, 4, FreeToPlayCost.class);
         assertListContains(result, 12, ComplexResourceCost.class);
+    }
+
+    @Test
+    void getAge2Group3() {
+        var deck = new Deck(modelElement);
+
+        var result = deck.getAge2Group3();
+
+        assertEquals(19, result.size());
+        assertTrue(result.stream().allMatch(card -> card.getAge() == 2));
+
+        assertListContains(result, 9, CardType.MILITARY);
+        assertListContains(result, 2, CardType.CIVIL);
+        assertListContains(result, 8, CardType.COMMERCIAL);
+
+        assertCardEffect(result, 2, VictoryPointEffect.class);
+        assertCardEffect(result, 8, ScienceSymbolsEffect.class);
+        assertCardEffect(result, 9, WarShieldsEffect.class);
+        assertListContains(result, 8, 3);
+        assertListContains(result, 2, 4);
+        assertListContains(result, 3, 5);
+        assertListContains(result, 3, 6);
+        assertListContains(result, 3, 7);
+
+        assertListContains(result, 19, ComplexResourceCost.class);
     }
 
     private void assertListContains(List<Card> result, int expected, CardType cardType) {

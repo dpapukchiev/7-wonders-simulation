@@ -66,6 +66,6 @@ public class ResourceEffect extends BaseEffect {
 
     @Override
     public String report() {
-        return Reporters.resourcesReport(rawMaterialList, manufacturedGoodList);
+        return "R(%s)".formatted(Reporters.resourcesReport(rawMaterialList, manufacturedGoodList));
     }
 }

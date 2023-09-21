@@ -12,7 +12,7 @@ import lombok.ToString;
 public class TurnContext {
     private Player      player;
     private HandOfCards handOfCards;
-    private int         simulationStep;
+    private double      simulationStep;
     private int         age;
     private int         turnCountAge;
 

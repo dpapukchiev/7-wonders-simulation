@@ -47,7 +47,7 @@ public class ResourceContext {
             var count = getRawMaterialCount(rawMaterial.getKey());
             var requiredCount = rawMaterial.getValue();
             var missingCount = requiredCount - count;
-            if (missingCount == 0) {
+            if (count >= requiredCount) {
                 continue;
             }
 
@@ -94,7 +94,7 @@ public class ResourceContext {
             var count = getManufacturedGoodCount(manufacturedGood.getKey());
             var requiredCount = manufacturedGood.getValue();
             var missingCount = requiredCount - count;
-            if (missingCount == 0) {
+            if (count >= requiredCount) {
                 continue;
             }
 

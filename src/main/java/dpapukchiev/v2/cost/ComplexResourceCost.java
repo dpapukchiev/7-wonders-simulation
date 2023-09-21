@@ -45,6 +45,6 @@ public class ComplexResourceCost implements Cost {
 
     @Override
     public String report() {
-        return Reporters.resourcesReport(rawMaterialList, manufacturedGoodsList);
+        return "C(%s)".formatted(Reporters.resourcesReport(rawMaterialList, manufacturedGoodsList));
     }
 }

@@ -44,6 +44,6 @@ public class CoinRewardWithModifiersEffect extends BaseRewardWithModifiersEffect
 
     @Override
     public String report() {
-        return "COIN(%s %s %s)".formatted(coinReward, directionConstraint, multiplierType);
+        return "COIN(%sx%sx%s)".formatted(coinReward, directionConstraint, multiplierType);
     }
 }

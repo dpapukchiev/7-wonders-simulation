@@ -10,7 +10,6 @@ import dpapukchiev.v2.effects.ResourceEffect;
 import dpapukchiev.v2.effects.ScienceSymbolsEffect;
 import dpapukchiev.v2.effects.VictoryPointEffect;
 import dpapukchiev.v2.effects.WarShieldsEffect;
-import dpapukchiev.v2.effects.core.EffectMultiplierType;
 import dpapukchiev.v2.resources.ManufacturedGood;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
@@ -74,6 +73,7 @@ public class Deck {
 
         allCards.addAll(getAge2Group1());
         allCards.addAll(getAge2Group2());
+        allCards.addAll(getAge2Group3());
 
         allCards = new ArrayList<>(allCards.stream()
                 .filter(card -> card.getRequiredPlayersCount() <= numberOfPlayers)
@@ -85,6 +85,7 @@ public class Deck {
                 .collect(Collectors.groupingBy(Card::getAge));
     }
 
+    // AGE 1
     public List<Card> getAge1Group1() {
         var rawMaterial = CardType.RAW_MATERIAL;
         var manufacturedGood = CardType.MANUFACTURED_GOOD;
@@ -527,6 +528,7 @@ public class Deck {
         );
     }
 
+    // AGE 2
     public List<Card> getAge2Group1() {
         var rawMaterial = CardType.RAW_MATERIAL;
         var manufacturedGood = CardType.MANUFACTURED_GOOD;
@@ -781,7 +783,7 @@ public class Deck {
                                 RAW_MATERIAL_CARD,
                                 1
                         ))
-                        .name(CardName.KARAWANSEREI)
+                        .name(CardName.WEINBERG)
                         .build(),
                 Card.builder()
                         .type(commercial)
@@ -793,7 +795,7 @@ public class Deck {
                                 RAW_MATERIAL_CARD,
                                 1
                         ))
-                        .name(CardName.KARAWANSEREI)
+                        .name(CardName.WEINBERG)
                         .build(),
 
                 Card.builder()
@@ -819,6 +821,208 @@ public class Deck {
                                 2
                         ))
                         .name(CardName.BASAR)
+                        .build()
+        );
+    }
+
+    public List<Card> getAge2Group3() {
+        var military = CardType.MILITARY;
+        var science = CardType.COMMERCIAL;
+        var age = 2;
+
+        return List.of(
+                // MILITARY
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.of(STONE, STONE, STONE))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.MAUERN)
+                        .build(),
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(7)
+                        .cost(ComplexResourceCost.of(STONE, STONE, STONE))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.MAUERN)
+                        .build(),
+
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(4)
+                        .cost(ComplexResourceCost.of(WOOD, METAL_ORE, METAL_ORE))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.TRAININGSGELANDE)
+                        .build(),
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(6)
+                        .cost(ComplexResourceCost.of(WOOD, METAL_ORE, METAL_ORE))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.TRAININGSGELANDE)
+                        .build(),
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(7)
+                        .cost(ComplexResourceCost.of(WOOD, METAL_ORE, METAL_ORE))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.TRAININGSGELANDE)
+                        .build(),
+
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.of(METAL_ORE, CLAY, WOOD))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.STALLE)
+                        .build(),
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(5)
+                        .cost(ComplexResourceCost.of(METAL_ORE, CLAY, WOOD))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.STALLE)
+                        .build(),
+
+                Card.builder()
+                        .type(science)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(METAL_ORE, METAL_ORE))
+                                .manufacturedGoodsList(List.of(GLASS))
+                                .build()
+                        )
+                        .effect(ScienceSymbolsEffect.of(COMPASS))
+                        .name(CardName.ARZNEIAUSGABE)
+                        .build(),
+                Card.builder()
+                        .type(science)
+                        .age(age)
+                        .requiredPlayersCount(4)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(METAL_ORE, METAL_ORE))
+                                .manufacturedGoodsList(List.of(GLASS))
+                                .build()
+                        )
+                        .effect(ScienceSymbolsEffect.of(COMPASS))
+                        .name(CardName.ARZNEIAUSGABE)
+                        .build(),
+
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.of(WOOD, WOOD, METAL_ORE))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.SCHIESSPLATZ)
+                        .build(),
+                Card.builder()
+                        .type(military)
+                        .age(age)
+                        .requiredPlayersCount(6)
+                        .cost(ComplexResourceCost.of(WOOD, WOOD, METAL_ORE))
+                        .effect(WarShieldsEffect.of(2))
+                        .name(CardName.SCHIESSPLATZ)
+                        .build(),
+
+                Card.builder()
+                        .type(science)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(CLAY, CLAY))
+                                .manufacturedGoodsList(List.of(SCRIPTS))
+                                .build()
+                        )
+                        .effect(ScienceSymbolsEffect.of(COGWHEEL))
+                        .name(CardName.LABORATORIUM)
+                        .build(),
+                Card.builder()
+                        .type(science)
+                        .age(age)
+                        .requiredPlayersCount(5)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(CLAY, CLAY))
+                                .manufacturedGoodsList(List.of(SCRIPTS))
+                                .build()
+                        )
+                        .effect(ScienceSymbolsEffect.of(COGWHEEL))
+                        .name(CardName.LABORATORIUM)
+                        .build(),
+
+                Card.builder()
+                        .type(CardType.CIVIL)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(CLAY, CLAY))
+                                .manufacturedGoodsList(List.of(TEXTILE))
+                                .build()
+                        )
+                        .effect(VictoryPointEffect.of(4))
+                        .name(CardName.GERICHT)
+                        .build(),
+                Card.builder()
+                        .type(CardType.CIVIL)
+                        .age(age)
+                        .requiredPlayersCount(5)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(CLAY, CLAY))
+                                .manufacturedGoodsList(List.of(TEXTILE))
+                                .build()
+                        )
+                        .effect(VictoryPointEffect.of(4))
+                        .name(CardName.GERICHT)
+                        .build(),
+
+                Card.builder()
+                        .type(science)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(STONE, STONE))
+                                .manufacturedGoodsList(List.of(TEXTILE))
+                                .build()
+                        )
+                        .effect(ScienceSymbolsEffect.of(TABLET))
+                        .name(CardName.BIBLIOTHEK)
+                        .build(),
+                Card.builder()
+                        .type(science)
+                        .age(age)
+                        .requiredPlayersCount(6)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(STONE, STONE))
+                                .manufacturedGoodsList(List.of(TEXTILE))
+                                .build()
+                        )
+                        .effect(ScienceSymbolsEffect.of(TABLET))
+                        .name(CardName.BIBLIOTHEK)
+                        .build(),
+
+                Card.builder()
+                        .type(science)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.of(WOOD, SCRIPTS))
+                        .effect(ScienceSymbolsEffect.of(TABLET))
+                        .name(CardName.SCHULE)
+                        .build(),
+                Card.builder()
+                        .type(science)
+                        .age(age)
+                        .requiredPlayersCount(7)
+                        .cost(ComplexResourceCost.of(WOOD, SCRIPTS))
+                        .effect(ScienceSymbolsEffect.of(TABLET))
+                        .name(CardName.SCHULE)
                         .build()
                 );
     }

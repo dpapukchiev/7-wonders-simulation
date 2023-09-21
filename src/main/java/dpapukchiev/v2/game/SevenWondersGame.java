@@ -2,8 +2,10 @@ package dpapukchiev.v2.game;
 
 import dpapukchiev.v2.cards.Deck;
 import dpapukchiev.v2.cards.HandOfCards;
+import dpapukchiev.v2.effects.core.EffectReward;
 import dpapukchiev.v2.player.Player;
 import jsl.modeling.elements.variable.RandomVariable;
+import jsl.simulation.EventAction;
 import jsl.simulation.EventActionIfc;
 import jsl.simulation.JSLEvent;
 import jsl.simulation.ModelElement;
@@ -60,7 +62,8 @@ public class SevenWondersGame extends SchedulingElement {
         public void action(JSLEvent<TurnContext> event) {
             var turnContext = event.getMessage();
             var player = turnContext.getPlayer();
-            log.info("\n=>Start p({}) turn {}-{} {} \n{}",
+            log.info("\n{}=>PlayerTurnStarted p({}) turn {}-{} {} \n{}",
+                    getTime(),
                     player.getName(),
                     turnContext.getAge(),
                     turnContext.getTurnCountAge(),
@@ -68,11 +71,31 @@ public class SevenWondersGame extends SchedulingElement {
                     player.report()
             );
             player.executeTurn(turnContext);
-            player.getEffectExecutionContext()
-                    .executeEffectsEndOfTurn(player)
-                    .ifPresent(player::applyEffectReward);
 
-            log.info("\n=>ExecutedPlayerTurn {}", player.report());
+            log.info("\n{}=>PlayerTurnEnded {}",getTime(), player.report());
+        }
+    }
+
+    class ExecuteEndOfTurn extends EventAction {
+        @Override
+        public void action(JSLEvent<Object> event) {
+            log.info("\n{}=>ExecuteEndOfTurn", getTime());
+            playersFactory.getPlayers().forEach(player -> {
+                log.info("\n{}=>ApplyingEndOfTurnEffects for player {}", getTime(), player.getName());
+                var efxReportBeforeStart = player.getEffectExecutionContext().report();
+                Optional<EffectReward> effectReward = player.getEffectExecutionContext()
+                        .executeEffectsEndOfTurn(player);
+                effectReward.ifPresent(player::applyEffectReward);
+
+                log.info(
+                        "{}=>AppliedEndOfTurnEffects \nreward: {} \nefx before: {}  \nnew state: {}",
+                        getTime(),
+                        effectReward.map(EffectReward::report).
+                                orElse("no rewards"),
+                        efxReportBeforeStart,
+                        player.report()
+                );
+            });
         }
     }
 
@@ -81,7 +104,7 @@ public class SevenWondersGame extends SchedulingElement {
         @Override
         public void action(JSLEvent<Integer> event) {
             var age = event.getMessage();
-            log.info("{} ExecuteAgeTransitionTurn {}", getTime(), age);
+            log.info("{}=>ExecuteAgeTransitionTurn {}", getTime(), age);
             playersFactory.getPlayers()
                     .forEach(player -> player
                             .getEffectExecutionContext()
@@ -117,32 +140,34 @@ public class SevenWondersGame extends SchedulingElement {
         var players = playersFactory.getPlayers();
 
         // Every age starts with 7 cards and ends with 1 discarded
-        for (int j = 0; j < 6; j++) {
-            for (int i = 0; i < players.size(); i++) {
-                var player = players.get(i);
-                var handToAssign = getHandOfCards(age, currentHandIndexPerPlayer, i, player);
+        int turnsPerAge = 6;
+        for (int turnInAge = 0; turnInAge < turnsPerAge; turnInAge++) {
+            for (int playerIndex = 0; playerIndex < players.size(); playerIndex++) {
+                var player = players.get(playerIndex);
+                var handToAssign = getHandOfCards(age, currentHandIndexPerPlayer, playerIndex, player);
 
-                int newOffset = ageStartingOffset + j;
-                lastOffset = newOffset;
                 var turnContext = TurnContext.builder()
-                        .turnCountAge(j + 1)
-                        .simulationStep(newOffset)
+                        .turnCountAge(turnInAge + 1)
+                        .simulationStep(lastOffset)
                         .age(age)
                         .player(player)
                         .handOfCards(handToAssign)
                         .build();
-                scheduleEvent(new ExecutePlayerTurn(), newOffset, i, turnContext);
+                scheduleEvent(new ExecutePlayerTurn(), lastOffset, playerIndex, turnContext);
+                lastOffset++;
             }
+            scheduleEvent(new ExecuteEndOfTurn(), lastOffset);
+            lastOffset++;
         }
         return lastOffset;
     }
 
-    private HandOfCards getHandOfCards(int age, HashMap<Player, Integer> currentIndexPerPlayer, int i, Player player) {
+    private HandOfCards getHandOfCards(int age, HashMap<Player, Integer> currentIndexPerPlayer, int playerIndex, Player player) {
         var playerCount = playersFactory.getPlayers().size();
         var handsPerAge = handsOfCardsPerAge.get(age);
 
         int currentHandIndex = Optional.ofNullable(currentIndexPerPlayer.get(player))
-                .orElse(i);
+                .orElse(playerIndex);
         var handToAssign = handsPerAge.get(currentHandIndex);
 
         // CARD ROTATION PER AGE

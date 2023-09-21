@@ -62,10 +62,7 @@ public class Player {
             return;
         }
 
-        var cardToDiscard = randomlySelect(handOfCards.getCards(), pickACard.getStreamNumber());
-        turnContext.getPlayer().getVault().addCoins(3);
-
-        playCard(turnContext, handOfCards, cardToDiscard);
+        discardCard(handOfCards);
 
         // get the cards that can be built for free (effect)
         // get the cards that can be built for free (previous card)
@@ -74,6 +71,22 @@ public class Player {
         // if a card can be built, build it
         // pay the cost
         // apply the effect
+    }
+
+    private void discardCard(HandOfCards handOfCards) {
+        var coinsBefore = getVault().getCoins();
+        var cardToDiscard = randomlySelect(handOfCards.getCards(), pickACard.getStreamNumber());
+        getVault().addCoins(3);
+
+        handOfCards.discard(cardToDiscard);
+        getVault().discardCard(cardToDiscard);
+
+        log.info("\nPlayer {} discards card {} and gets 3 coins. {} => {}",
+                name,
+                cardToDiscard.report(),
+                coinsBefore,
+                getVault().getCoins()
+        );
     }
 
     public void executeWar(int age) {
@@ -98,11 +111,12 @@ public class Player {
     }
 
     private void playCard(TurnContext turnContext, HandOfCards handOfCards, Card card) {
-        log.info("\nPlayer {} plays from hand {} card {}", turnContext.getPlayer().getName(), handOfCards.getUuid(), card.report());
-        handOfCards.getCards().remove(card);
-        turnContext.getPlayer().getVault().getBuiltCards().add(card);
+        log.info("\nPlayer {} plays from hand {} card {}", getName(), handOfCards.getUuid(), card.report());
 
-        card.getEffect().scheduleEffect(turnContext.getPlayer());
+        handOfCards.remove(card);
+        getVault().getBuiltCards().add(card);
+
+        card.getEffect().scheduleEffect(this);
 
         var cost = card.getCost().generateCostReport(turnContext);
         if (cost.getToPayTotal() == 0) {
@@ -112,12 +126,14 @@ public class Player {
         getRightPlayer().getVault().addCoins(cost.getToPayRight());
         getVault().removeCoins(cost.getToPayTotal());
         log.info(
-                "Player {} pays for card {} {} to bank {} to left, {} to right, {} total",
-                turnContext.getPlayer().getName(),
+                "Player {} pays for card {} {} to bank {} to L({}), {} to R({}), {} total",
+                getName(),
                 card.getName(),
                 cost.getToPayBank(),
                 cost.getToPayLeft(),
+                getLeftPlayer().getName(),
                 cost.getToPayRight(),
+                getRightPlayer().getName(),
                 cost.getToPayTotal()
         );
     }

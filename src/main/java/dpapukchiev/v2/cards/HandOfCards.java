@@ -23,6 +23,7 @@ public class HandOfCards {
 
     public void discard(Card card) {
         deck.discard(card);
+        cards.remove(card);
     }
 
     public List<Pair<Card, CostReport>> getCostReportsPerCard(TurnContext turnContext) {
@@ -54,5 +55,9 @@ public class HandOfCards {
         return "\nHandOfCards(%s): %s \n%s".formatted(cards.size(), uuid, cards.stream()
                 .map(Card::report)
                 .collect(Collectors.joining("\n")));
+    }
+
+    public void remove(Card card) {
+        cards.remove(card);
     }
 }
