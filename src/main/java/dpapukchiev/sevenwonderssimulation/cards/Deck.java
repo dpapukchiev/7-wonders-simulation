@@ -20,6 +20,7 @@ import jsl.simulation.ModelElement;
 import jsl.utilities.random.rvariable.NormalRV;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COMPASS
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.TABLET;
 import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
+@Getter
 @Builder
 @AllArgsConstructor
 public class Deck {

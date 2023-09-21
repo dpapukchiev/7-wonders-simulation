@@ -11,6 +11,7 @@ import jsl.simulation.JSLEvent;
 import jsl.simulation.ModelElement;
 import jsl.simulation.SchedulingElement;
 import jsl.utilities.random.rvariable.NormalRV;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
@@ -21,11 +22,12 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Log4j2
+@Getter
 public class SevenWondersGame extends SchedulingElement {
-    private Deck                            deck;
-    private GameOptions                     gameOptions;
-    private PlayersFactory                  playersFactory;
-    private Map<Integer, List<HandOfCards>> handsOfCardsPerAge = new HashMap<>();
+    private final Deck                            deck;
+    private final GameOptions                     gameOptions;
+    private final PlayersFactory                  playersFactory;
+    private final Map<Integer, List<HandOfCards>> handsOfCardsPerAge = new HashMap<>();
 
     public SevenWondersGame(
             ModelElement parent,
