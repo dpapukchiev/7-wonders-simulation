@@ -8,10 +8,6 @@ import java.util.Optional;
 public interface Effect {
     void scheduleEffect(Player player);
 
-    default EffectDirectionConstraint getDirectionConstraint() {
-        return EffectDirectionConstraint.SELF;
-    }
-
     default Optional<EffectReward> getReward(Player player) {
         return Optional.empty();
     }

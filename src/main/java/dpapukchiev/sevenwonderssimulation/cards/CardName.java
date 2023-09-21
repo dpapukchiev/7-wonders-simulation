@@ -72,15 +72,15 @@ public enum CardName {
     AKADEMIE("Akademie"),
     STUDIENZIMMER("Studienzimmer"),
     GILDE_DER_ARBEITER("Gilde der Arbeiter"),
-    GILDER_DER_KUNSTLER("Gilde der Kunstler"),
+    GILDE_DER_KUNSTLER("Gilde der Kunstler"),
     GILDE_DER_HANDELER("Gilde der Handler"),
     GILDE_DER_PHILOSOPHEN("Gilde der Philosophen"),
-    GILDER_DER_SPIONE("Gilde der Spione"),
+    GILDE_DER_SPIONE("Gilde der Spione"),
     GILDE_DER_STRATEGEN("Gilde der Strategen"),
-    GILDER_DER_REEDER("Gilde der Reeder"),
-    GILDER_DER_WISSENSCHAFTLER("Gilde der Wissenschaftler"),
-    GILDER_DER_BEAMTEN("Gilde der Beamten"),
-    GILDER_DER_BAUMEISTER("Gilde der Baumeister");
+    GILDE_DER_REEDER("Gilde der Reeder"),
+    GILDE_DER_WISSENSCHAFTLER("Gilde der Wissenschaftler"),
+    GILDE_DER_BEAMTEN("Gilde der Beamten"),
+    GILDE_DER_BAUMEISTER("Gilde der Baumeister");
 
     private String displayName;
 }

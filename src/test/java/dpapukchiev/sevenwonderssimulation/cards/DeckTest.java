@@ -7,15 +7,19 @@ import dpapukchiev.sevenwonderssimulation.cost.Cost;
 import dpapukchiev.sevenwonderssimulation.cost.FreeToPlayCost;
 import dpapukchiev.sevenwonderssimulation.effects.CoinRewardAndVictoryPointWithModifiersEffect;
 import dpapukchiev.sevenwonderssimulation.effects.CoinRewardWithModifiersEffect;
+import dpapukchiev.sevenwonderssimulation.effects.GuildVictoryPointsForCardsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.ResourceEffect;
 import dpapukchiev.sevenwonderssimulation.effects.ScienceSymbolsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.VictoryPointEffect;
+import dpapukchiev.sevenwonderssimulation.effects.VictoryPointWithModifiersEffect;
 import dpapukchiev.sevenwonderssimulation.effects.WarShieldsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import jsl.simulation.ModelElement;
 import jsl.simulation.Simulation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +36,10 @@ class DeckTest extends BasePlayerTest {
         modelElement = new Simulation().getModel();
     }
 
-    @Test
-    void getCardsByAge() {
+    @ParameterizedTest
+    @ValueSource(ints = {3, 4, 5, 6, 7})
+    void getCardsByAge(int numberOfPlayers) {
         var deck = new Deck(modelElement);
-        int numberOfPlayers = 7;
         deck.resetDeck(numberOfPlayers);
         var maxCardsPerAge = numberOfPlayers * 7;
 
@@ -53,6 +57,9 @@ class DeckTest extends BasePlayerTest {
                 3 * maxCardsPerAge,
                 result.values().stream().mapToInt(List::size).sum() * 100.0 / (3 * maxCardsPerAge)
         );
+
+        assertEquals(3, result.size());
+        assertTrue(result.values().stream().allMatch(list -> list.size() == maxCardsPerAge));
     }
 
     // AGE 1
@@ -198,6 +205,40 @@ class DeckTest extends BasePlayerTest {
     }
 
     // AGE 3
+    @Test
+    void guildCards() {
+        var deck = new Deck(modelElement);
+
+        var result = deck.getGuildCards();
+
+        assertEquals(10, result.size());
+        assertTrue(result.stream().allMatch(card -> card.getAge() == 3));
+
+        assertListContains(result, 10, CardType.GUILD);
+
+        assertCardEffect(result, 8, VictoryPointWithModifiersEffect.class);
+        assertCardEffect(result, 1, GuildVictoryPointsForCardsEffect.class);
+        assertCardEffect(result, 1, ScienceSymbolsEffect.class);
+        assertListContains(result, 10, 3);
+
+        assertListContains(result, 10, ComplexResourceCost.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7})
+    void pickRandomGuildCards(int playerCount) {
+        var deck = new Deck(modelElement);
+
+        var result = deck.getRandomSetOfGuildCards(playerCount);
+        var expectedCount = playerCount + 2;
+
+        assertEquals(expectedCount, result.size());
+        assertTrue(result.stream().allMatch(card -> card.getAge() == 3));
+
+        assertListContains(result, expectedCount, CardType.GUILD);
+        assertListContains(result, expectedCount, ComplexResourceCost.class);
+    }
+
     @Test
     void getAge3Group2() {
         var deck = new Deck(modelElement);

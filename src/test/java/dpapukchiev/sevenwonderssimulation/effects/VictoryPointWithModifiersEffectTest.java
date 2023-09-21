@@ -5,6 +5,7 @@ import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
+import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.player.WarPoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class VictoryPointWithModifiersEffectTest extends BasePlayerTest {
             EffectMultiplierType effectMultiplierType,
             long expectedPoints
     ) {
-        effect = new VictoryPointWithModifiersEffect(
+        effect = VictoryPointWithModifiersEffect.of(
                 directionConstraint,
                 effectMultiplierType,
                 2
@@ -79,7 +80,7 @@ class VictoryPointWithModifiersEffectTest extends BasePlayerTest {
 
     @Test
     void getReward() {
-        effect = new VictoryPointWithModifiersEffect(
+        effect = VictoryPointWithModifiersEffect.of(
                 EffectDirectionConstraint.LEFT,
                 EffectMultiplierType.WAR_WIN,
                 2

@@ -84,6 +84,7 @@ public class Vault {
             case WAR_WIN_3 -> getWarPointOfType(WarPoint.THREE);
             case WAR_WIN_5 -> getWarPointOfType(WarPoint.FIVE);
             case WAR_WIN -> getWarPointOfType(null);
+            case GUILD_CARD -> getCardCount(CardType.GUILD);
             case WONDER_STAGE -> {
                 yield 0;
             } // TODO: implement

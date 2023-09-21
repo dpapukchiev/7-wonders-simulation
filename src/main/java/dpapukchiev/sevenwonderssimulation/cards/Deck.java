@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.cards;
 
 import dpapukchiev.sevenwonderssimulation.cards.templates.CivilCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cards.templates.CommercialCardTemplate;
+import dpapukchiev.sevenwonderssimulation.cards.templates.GuildCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cards.templates.MilitaryCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cards.templates.ScienceCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cost.CoinCost;
@@ -34,9 +35,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint.SELF;
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.CIVIL_CARD;
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.COMMERCIAL_CARD;
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.MANUFACTURED_GOOD_CARD;
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.MILITARY_CARD;
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.RAW_MATERIAL_CARD;
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.SCIENCE_CARD;
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.WAR_LOSS;
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.WONDER_STAGE;
 import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.GLASS;
 import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.SCRIPTS;
@@ -83,9 +88,24 @@ public class Deck {
         allCards.addAll(getAge2Group2());
         allCards.addAll(getAge2Group3());
 
+        allCards.addAll(getRandomSetOfGuildCards(numberOfPlayers));
+        allCards.addAll(getAge3Group2());
+        allCards.addAll(getAge3Group3());
+
         allCards = new ArrayList<>(allCards.stream()
                 .filter(card -> card.getRequiredPlayersCount() <= numberOfPlayers)
                 .toList());
+    }
+
+    public List<Card> getRandomSetOfGuildCards(int playerCount) {
+        var guildCards = getGuildCards();
+        var cardsToReturn = new ArrayList<Card>();
+        for (int i = 0; i < playerCount + 2; i++) {
+            var selected = randomlySelect(guildCards, cardDistribution.getRandomNumberStream());
+            cardsToReturn.add(selected);
+            guildCards.remove(selected);
+        }
+        return cardsToReturn;
     }
 
     public Map<Integer, List<Card>> getCardsByAge() {
@@ -1036,6 +1056,88 @@ public class Deck {
     }
 
     // AGE 3
+    public List<Card> getGuildCards() {
+        var cards = new ArrayList<Card>();
+        var guildCardTemplate = GuildCardTemplate.create();
+
+        cards.add(guildCardTemplate.createCardsForTypeAndDirection(
+                CardName.GILDE_DER_ARBEITER,
+                List.of(METAL_ORE, METAL_ORE, CLAY, STONE, WOOD),
+                List.of(),
+                RAW_MATERIAL_CARD,
+                EffectDirectionConstraint.BOTH,
+                2
+        ));
+
+        cards.add(guildCardTemplate.createCardsForTypeAndDirection(
+                CardName.GILDE_DER_KUNSTLER,
+                List.of(METAL_ORE, METAL_ORE, STONE, STONE),
+                List.of(),
+                MANUFACTURED_GOOD_CARD,
+                EffectDirectionConstraint.BOTH,
+                1
+        ));
+
+        cards.add(guildCardTemplate.createCardsForTypeAndDirection(
+                CardName.GILDE_DER_HANDELER,
+                List.of(),
+                ManufacturedGood.all(),
+                COMMERCIAL_CARD,
+                EffectDirectionConstraint.BOTH,
+                1
+        ));
+
+        cards.add(guildCardTemplate.createCardsForTypeAndDirection(
+                CardName.GILDE_DER_PHILOSOPHEN,
+                List.of(CLAY, CLAY, CLAY),
+                List.of(TEXTILE, SCRIPTS),
+                SCIENCE_CARD,
+                EffectDirectionConstraint.BOTH,
+                1
+        ));
+
+        cards.add(guildCardTemplate.createCardsForTypeAndDirection(
+                CardName.GILDE_DER_SPIONE,
+                List.of(CLAY, CLAY, CLAY),
+                List.of(GLASS),
+                MILITARY_CARD,
+                EffectDirectionConstraint.BOTH,
+                1
+        ));
+
+        cards.add(guildCardTemplate.createCardsForTypeAndDirection(
+                CardName.GILDE_DER_STRATEGEN,
+                List.of(METAL_ORE, METAL_ORE, STONE),
+                List.of(TEXTILE),
+                WAR_LOSS,
+                EffectDirectionConstraint.BOTH,
+                1
+        ));
+
+        cards.add(guildCardTemplate.createGildeDerReederCard());
+        cards.add(guildCardTemplate.createGildeDerWissenschaftlerCard());
+
+        cards.add(guildCardTemplate.createCardsForTypeAndDirection(
+                CardName.GILDE_DER_BEAMTEN,
+                List.of(WOOD, WOOD, WOOD, STONE),
+                List.of(TEXTILE),
+                CIVIL_CARD,
+                EffectDirectionConstraint.BOTH,
+                1
+        ));
+
+        cards.add(guildCardTemplate.createCardsForTypeAndDirection(
+                CardName.GILDE_DER_BAUMEISTER,
+                List.of(STONE, STONE, CLAY, CLAY),
+                List.of(GLASS),
+                WONDER_STAGE,
+                EffectDirectionConstraint.ALL,
+                1
+        ));
+
+        return cards;
+    }
+
     public List<Card> getAge3Group2() {
         var cards = new ArrayList<Card>();
         var civilFactory = CivilCardTemplate.create(3);

@@ -5,19 +5,24 @@ import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceBundle;
 import dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ScienceSymbolsEffect extends BaseEffect {
 
+    private       ScienceSymbol       chosenSymbol;
     private final List<ScienceSymbol> scienceSymbols;
 
     public static ScienceSymbolsEffect of(ScienceSymbol... scienceSymbols) {
         return new ScienceSymbolsEffect(List.of(scienceSymbols));
+    }
+
+    public static ScienceSymbolsEffect of(List<ScienceSymbol> scienceSymbols) {
+        return new ScienceSymbolsEffect(scienceSymbols);
     }
 
     @Override
