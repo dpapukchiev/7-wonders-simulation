@@ -5,6 +5,7 @@ import dpapukchiev.sevenwonderssimulation.cost.CoinCost;
 import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
 import dpapukchiev.sevenwonderssimulation.cost.Cost;
 import dpapukchiev.sevenwonderssimulation.cost.FreeToPlayCost;
+import dpapukchiev.sevenwonderssimulation.effects.CoinRewardAndVictoryPointWithModifiersEffect;
 import dpapukchiev.sevenwonderssimulation.effects.CoinRewardWithModifiersEffect;
 import dpapukchiev.sevenwonderssimulation.effects.ResourceEffect;
 import dpapukchiev.sevenwonderssimulation.effects.ScienceSymbolsEffect;
@@ -194,6 +195,29 @@ class DeckTest extends BasePlayerTest {
         assertListContains(result, 3, 7);
 
         assertListContains(result, 19, ComplexResourceCost.class);
+    }
+
+    @Test
+    void getAge3Group2() {
+        var deck = new Deck(modelElement);
+
+        var result = deck.getAge3Group2();
+
+        assertEquals(15, result.size());
+        assertTrue(result.stream().allMatch(card -> card.getAge() == 3));
+
+        assertListContains(result, 9, CardType.CIVIL);
+        assertListContains(result, 6, CardType.COMMERCIAL);
+
+        assertCardEffect(result,9, VictoryPointEffect.class);
+        assertCardEffect(result, 6, CoinRewardAndVictoryPointWithModifiersEffect.class);
+        assertListContains(result, 6, 3);
+        assertListContains(result, 3, 4);
+        assertListContains(result, 1, 5);
+        assertListContains(result, 4, 6);
+        assertListContains(result, 1, 7);
+
+        assertListContains(result, 15, ComplexResourceCost.class);
     }
 
     private void assertListContains(List<Card> result, int expected, CardType cardType) {

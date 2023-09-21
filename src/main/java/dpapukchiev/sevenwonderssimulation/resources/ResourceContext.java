@@ -1,11 +1,11 @@
 package dpapukchiev.sevenwonderssimulation.resources;
 
+import dpapukchiev.sevenwonderssimulation.cost.CostReport;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
+import dpapukchiev.sevenwonderssimulation.effects.core.EffectState;
 import dpapukchiev.sevenwonderssimulation.effects.core.PreferentialTradingContract;
 import dpapukchiev.sevenwonderssimulation.player.Player;
-import dpapukchiev.sevenwonderssimulation.cost.CostReport;
-import dpapukchiev.sevenwonderssimulation.effects.core.EffectState;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -37,6 +37,41 @@ public class ResourceContext {
                     .build();
         }
         return costReport;
+    }
+
+    public double getRawMaterialCount(RawMaterial rawMaterial) {
+        return countMaterial(rawMaterial, getPermanentEffectsProvidingResources(), false);
+    }
+
+    public double getRawMaterialCountWildcard(RawMaterial rawMaterial) {
+        return countMaterial(rawMaterial, getPermanentEffectsProvidingResources(), true);
+    }
+
+    public double getManufacturedGoodCount(ManufacturedGood manufacturedGood) {
+        return countMaterial(manufacturedGood, getPermanentEffectsProvidingResources(), false);
+    }
+
+    public double getManufacturedGoodCountWildcard(ManufacturedGood manufacturedGood) {
+        return countMaterial(manufacturedGood, getPermanentEffectsProvidingResources(), true);
+    }
+
+    public List<ResourceBundle> getWildcardRawMaterialResourceBundles() {
+        return getResourceBundles()
+                .stream()
+                .filter(ResourceBundle::isWildcardRawMaterial)
+                .toList();
+    }
+
+    public List<ResourceBundle> getPermanentWildcardManufacturedGoodResourceBundles() {
+        return getResourceBundles()
+                .stream()
+                .filter(ResourceBundle::isWildcardManufacturedGood)
+                .toList();
+    }
+
+    public String report() {
+        // TODO: implement
+        return "";
     }
 
     private CostReport createReportForRawMaterials(List<RawMaterial> rawMaterials, ArrayList<ResourceBundle> usedEffects, CostReport costReport) {
@@ -168,36 +203,6 @@ public class ResourceContext {
         return missingCount;
     }
 
-    public double getRawMaterialCount(RawMaterial rawMaterial) {
-        return countMaterial(rawMaterial, getPermanentEffectsProvidingResources(), false);
-    }
-
-    public double getManufacturedGoodCount(ManufacturedGood manufacturedGood) {
-        return countMaterial(manufacturedGood, getPermanentEffectsProvidingResources(), false);
-    }
-
-    public double getManufacturedGoodCountWildcard(ManufacturedGood manufacturedGood) {
-        return countMaterial(manufacturedGood, getPermanentEffectsProvidingResources(), true);
-    }
-
-    public double getRawMaterialCountWildcard(RawMaterial rawMaterial) {
-        return countMaterial(rawMaterial, getPermanentEffectsProvidingResources(), true);
-    }
-
-    public List<ResourceBundle> getWildcardRawMaterialResourceBundles() {
-        return getResourceBundles()
-                .stream()
-                .filter(ResourceBundle::isWildcardRawMaterial)
-                .toList();
-    }
-
-    public List<ResourceBundle> getPermanentWildcardManufacturedGoodResourceBundles() {
-        return getResourceBundles()
-                .stream()
-                .filter(ResourceBundle::isWildcardManufacturedGood)
-                .toList();
-    }
-
     private List<ResourceBundle> getResourceBundles() {
         return player.getEffectExecutionContext().getPermanentEffects()
                 .stream()
@@ -207,11 +212,6 @@ public class ResourceContext {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
-    }
-
-    public String report() {
-        // TODO: implement
-        return "";
     }
 
     private List<Effect> getPermanentEffectsProvidingResources() {

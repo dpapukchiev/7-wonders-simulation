@@ -24,11 +24,11 @@ public class Card {
     @Builder.Default
     protected List<String> freeUpgrades = new ArrayList<>();
     protected int          age;
-    protected int      requiredPlayersCount;
-    protected Cost     cost;
-    protected CardType type;
+    protected int          requiredPlayersCount;
+    protected Cost         cost;
+    protected CardType     type;
     @ToString.Include
-    protected Effect   effect;
+    protected Effect       effect;
 
     public String report() {
         return "%s %s %s %s".formatted(type.name(), name, cost.report(), effect.report());

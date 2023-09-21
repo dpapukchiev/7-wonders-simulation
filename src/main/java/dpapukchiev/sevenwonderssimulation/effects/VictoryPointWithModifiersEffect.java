@@ -12,14 +12,25 @@ import java.util.Optional;
 public class VictoryPointWithModifiersEffect extends BaseRewardWithModifiersEffect {
     private final double victoryPoints;
 
-    public VictoryPointWithModifiersEffect(EffectDirectionConstraint directionConstraint, EffectMultiplierType multiplierType, double victoryPoints) {
+    public VictoryPointWithModifiersEffect(
+            EffectDirectionConstraint directionConstraint,
+            EffectMultiplierType multiplierType,
+            double victoryPoints
+    ) {
         super(directionConstraint, multiplierType);
         this.victoryPoints = victoryPoints;
     }
 
+    public static VictoryPointWithModifiersEffect of(
+            EffectDirectionConstraint directionConstraint,
+            EffectMultiplierType multiplierType,
+            double victoryPoints
+    ) {
+        return new VictoryPointWithModifiersEffect(directionConstraint, multiplierType, victoryPoints);
+    }
+
     @Override
     protected Optional<EffectReward> buildEffectReward(double reward) {
-        markAsExhausted();
         return Optional.of(EffectReward.builder()
                 .victoryPointsReward(reward)
                 .build());

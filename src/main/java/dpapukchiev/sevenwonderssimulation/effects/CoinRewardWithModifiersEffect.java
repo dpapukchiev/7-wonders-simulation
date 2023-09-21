@@ -12,18 +12,25 @@ import java.util.Optional;
 public class CoinRewardWithModifiersEffect extends BaseRewardWithModifiersEffect {
     private final double coinReward;
 
-    public CoinRewardWithModifiersEffect(EffectDirectionConstraint directionConstraint, EffectMultiplierType multiplierType, double coinReward) {
+    public CoinRewardWithModifiersEffect(
+            EffectDirectionConstraint directionConstraint,
+            EffectMultiplierType multiplierType,
+            double coinReward
+    ) {
         super(directionConstraint, multiplierType);
         this.coinReward = coinReward;
     }
 
-    public static CoinRewardWithModifiersEffect of(EffectDirectionConstraint directionConstraint, EffectMultiplierType multiplierType, double coinReward) {
+    public static CoinRewardWithModifiersEffect of(
+            EffectDirectionConstraint directionConstraint,
+            EffectMultiplierType multiplierType,
+            double coinReward
+    ) {
         return new CoinRewardWithModifiersEffect(directionConstraint, multiplierType, coinReward);
     }
 
     @Override
     protected Optional<EffectReward> buildEffectReward(double reward) {
-        markAsExhausted();
         return Optional.of(
                 EffectReward.builder()
                         .coinReward(reward)

@@ -52,7 +52,14 @@ public enum CardName {
     ZIEGELEI("Ziegelei"),
     BAUMSCHULE("Baumschule"),
     MINE("Mine"),
-    ALTAR("Altar");
+    ALTAR("Altar"),
+    PANTHENON("Pantheon"),
+    GARTEN("Garten"),
+    RATHAUS("Rathaus"),
+    PALAST("Palast"),
+    HAFEN("Hafen"),
+    LEUCHTTURM("Leuchtturm"),
+    HANDELSKAMMER("Handelskammer");
 
     private String displayName;
 }

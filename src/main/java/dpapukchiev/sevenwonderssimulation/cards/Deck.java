@@ -1,20 +1,23 @@
 package dpapukchiev.sevenwonderssimulation.cards;
 
+import dpapukchiev.sevenwonderssimulation.cards.templates.CivilCardTemplate;
+import dpapukchiev.sevenwonderssimulation.cards.templates.CommercialCardTemplate;
+import dpapukchiev.sevenwonderssimulation.cost.CoinCost;
+import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
+import dpapukchiev.sevenwonderssimulation.cost.FreeToPlayCost;
+import dpapukchiev.sevenwonderssimulation.effects.CoinRewardAndVictoryPointWithModifiersEffect;
+import dpapukchiev.sevenwonderssimulation.effects.CoinRewardEffect;
 import dpapukchiev.sevenwonderssimulation.effects.CoinRewardWithModifiersEffect;
+import dpapukchiev.sevenwonderssimulation.effects.PreferentialTradingEffect;
 import dpapukchiev.sevenwonderssimulation.effects.ResourceEffect;
 import dpapukchiev.sevenwonderssimulation.effects.ScienceSymbolsEffect;
+import dpapukchiev.sevenwonderssimulation.effects.VictoryPointEffect;
 import dpapukchiev.sevenwonderssimulation.effects.WarShieldsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
 import dpapukchiev.sevenwonderssimulation.effects.core.PreferentialTradingContract;
 import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
 import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
-import dpapukchiev.sevenwonderssimulation.cost.CoinCost;
-import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
-import dpapukchiev.sevenwonderssimulation.cost.FreeToPlayCost;
-import dpapukchiev.sevenwonderssimulation.effects.CoinRewardEffect;
-import dpapukchiev.sevenwonderssimulation.effects.PreferentialTradingEffect;
-import dpapukchiev.sevenwonderssimulation.effects.VictoryPointEffect;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
 import jsl.utilities.random.rvariable.NormalRV;
@@ -28,6 +31,17 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint.SELF;
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.COMMERCIAL_CARD;
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.MANUFACTURED_GOOD_CARD;
+import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.RAW_MATERIAL_CARD;
+import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.GLASS;
+import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.SCRIPTS;
+import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.TEXTILE;
+import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.CLAY;
+import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.METAL_ORE;
+import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.STONE;
+import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.WOOD;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COGWHEEL;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COMPASS;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.TABLET;
@@ -123,7 +137,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(FreeToPlayCost.newInstance())
-                        .effect(ResourceEffect.of(RawMaterial.CLAY))
+                        .effect(ResourceEffect.of(CLAY))
                         .name(CardName.ZIEGELEI)
                         .build(),
                 Card.builder()
@@ -131,7 +145,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(5)
                         .cost(FreeToPlayCost.newInstance())
-                        .effect(ResourceEffect.of(RawMaterial.CLAY))
+                        .effect(ResourceEffect.of(CLAY))
                         .name(CardName.ZIEGELEI)
                         .build(),
 
@@ -157,7 +171,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(6)
                         .cost(CoinCost.of(1))
-                        .effect(ResourceEffect.of(RawMaterial.WOOD, RawMaterial.CLAY))
+                        .effect(ResourceEffect.of(RawMaterial.WOOD, CLAY))
                         .name(CardName.BAUMSCHULE)
                         .build(),
                 Card.builder()
@@ -165,7 +179,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(4)
                         .cost(CoinCost.of(1))
-                        .effect(ResourceEffect.of(RawMaterial.STONE, RawMaterial.CLAY))
+                        .effect(ResourceEffect.of(RawMaterial.STONE, CLAY))
                         .name(CardName.AUSGRABUNGSTTATTE)
                         .build(),
                 Card.builder()
@@ -173,7 +187,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(CoinCost.of(1))
-                        .effect(ResourceEffect.of(RawMaterial.METAL_ORE, RawMaterial.CLAY))
+                        .effect(ResourceEffect.of(RawMaterial.METAL_ORE, CLAY))
                         .name(CardName.TONGRUBE)
                         .build(),
                 Card.builder()
@@ -223,7 +237,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(FreeToPlayCost.newInstance())
-                        .effect(ResourceEffect.of(ManufacturedGood.GLASS))
+                        .effect(ResourceEffect.of(GLASS))
                         .name(CardName.GLASHUTTE)
                         .build(),
                 Card.builder()
@@ -231,7 +245,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(6)
                         .cost(FreeToPlayCost.newInstance())
-                        .effect(ResourceEffect.of(ManufacturedGood.GLASS))
+                        .effect(ResourceEffect.of(GLASS))
                         .name(CardName.GLASHUTTE)
                         .build(),
                 Card.builder()
@@ -452,7 +466,7 @@ public class Deck {
                         .type(military)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(ComplexResourceCost.of(RawMaterial.CLAY))
+                        .cost(ComplexResourceCost.of(CLAY))
                         .effect(WarShieldsEffect.of(1))
                         .name(CardName.WACHTURM)
                         .build(),
@@ -460,7 +474,7 @@ public class Deck {
                         .type(military)
                         .age(age)
                         .requiredPlayersCount(4)
-                        .cost(ComplexResourceCost.of(RawMaterial.CLAY))
+                        .cost(ComplexResourceCost.of(CLAY))
                         .effect(WarShieldsEffect.of(1))
                         .name(CardName.WACHTURM)
                         .build(),
@@ -487,7 +501,7 @@ public class Deck {
                         .type(science)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(ComplexResourceCost.of(ManufacturedGood.GLASS))
+                        .cost(ComplexResourceCost.of(GLASS))
                         .effect(ScienceSymbolsEffect.of(COGWHEEL))
                         .name(CardName.WERKSTAT)
                         .build(),
@@ -495,7 +509,7 @@ public class Deck {
                         .type(science)
                         .age(age)
                         .requiredPlayersCount(7)
-                        .cost(ComplexResourceCost.of(ManufacturedGood.GLASS))
+                        .cost(ComplexResourceCost.of(GLASS))
                         .effect(ScienceSymbolsEffect.of(COGWHEEL))
                         .name(CardName.WERKSTAT)
                         .build(),
@@ -566,7 +580,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(CoinCost.of(1))
-                        .effect(ResourceEffect.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                        .effect(ResourceEffect.of(CLAY, CLAY))
                         .name(CardName.ZIEGELBRENNERI)
                         .build(),
                 Card.builder()
@@ -574,7 +588,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(4)
                         .cost(CoinCost.of(1))
-                        .effect(ResourceEffect.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                        .effect(ResourceEffect.of(CLAY, CLAY))
                         .name(CardName.ZIEGELBRENNERI)
                         .build(),
 
@@ -617,7 +631,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(FreeToPlayCost.newInstance())
-                        .effect(ResourceEffect.of(ManufacturedGood.GLASS))
+                        .effect(ResourceEffect.of(GLASS))
                         .name(CardName.GLASHUTTE)
                         .build(),
                 Card.builder()
@@ -625,7 +639,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(5)
                         .cost(FreeToPlayCost.newInstance())
-                        .effect(ResourceEffect.of(ManufacturedGood.GLASS))
+                        .effect(ResourceEffect.of(GLASS))
                         .name(CardName.GLASHUTTE)
                         .build(),
                 Card.builder()
@@ -676,8 +690,8 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(ComplexResourceCost.builder()
-                                .rawMaterialList(List.of(RawMaterial.WOOD, RawMaterial.CLAY))
-                                .manufacturedGoodsList(List.of(ManufacturedGood.GLASS))
+                                .rawMaterialList(List.of(RawMaterial.WOOD, CLAY))
+                                .manufacturedGoodsList(List.of(GLASS))
                                 .build()
                         )
                         .effect(VictoryPointEffect.of(3))
@@ -688,8 +702,8 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(6)
                         .cost(ComplexResourceCost.builder()
-                                .rawMaterialList(List.of(RawMaterial.WOOD, RawMaterial.CLAY))
-                                .manufacturedGoodsList(List.of(ManufacturedGood.GLASS))
+                                .rawMaterialList(List.of(RawMaterial.WOOD, CLAY))
+                                .manufacturedGoodsList(List.of(GLASS))
                                 .build()
                         )
                         .effect(VictoryPointEffect.of(3))
@@ -718,7 +732,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(ComplexResourceCost.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                        .cost(ComplexResourceCost.of(CLAY, CLAY))
                         .effect(ResourceEffect.manufacturedGoodWildcard())
                         .name(CardName.FORUM)
                         .build(),
@@ -726,7 +740,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(6)
-                        .cost(ComplexResourceCost.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                        .cost(ComplexResourceCost.of(CLAY, CLAY))
                         .effect(ResourceEffect.manufacturedGoodWildcard())
                         .name(CardName.FORUM)
                         .build(),
@@ -734,7 +748,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(7)
-                        .cost(ComplexResourceCost.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                        .cost(ComplexResourceCost.of(CLAY, CLAY))
                         .effect(ResourceEffect.manufacturedGoodWildcard())
                         .name(CardName.FORUM)
                         .build(),
@@ -771,7 +785,7 @@ public class Deck {
                         .cost(FreeToPlayCost.newInstance())
                         .effect(CoinRewardWithModifiersEffect.of(
                                 EffectDirectionConstraint.ALL,
-                                EffectMultiplierType.RAW_MATERIAL_CARD,
+                                RAW_MATERIAL_CARD,
                                 1
                         ))
                         .name(CardName.WEINBERG)
@@ -783,7 +797,7 @@ public class Deck {
                         .cost(FreeToPlayCost.newInstance())
                         .effect(CoinRewardWithModifiersEffect.of(
                                 EffectDirectionConstraint.ALL,
-                                EffectMultiplierType.RAW_MATERIAL_CARD,
+                                RAW_MATERIAL_CARD,
                                 1
                         ))
                         .name(CardName.WEINBERG)
@@ -869,7 +883,7 @@ public class Deck {
                         .type(military)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(ComplexResourceCost.of(RawMaterial.METAL_ORE, RawMaterial.CLAY, RawMaterial.WOOD))
+                        .cost(ComplexResourceCost.of(RawMaterial.METAL_ORE, CLAY, RawMaterial.WOOD))
                         .effect(WarShieldsEffect.of(2))
                         .name(CardName.STALLE)
                         .build(),
@@ -877,7 +891,7 @@ public class Deck {
                         .type(military)
                         .age(age)
                         .requiredPlayersCount(5)
-                        .cost(ComplexResourceCost.of(RawMaterial.METAL_ORE, RawMaterial.CLAY, RawMaterial.WOOD))
+                        .cost(ComplexResourceCost.of(RawMaterial.METAL_ORE, CLAY, RawMaterial.WOOD))
                         .effect(WarShieldsEffect.of(2))
                         .name(CardName.STALLE)
                         .build(),
@@ -888,7 +902,7 @@ public class Deck {
                         .requiredPlayersCount(3)
                         .cost(ComplexResourceCost.builder()
                                 .rawMaterialList(List.of(RawMaterial.METAL_ORE, RawMaterial.METAL_ORE))
-                                .manufacturedGoodsList(List.of(ManufacturedGood.GLASS))
+                                .manufacturedGoodsList(List.of(GLASS))
                                 .build()
                         )
                         .effect(ScienceSymbolsEffect.of(COMPASS))
@@ -900,7 +914,7 @@ public class Deck {
                         .requiredPlayersCount(4)
                         .cost(ComplexResourceCost.builder()
                                 .rawMaterialList(List.of(RawMaterial.METAL_ORE, RawMaterial.METAL_ORE))
-                                .manufacturedGoodsList(List.of(ManufacturedGood.GLASS))
+                                .manufacturedGoodsList(List.of(GLASS))
                                 .build()
                         )
                         .effect(ScienceSymbolsEffect.of(COMPASS))
@@ -929,7 +943,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(ComplexResourceCost.builder()
-                                .rawMaterialList(List.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                                .rawMaterialList(List.of(CLAY, CLAY))
                                 .manufacturedGoodsList(List.of(ManufacturedGood.SCRIPTS))
                                 .build()
                         )
@@ -941,7 +955,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(5)
                         .cost(ComplexResourceCost.builder()
-                                .rawMaterialList(List.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                                .rawMaterialList(List.of(CLAY, CLAY))
                                 .manufacturedGoodsList(List.of(ManufacturedGood.SCRIPTS))
                                 .build()
                         )
@@ -954,7 +968,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(ComplexResourceCost.builder()
-                                .rawMaterialList(List.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                                .rawMaterialList(List.of(CLAY, CLAY))
                                 .manufacturedGoodsList(List.of(ManufacturedGood.TEXTILE))
                                 .build()
                         )
@@ -966,7 +980,7 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(5)
                         .cost(ComplexResourceCost.builder()
-                                .rawMaterialList(List.of(RawMaterial.CLAY, RawMaterial.CLAY))
+                                .rawMaterialList(List.of(CLAY, CLAY))
                                 .manufacturedGoodsList(List.of(ManufacturedGood.TEXTILE))
                                 .build()
                         )
@@ -1015,7 +1029,85 @@ public class Deck {
                         .effect(ScienceSymbolsEffect.of(TABLET))
                         .name(CardName.SCHULE)
                         .build()
-                );
+        );
+    }
+
+    public List<Card> getAge3Group2() {
+        var cards = new ArrayList<Card>();
+        var civilFactory = CivilCardTemplate.create(3);
+        var commercialFactory = CommercialCardTemplate.create(3);
+
+        cards.addAll(civilFactory.createCards(
+                CardName.PANTHENON,
+                List.of(3, 6),
+                List.of(CLAY, CLAY, METAL_ORE),
+                ManufacturedGood.all(),
+                7
+        ));
+
+        cards.addAll(civilFactory.createCards(
+                CardName.GARTEN,
+                List.of(3, 4),
+                List.of(WOOD, CLAY, CLAY),
+                List.of(),
+                5
+        ));
+
+        cards.addAll(civilFactory.createCards(
+                CardName.RATHAUS,
+                List.of(3, 5, 6),
+                List.of(METAL_ORE, STONE, STONE),
+                List.of(GLASS),
+                6
+        ));
+
+        cards.addAll(civilFactory.createCards(
+                CardName.PALAST,
+                List.of(3, 7),
+                RawMaterial.all(),
+                ManufacturedGood.all(),
+                8
+        ));
+
+        cards.addAll(commercialFactory.createCards(
+                CardName.HAFEN,
+                List.of(3, 4),
+                List.of(METAL_ORE, WOOD),
+                List.of(TEXTILE),
+                CoinRewardAndVictoryPointWithModifiersEffect.of(
+                        SELF,
+                        RAW_MATERIAL_CARD,
+                        1,
+                        1
+                )
+        ));
+
+        cards.addAll(commercialFactory.createCards(
+                CardName.LEUCHTTURM,
+                List.of(3, 6),
+                List.of(STONE),
+                List.of(GLASS),
+                CoinRewardAndVictoryPointWithModifiersEffect.of(
+                        SELF,
+                        COMMERCIAL_CARD,
+                        1,
+                        1
+                )
+        ));
+        cards.addAll(commercialFactory.createCards(
+                CardName.HANDELSKAMMER,
+                List.of(4, 6),
+                List.of(CLAY, CLAY),
+                List.of(SCRIPTS),
+                CoinRewardAndVictoryPointWithModifiersEffect.of(
+                        SELF,
+                        MANUFACTURED_GOOD_CARD,
+                        2,
+                        2
+                )
+        ));
+
+        return cards;
     }
 
     public HandOfCards prepareHandOfCards(int age) {
