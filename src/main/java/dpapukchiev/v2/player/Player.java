@@ -102,6 +102,22 @@ public class Player {
         handOfCards.getCards().remove(card);
         turnContext.getPlayer().getVault().getBuiltCards().add(card);
 
+        var cost = card.getCost().generateCostReport(turnContext);
+        if (cost.getToPayTotal() > 0) {
+            getLeftPlayer().getVault().addCoins(cost.getToPayLeft());
+            getRightPlayer().getVault().addCoins(cost.getToPayRight());
+            getVault().removeCoins(cost.getToPayTotal());
+            log.info(
+                    "Player {} pays for card {} {} to bank {} to left, {} to right, {} total",
+                    turnContext.getPlayer().getName(),
+                    card.getName(),
+                    cost.getToPayBank(),
+                    cost.getToPayLeft(),
+                    cost.getToPayRight(),
+                    cost.getToPayTotal()
+            );
+        }
+
         card.getEffect().scheduleEffect(turnContext.getPlayer());
     }
 

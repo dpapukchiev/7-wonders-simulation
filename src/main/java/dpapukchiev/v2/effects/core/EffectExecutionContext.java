@@ -1,11 +1,13 @@
 package dpapukchiev.v2.effects.core;
 
 import dpapukchiev.v2.player.Player;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 public class EffectExecutionContext {
     private final List<Effect> effectsEndOfTurn = new ArrayList<>();
     private final List<Effect> effectsEndOfAge  = new ArrayList<>();
@@ -96,6 +98,8 @@ public class EffectExecutionContext {
                     var reward = effect.getReward(player);
                     if (reward.isPresent()) {
                         effect.markAsExhausted();
+                        log.info("Player {} exhausted effect {} reward {}",
+                                player.getName(), effect.report(), reward.get().report());
                     }
                     return reward;
                 })
