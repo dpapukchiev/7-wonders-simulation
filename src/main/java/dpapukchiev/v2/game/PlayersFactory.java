@@ -49,7 +49,8 @@ public class PlayersFactory {
                     player.getRightPlayer().getName()
             );
         }
-        log.info("Initialised Players {}", players);
+
+        players.forEach(player -> log.info("Initialised Player {}", player.report()));
     }
 
     private List<CityName> selectRandomCities(GameOptions options) {

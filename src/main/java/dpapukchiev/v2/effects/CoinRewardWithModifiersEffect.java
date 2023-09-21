@@ -17,6 +17,10 @@ public class CoinRewardWithModifiersEffect extends BaseRewardWithModifiersEffect
         this.coinReward = coinReward;
     }
 
+    public static CoinRewardWithModifiersEffect of(EffectDirectionConstraint directionConstraint, EffectMultiplierType multiplierType, double coinReward) {
+        return new CoinRewardWithModifiersEffect(directionConstraint, multiplierType, coinReward);
+    }
+
     @Override
     protected Optional<EffectReward> buildEffectReward(double reward) {
         markAsExhausted();

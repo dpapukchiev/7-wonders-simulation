@@ -5,11 +5,12 @@ import dpapukchiev.v2.cost.CoinCost;
 import dpapukchiev.v2.cost.ComplexResourceCost;
 import dpapukchiev.v2.cost.Cost;
 import dpapukchiev.v2.cost.FreeToPlayCost;
+import dpapukchiev.v2.effects.CoinRewardWithModifiersEffect;
+import dpapukchiev.v2.effects.ResourceEffect;
 import dpapukchiev.v2.effects.ScienceSymbolsEffect;
+import dpapukchiev.v2.effects.VictoryPointEffect;
 import dpapukchiev.v2.effects.WarShieldsEffect;
 import dpapukchiev.v2.effects.core.Effect;
-import dpapukchiev.v2.effects.ResourceEffect;
-import dpapukchiev.v2.effects.VictoryPointEffect;
 import jsl.simulation.ModelElement;
 import jsl.simulation.Simulation;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,21 +34,24 @@ class DeckTest extends BasePlayerTest {
     @Test
     void getCardsByAge() {
         var deck = new Deck(modelElement);
-        deck.resetDeck(5);
+        int numberOfPlayers = 5;
+        deck.resetDeck(numberOfPlayers);
+        var maxCardsPerAge = numberOfPlayers * 7;
 
         var result = deck.getCardsByAge();
 
         assertEquals(2, result.size());
         IntStream.rangeClosed(1, 3)
-                .forEach(age -> System.out.printf("\nAge %d %d/49 %f%%\n",
+                .forEach(age -> System.out.printf("\nAge %d %d/%d %f%%\n",
                         age,
                         Optional.ofNullable(result.get(age)).orElse(List.of()).size(),
-                        Optional.ofNullable(result.get(age)).orElse(List.of()).size() * 100.0 / 49
+                        maxCardsPerAge,
+                        Optional.ofNullable(result.get(age)).orElse(List.of()).size() * 100.0 / maxCardsPerAge
                 ));
         System.out.printf("\nTotal %d/%d %f%%\n",
                 result.values().stream().mapToInt(List::size).sum(),
-                3 * 49,
-                result.values().stream().mapToInt(List::size).sum() * 100.0 / (3 * 49)
+                3 * maxCardsPerAge,
+                result.values().stream().mapToInt(List::size).sum() * 100.0 / (3 * maxCardsPerAge)
         );
     }
 
@@ -71,28 +75,6 @@ class DeckTest extends BasePlayerTest {
 
         assertListContains(result, 14, FreeToPlayCost.class);
         assertListContains(result, 6, CoinCost.class);
-    }
-
-    @Test
-    void getAge2Group1() {
-        var deck = new Deck(modelElement);
-
-        var result = deck.getAge2Group1();
-
-        assertEquals(14, result.size());
-        assertTrue(result.stream().allMatch(card -> card.getAge() == 2));
-
-        assertListContains(result, 6, CardType.MANUFACTURED_GOOD);
-        assertListContains(result, 8, CardType.RAW_MATERIAL);
-
-        assertCardEffect(result, ResourceEffect.class);
-        assertListContains(result, 7, 3);
-        assertListContains(result, 4, 4);
-        assertListContains(result, 3, 5);
-        assertListContains(result, 0, 6);
-
-        assertListContains(result, 6, FreeToPlayCost.class);
-        assertListContains(result, 8, CoinCost.class);
     }
 
     @Test
@@ -138,6 +120,53 @@ class DeckTest extends BasePlayerTest {
         assertListContains(result, 0, 6);
         assertListContains(result, 2, 7);
 
+        assertListContains(result, 12, ComplexResourceCost.class);
+    }
+
+    @Test
+    void getAge2Group1() {
+        var deck = new Deck(modelElement);
+
+        var result = deck.getAge2Group1();
+
+        assertEquals(14, result.size());
+        assertTrue(result.stream().allMatch(card -> card.getAge() == 2));
+
+        assertListContains(result, 6, CardType.MANUFACTURED_GOOD);
+        assertListContains(result, 8, CardType.RAW_MATERIAL);
+
+        assertCardEffect(result, ResourceEffect.class);
+        assertListContains(result, 7, 3);
+        assertListContains(result, 4, 4);
+        assertListContains(result, 3, 5);
+        assertListContains(result, 0, 6);
+
+        assertListContains(result, 6, FreeToPlayCost.class);
+        assertListContains(result, 8, CoinCost.class);
+    }
+
+    @Test
+    void getAge2Group2() {
+        var deck = new Deck(modelElement);
+
+        var result = deck.getAge2Group2();
+
+        assertEquals(16, result.size());
+        assertTrue(result.stream().allMatch(card -> card.getAge() == 2));
+
+        assertListContains(result, 6, CardType.CIVIL);
+        assertListContains(result, 10, CardType.COMMERCIAL);
+
+        assertCardEffect(result, 6, VictoryPointEffect.class);
+        assertCardEffect(result, 6, ResourceEffect.class);
+        assertCardEffect(result, 4, CoinRewardWithModifiersEffect.class);
+        assertListContains(result, 6, 3);
+        assertListContains(result, 1, 4);
+        assertListContains(result, 1, 5);
+        assertListContains(result, 4, 6);
+        assertListContains(result, 4, 7);
+
+        assertListContains(result, 4, FreeToPlayCost.class);
         assertListContains(result, 12, ComplexResourceCost.class);
     }
 

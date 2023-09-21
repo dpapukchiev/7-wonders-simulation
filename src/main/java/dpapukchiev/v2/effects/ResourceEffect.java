@@ -26,6 +26,18 @@ public class ResourceEffect extends BaseEffect {
                 .build();
     }
 
+    public static ResourceEffect rawMaterialWildcard() {
+        return ResourceEffect.builder()
+                .rawMaterialList(RawMaterial.all())
+                .build();
+    }
+
+    public static ResourceEffect manufacturedGoodWildcard() {
+        return ResourceEffect.builder()
+                .manufacturedGoodList(ManufacturedGood.all())
+                .build();
+    }
+
     public static ResourceEffect of(ManufacturedGood... manufacturedGood) {
         return ResourceEffect.builder()
                 .manufacturedGoodList(List.of(manufacturedGood))

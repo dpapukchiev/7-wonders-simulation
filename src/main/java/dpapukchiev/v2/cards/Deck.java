@@ -4,11 +4,13 @@ import dpapukchiev.v2.cost.CoinCost;
 import dpapukchiev.v2.cost.ComplexResourceCost;
 import dpapukchiev.v2.cost.FreeToPlayCost;
 import dpapukchiev.v2.effects.CoinRewardEffect;
+import dpapukchiev.v2.effects.CoinRewardWithModifiersEffect;
 import dpapukchiev.v2.effects.PreferentialTradingEffect;
 import dpapukchiev.v2.effects.ResourceEffect;
 import dpapukchiev.v2.effects.ScienceSymbolsEffect;
 import dpapukchiev.v2.effects.VictoryPointEffect;
 import dpapukchiev.v2.effects.WarShieldsEffect;
+import dpapukchiev.v2.effects.core.EffectMultiplierType;
 import dpapukchiev.v2.resources.ManufacturedGood;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
@@ -22,9 +24,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.ALL;
 import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.BOTH;
 import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.LEFT;
 import static dpapukchiev.v2.effects.core.EffectDirectionConstraint.RIGHT;
+import static dpapukchiev.v2.effects.core.EffectMultiplierType.MANUFACTURED_GOOD_CARD;
+import static dpapukchiev.v2.effects.core.EffectMultiplierType.RAW_MATERIAL_CARD;
 import static dpapukchiev.v2.effects.core.PreferentialTradingContract.Type.MANUFACTURED_GOODS;
 import static dpapukchiev.v2.effects.core.PreferentialTradingContract.Type.RAW_MATERIALS;
 import static dpapukchiev.v2.resources.ManufacturedGood.GLASS;
@@ -68,6 +73,7 @@ public class Deck {
         allCards.addAll(getAge1Group3());
 
         allCards.addAll(getAge2Group1());
+        allCards.addAll(getAge2Group2());
 
         allCards = new ArrayList<>(allCards.stream()
                 .filter(card -> card.getRequiredPlayersCount() <= numberOfPlayers)
@@ -259,12 +265,6 @@ public class Deck {
         var civil = CardType.CIVIL;
         var commercial = CardType.COMMERCIAL;
         var age = 1;
-        var oneStoneCost = ComplexResourceCost.builder()
-                .rawMaterialList(List.of(STONE))
-                .build();
-        var freeToPlayCost = FreeToPlayCost
-                .builder()
-                .build();
 
         return List.of(
                 // CIVIL
@@ -272,7 +272,7 @@ public class Deck {
                         .type(civil)
                         .age(age)
                         .requiredPlayersCount(4)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(VictoryPointEffect.of(3))
                         .name(CardName.PFANDHOUSE)
                         .build(),
@@ -280,7 +280,7 @@ public class Deck {
                         .type(civil)
                         .age(age)
                         .requiredPlayersCount(7)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(VictoryPointEffect.of(3))
                         .name(CardName.PFANDHOUSE)
                         .build(),
@@ -289,7 +289,7 @@ public class Deck {
                         .type(civil)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(oneStoneCost)
+                        .cost(ComplexResourceCost.of(STONE))
                         .effect(VictoryPointEffect.of(3))
                         .name(CardName.BADER)
                         .build(),
@@ -297,7 +297,7 @@ public class Deck {
                         .type(civil)
                         .age(age)
                         .requiredPlayersCount(7)
-                        .cost(oneStoneCost)
+                        .cost(ComplexResourceCost.of(STONE))
                         .effect(VictoryPointEffect.of(3))
                         .name(CardName.BADER)
                         .build(),
@@ -306,7 +306,7 @@ public class Deck {
                         .type(civil)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(VictoryPointEffect.of(2))
                         .name(CardName.ALTAR)
                         .build(),
@@ -314,7 +314,7 @@ public class Deck {
                         .type(civil)
                         .age(age)
                         .requiredPlayersCount(5)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(VictoryPointEffect.of(2))
                         .name(CardName.ALTAR)
                         .build(),
@@ -323,7 +323,7 @@ public class Deck {
                         .type(civil)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(VictoryPointEffect.of(2))
                         .name(CardName.THEATER)
                         .build(),
@@ -331,7 +331,7 @@ public class Deck {
                         .type(civil)
                         .age(age)
                         .requiredPlayersCount(6)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(VictoryPointEffect.of(2))
                         .name(CardName.THEATER)
                         .build(),
@@ -341,7 +341,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(4)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(CoinRewardEffect.of(5))
                         .name(CardName.TAVERNE)
                         .build(),
@@ -349,7 +349,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(5)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(CoinRewardEffect.of(5))
                         .name(CardName.TAVERNE)
                         .build(),
@@ -357,7 +357,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(7)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(CoinRewardEffect.of(5))
                         .name(CardName.TAVERNE)
                         .build(),
@@ -366,7 +366,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(PreferentialTradingEffect.forDirectionAndType(RIGHT, RAW_MATERIALS))
                         .name(CardName.KONTOR_OST)
                         .build(),
@@ -374,7 +374,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(7)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(PreferentialTradingEffect.forDirectionAndType(RIGHT, RAW_MATERIALS))
                         .name(CardName.KONTOR_OST)
                         .build(),
@@ -383,7 +383,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(PreferentialTradingEffect.forDirectionAndType(LEFT, RAW_MATERIALS))
                         .name(CardName.KONTOR_WEST)
                         .build(),
@@ -391,7 +391,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(7)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(PreferentialTradingEffect.forDirectionAndType(LEFT, RAW_MATERIALS))
                         .name(CardName.KONTOR_WEST)
                         .build(),
@@ -400,7 +400,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(3)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(PreferentialTradingEffect.forDirectionAndType(BOTH, MANUFACTURED_GOODS))
                         .name(CardName.MARKT)
                         .build(),
@@ -408,7 +408,7 @@ public class Deck {
                         .type(commercial)
                         .age(age)
                         .requiredPlayersCount(6)
-                        .cost(freeToPlayCost)
+                        .cost(FreeToPlayCost.newInstance())
                         .effect(PreferentialTradingEffect.forDirectionAndType(BOTH, MANUFACTURED_GOODS))
                         .name(CardName.MARKT)
                         .build()
@@ -652,6 +652,175 @@ public class Deck {
                         .name(CardName.PRESSE)
                         .build()
         );
+    }
+
+    public List<Card> getAge2Group2() {
+        var civil = CardType.CIVIL;
+        var commercial = CardType.COMMERCIAL;
+        var age = 2;
+
+        return List.of(
+                // CIVIL
+                Card.builder()
+                        .type(civil)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.of(STONE, STONE, STONE))
+                        .effect(VictoryPointEffect.of(5))
+                        .name(CardName.AQUADUKT)
+                        .build(),
+                Card.builder()
+                        .type(civil)
+                        .age(age)
+                        .requiredPlayersCount(7)
+                        .cost(ComplexResourceCost.of(STONE, STONE, STONE))
+                        .effect(VictoryPointEffect.of(5))
+                        .name(CardName.AQUADUKT)
+                        .build(),
+
+                Card.builder()
+                        .type(civil)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(WOOD, CLAY))
+                                .manufacturedGoodsList(List.of(GLASS))
+                                .build()
+                        )
+                        .effect(VictoryPointEffect.of(3))
+                        .name(CardName.TEMPEL)
+                        .build(),
+                Card.builder()
+                        .type(civil)
+                        .age(age)
+                        .requiredPlayersCount(6)
+                        .cost(ComplexResourceCost.builder()
+                                .rawMaterialList(List.of(WOOD, CLAY))
+                                .manufacturedGoodsList(List.of(GLASS))
+                                .build()
+                        )
+                        .effect(VictoryPointEffect.of(3))
+                        .name(CardName.TEMPEL)
+                        .build(),
+
+                Card.builder()
+                        .type(civil)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.of(METAL_ORE, METAL_ORE, WOOD))
+                        .effect(VictoryPointEffect.of(4))
+                        .name(CardName.STATUE)
+                        .build(),
+                Card.builder()
+                        .type(civil)
+                        .age(age)
+                        .requiredPlayersCount(7)
+                        .cost(ComplexResourceCost.of(METAL_ORE, METAL_ORE, WOOD))
+                        .effect(VictoryPointEffect.of(4))
+                        .name(CardName.STATUE)
+                        .build(),
+
+                // CIVIL
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.of(CLAY, CLAY))
+                        .effect(ResourceEffect.manufacturedGoodWildcard())
+                        .name(CardName.FORUM)
+                        .build(),
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(6)
+                        .cost(ComplexResourceCost.of(CLAY, CLAY))
+                        .effect(ResourceEffect.manufacturedGoodWildcard())
+                        .name(CardName.FORUM)
+                        .build(),
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(7)
+                        .cost(ComplexResourceCost.of(CLAY, CLAY))
+                        .effect(ResourceEffect.manufacturedGoodWildcard())
+                        .name(CardName.FORUM)
+                        .build(),
+
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(ComplexResourceCost.of(WOOD, WOOD))
+                        .effect(ResourceEffect.rawMaterialWildcard())
+                        .name(CardName.KARAWANSEREI)
+                        .build(),
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(5)
+                        .cost(ComplexResourceCost.of(WOOD, WOOD))
+                        .effect(ResourceEffect.rawMaterialWildcard())
+                        .name(CardName.KARAWANSEREI)
+                        .build(),
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(6)
+                        .cost(ComplexResourceCost.of(WOOD, WOOD))
+                        .effect(ResourceEffect.rawMaterialWildcard())
+                        .name(CardName.KARAWANSEREI)
+                        .build(),
+
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(3)
+                        .cost(FreeToPlayCost.newInstance())
+                        .effect(CoinRewardWithModifiersEffect.of(
+                                ALL,
+                                RAW_MATERIAL_CARD,
+                                1
+                        ))
+                        .name(CardName.KARAWANSEREI)
+                        .build(),
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(6)
+                        .cost(FreeToPlayCost.newInstance())
+                        .effect(CoinRewardWithModifiersEffect.of(
+                                ALL,
+                                RAW_MATERIAL_CARD,
+                                1
+                        ))
+                        .name(CardName.KARAWANSEREI)
+                        .build(),
+
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(4)
+                        .cost(FreeToPlayCost.newInstance())
+                        .effect(CoinRewardWithModifiersEffect.of(
+                                ALL,
+                                MANUFACTURED_GOOD_CARD,
+                                2
+                        ))
+                        .name(CardName.BASAR)
+                        .build(),
+                Card.builder()
+                        .type(commercial)
+                        .age(age)
+                        .requiredPlayersCount(7)
+                        .cost(FreeToPlayCost.newInstance())
+                        .effect(CoinRewardWithModifiersEffect.of(
+                                ALL,
+                                MANUFACTURED_GOOD_CARD,
+                                2
+                        ))
+                        .name(CardName.BASAR)
+                        .build()
+                );
     }
 
     public HandOfCards prepareHandOfCards(int age) {
