@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.cards;
 
 import dpapukchiev.sevenwonderssimulation.cards.templates.CivilCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cards.templates.CommercialCardTemplate;
+import dpapukchiev.sevenwonderssimulation.cards.templates.ScienceCardTemplate;
 import dpapukchiev.sevenwonderssimulation.cost.CoinCost;
 import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
 import dpapukchiev.sevenwonderssimulation.cost.FreeToPlayCost;
@@ -1032,6 +1033,16 @@ public class Deck {
         );
     }
 
+    // AGE 3
+    public List<Card> getAge3Group1() {
+        var cards = new ArrayList<Card>();
+        var scienceCardTemplate = ScienceCardTemplate.create(3);
+        var commercialFactory = CommercialCardTemplate.create(3);
+
+
+
+        return cards;
+    }
     public List<Card> getAge3Group2() {
         var cards = new ArrayList<Card>();
         var civilFactory = CivilCardTemplate.create(3);

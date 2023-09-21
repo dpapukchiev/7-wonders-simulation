@@ -5,7 +5,6 @@ import dpapukchiev.sevenwonderssimulation.cards.CardName;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
 import dpapukchiev.sevenwonderssimulation.cost.FreeToPlayCost;
-import dpapukchiev.sevenwonderssimulation.effects.VictoryPointEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
 import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
@@ -14,7 +13,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 @AllArgsConstructor
-public class CommercialCardTemplate {
+public class CommercialCardTemplate extends BaseCardTemplate {
     private final int age;
 
     public static CommercialCardTemplate create(int age) {
@@ -45,13 +44,7 @@ public class CommercialCardTemplate {
         return requiredPlayerCounts.stream()
                 .map(requiredPlayerCount ->
                         {
-                            var cost = rawMaterialsCost.isEmpty() &&
-                                    manufacturedGoodsCost.isEmpty() ?
-                                    FreeToPlayCost.newInstance() :
-                                    ComplexResourceCost.builder()
-                                            .rawMaterialList(rawMaterialsCost)
-                                            .manufacturedGoodsList(manufacturedGoodsCost)
-                                            .build();
+                            var cost = createCost(rawMaterialsCost, manufacturedGoodsCost);
                             return Card.builder()
                                     .name(name)
                                     .age(age)
