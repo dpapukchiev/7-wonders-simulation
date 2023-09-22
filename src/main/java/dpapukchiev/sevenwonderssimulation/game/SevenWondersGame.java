@@ -38,7 +38,10 @@ public class SevenWondersGame extends SchedulingElement {
             GameOptions gameOptions
     ) {
         super(parent);
-        this.playersFactory = new PlayersFactory(new RandomVariable(parent, new NormalRV()));
+        this.playersFactory = new PlayersFactory(
+                new RandomVariable(parent, new NormalRV()),
+                gameOptions.cityStatistics()
+        );
 
         this.gameOptions = gameOptions.toBuilder()
                 .playerRandomVariables(

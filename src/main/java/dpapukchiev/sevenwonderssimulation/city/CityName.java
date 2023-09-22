@@ -1,11 +1,19 @@
 package dpapukchiev.sevenwonderssimulation.city;
 
 public enum CityName {
-    BABYLON,
-    RHODOS,
-    OLIMPIA,
-    ALEXANDRIA,
-    HALIKARNASSOS,
-    GIZAH,
-    EPHESOS
+    BABYLON_A,
+    RHODOS_A,
+    OLIMPIA_A,
+    ALEXANDRIA_A,
+    HALIKARNASSOS_A,
+    GIZAH_A,
+    EPHESOS_A,
+
+    BABYLON_B,
+    RHODOS_B,
+    OLIMPIA_B,
+    ALEXANDRIA_B,
+    HALIKARNASSOS_B,
+    GIZAH_B,
+    EPHESOS_B
 }

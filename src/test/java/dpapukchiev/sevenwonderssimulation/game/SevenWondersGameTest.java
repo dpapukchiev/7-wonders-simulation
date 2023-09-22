@@ -17,17 +17,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.METRIC;
+import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.CITY;
+import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.METRIC_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    private final static int                    ATTEMPTS = 100;
-    private final static CityStatistics.SortBy  SORT_BY  = METRIC;
-    private final static Map<CityName, Integer> winners  = new HashMap<>();
-    private final static CityStatistics         metrics  = new CityStatistics();
+    private final static int                    ATTEMPTS       = 100;
+    private final static CityStatistics.SortBy  SORT_BY        = METRIC_NAME;
+    private final static Map<CityName, Integer> winners        = new HashMap<>();
+    private final static CityStatistics         cityStatistics = new CityStatistics(SORT_BY);
 
     private List<Arguments> getGameTestArguments() {
         return IntStream.rangeClosed(1, ATTEMPTS).mapToObj(Arguments::of).toList();
@@ -48,7 +49,7 @@ class SevenWondersGameTest {
         addWinnerToWinnersList(result.game());
         collectStatistics(result.game());
 
-        reportStatistics(streamNumber);
+        reportStatistics(streamNumber, SORT_BY);
     }
 
     @NotNull
@@ -60,6 +61,7 @@ class SevenWondersGameTest {
         var gameOptions = GameOptions.builder()
                 .numberOfPlayers(7)
                 .agesToSchedule(3)
+                .cityStatistics(cityStatistics)
                 .build();
 
         var game = new SevenWondersGame(
@@ -68,8 +70,7 @@ class SevenWondersGameTest {
         );
 
         simulation.run();
-        GameResult result = new GameResult(gameOptions, game);
-        return result;
+        return new GameResult(gameOptions, game);
     }
 
     private record GameResult(GameOptions gameOptions, SevenWondersGame game) {
@@ -120,15 +121,16 @@ class SevenWondersGameTest {
             var cityName = player.getWonderContext().getCityName();
 
             // TODO: add tracking of all scores
-            metrics.trackStatistic(cityName, "score-total", scoreCard.getTotalScore());
-            metrics.trackStatistic(cityName, "coins-score", scoreCard.getCoinsScore());
-            metrics.trackStatistic(cityName, "built-cards", player.getVault().getBuiltCards().size());
-            metrics.trackStatistic(cityName, "science-score", scoreCard.getScienceScore());
+            cityStatistics.collectMetric(cityName, "score-total", scoreCard.getTotalScore(), player);
+            cityStatistics.collectMetric(cityName, "coins-score", scoreCard.getCoinsScore(), player);
+            cityStatistics.collectMetric(cityName, "science-score", scoreCard.getScienceScore(), player);
+            cityStatistics.collectMetric(cityName, "built-cards", player.getVault().getBuiltCards().size(), player);
+            cityStatistics.collectMetric(cityName, "discarded-cards", player.getVault().getDiscardedCards().size(), player);
         });
     }
 
-    private static void reportStatistics(int streamNumber) {
-        metrics.reportStatistics();
+    private static void reportStatistics(int streamNumber, CityStatistics.SortBy sortBy) {
+        cityStatistics.reportStatistics(sortBy);
         if (streamNumber == ATTEMPTS) {
             assertEquals(ATTEMPTS, winners.values().stream().mapToInt(Integer::intValue).sum());
 

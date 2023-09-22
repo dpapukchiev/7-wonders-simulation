@@ -1,6 +1,7 @@
 package dpapukchiev.sevenwonderssimulation.reporting;
 
 import dpapukchiev.sevenwonderssimulation.city.CityName;
+import dpapukchiev.sevenwonderssimulation.player.Player;
 import jsl.utilities.statistic.Statistic;
 import lombok.extern.log4j.Log4j2;
 
@@ -9,38 +10,60 @@ import java.util.Map;
 
 @Log4j2
 public class CityStatistics {
+    private final SortBy sortBy;
+
+    public CityStatistics(SortBy sortBy) {
+        this.sortBy = sortBy;
+    }
+
     public enum SortBy {
         CITY,
-        METRIC
+        METRIC,
+        METRIC_NAME
     }
 
-    private final static SortBy                 SORT_BY = SortBy.METRIC;
-    // TODO: change to complex key to allow sorting by custom
-    private final        Map<String, Statistic> metrics = new HashMap<>();
-
-    private static String getStatisticName(CityName cityName, String statisticName) {
-        if (SORT_BY.equals(SortBy.METRIC)) {
-            return "%s-%s".formatted(statisticName, cityName.name());
-        }
-        return "%s-%s".formatted(cityName.name(), statisticName);
+    public record Metric(
+            Statistic statistic,
+            CityName cityName,
+            String playerName
+    ) {
     }
 
-    public void trackStatistic(CityName cityName, String statisticName, double value) {
+    private final Map<String, Metric> metrics = new HashMap<>();
+
+    private String getStatisticName(CityName cityName, String statisticName) {
+        return switch (sortBy) {
+            case CITY -> "%s-%s".formatted(cityName.name(), statisticName);
+            case METRIC, METRIC_NAME -> "%s-%s".formatted(statisticName, cityName.name());
+        };
+    }
+
+    public void collectMetric(CityName cityName, String statisticName, double value, Player player) {
         var metricName = getStatisticName(cityName, statisticName);
-        var statistic = metrics.getOrDefault(
+        var metric = metrics.getOrDefault(
                 metricName,
-                new Statistic(metricName)
+                new Metric(new Statistic(metricName), cityName, player.getName())
         );
-        statistic.collect(value);
-        metrics.put(metricName, statistic);
+
+        metric.statistic().collect(value);
+        metrics.put(metricName, metric);
     }
 
-    public void reportStatistics() {
+    public void reportStatistics(SortBy sortBy) {
+        log.info("\nSTATISTICS BY %s".formatted(sortBy));
         metrics.values().stream()
-                .sorted((s1, s2) -> switch (SORT_BY){
-                    case CITY, METRIC -> s1.getName().compareTo(s2.getName());
+                .sorted((s1, s2) -> switch (sortBy) {
+                    case CITY -> s1.cityName().name().compareTo(s2.cityName().name());
+                    case METRIC -> s1.statistic().compareTo(s2.statistic());
+                    case METRIC_NAME -> s1.statistic().getName().compareTo(s2.statistic().getName());
                 })
-                .map(Statistic::asString)
+                .map(Metric::statistic)
+                .map(s -> "%s: %s (n=%s, std=%s) ".formatted(
+                        s.getName(),
+                        Math.round(s.getAverage() * 100.0) / 100.0,
+                        s.getCount(),
+                        Math.round(s.getStandardDeviation() * 100.0) / 100.0
+                ))
                 .forEach(log::info);
     }
 

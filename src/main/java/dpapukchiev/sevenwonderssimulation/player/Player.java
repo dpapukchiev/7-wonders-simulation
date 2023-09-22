@@ -5,8 +5,8 @@ import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
+import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceContext;
-import dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.Comparator;
 
+import static dpapukchiev.sevenwonderssimulation.player.WarPoint.MINUS_ONE;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COGWHEEL;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COMPASS;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.TABLET;
@@ -35,6 +36,7 @@ public class Player {
     private EffectExecutionContext effectExecutionContext = new EffectExecutionContext();
     @Builder.Default
     private Vault                  vault                  = new Vault();
+    private CityStatistics         cityStatistics;
 
     public ResourceContext resourceContext() {
         return new ResourceContext(this);
@@ -77,22 +79,6 @@ public class Player {
         // apply the effect
     }
 
-    private void discardCard(HandOfCards handOfCards) {
-        var coinsBefore = getVault().getCoins();
-        var cardToDiscard = randomlySelect(handOfCards.getCards(), pickACard.getStreamNumber());
-        getVault().addCoins(3);
-
-        handOfCards.discard(cardToDiscard);
-        getVault().discardCard(cardToDiscard);
-
-        log.info("\nPlayer {} discards card {} and gets 3 coins. {} => {}",
-                name,
-                cardToDiscard.report(),
-                coinsBefore,
-                getVault().getCoins()
-        );
-    }
-
     public void executeWar(int age) {
         var warPoint = age != 1 ? (age != 2 ? WarPoint.FIVE : WarPoint.THREE) : WarPoint.ONE;
         var myShields = getVault().getShields();
@@ -103,49 +89,19 @@ public class Player {
 
         if (myShields > leftShields) {
             getVault().addWarPoint(warPoint);
+            collectMetric("war-wins-from-left", warPoint.getValue());
         } else if (myShields < leftShields) {
-            getVault().addWarPoint(WarPoint.MINUS_ONE);
+            getVault().addWarPoint(MINUS_ONE);
+            collectMetric("war-loss-from-left", MINUS_ONE.getValue());
         }
 
         if (myShields > rightShields) {
             getVault().addWarPoint(warPoint);
+            collectMetric("war-wins-from-left", warPoint.getValue());
         } else if (myShields < rightShields) {
-            getVault().addWarPoint(WarPoint.MINUS_ONE);
+            getVault().addWarPoint(MINUS_ONE);
+            collectMetric("war-loss-from-right", MINUS_ONE.getValue());
         }
-    }
-
-    private void playCard(TurnContext turnContext, HandOfCards handOfCards, Card card) {
-        log.info("\nPlayer {} plays from hand {} card {}", getName(), handOfCards.getUuid(), card.report());
-
-        handOfCards.remove(card);
-        getVault().getBuiltCards().add(card);
-
-        card.getEffect().scheduleEffect(this);
-
-        var cost = card.getCost().generateCostReport(turnContext);
-        if (cost.getToPayTotal() == 0) {
-            return;
-        }
-        getLeftPlayer().getVault().addCoins(cost.getToPayLeft());
-        getRightPlayer().getVault().addCoins(cost.getToPayRight());
-        getVault().removeCoins(cost.getToPayTotal());
-
-        if(cost.getToPayBank() > 1){
-            throw new IllegalStateException("Player %s has %s coins to pay to bank".formatted(getName(), cost.getToPayBank()));
-        }
-
-        log.info(
-                "Player {} pays for card {} \n${} to bank \n${} to L({}) \n${} to R({}) \ntotal {}",
-                getName(),
-                card.getName(),
-                // TODO: this is sometimes wrong, max should be 1
-                cost.getToPayBank(),
-                cost.getToPayLeft(),
-                getLeftPlayer().getName(),
-                cost.getToPayRight(),
-                getRightPlayer().getName(),
-                cost.getToPayTotal()
-        );
     }
 
     public ScoreCard score() {
@@ -168,10 +124,75 @@ public class Player {
         );
     }
 
+    private void discardCard(HandOfCards handOfCards) {
+        var coinsBefore = getVault().getCoins();
+        var cardToDiscard = randomlySelect(handOfCards.getCards(), pickACard.getStreamNumber());
+        getVault().addCoins(3);
+
+        handOfCards.discard(cardToDiscard);
+        getVault().discardCard(cardToDiscard);
+
+        log.info("\nPlayer {} discards card {} and gets 3 coins. {} => {}",
+                name,
+                cardToDiscard.report(),
+                coinsBefore,
+                getVault().getCoins()
+        );
+    }
+
+    private void playCard(TurnContext turnContext, HandOfCards handOfCards, Card card) {
+        log.info("\nPlayer {} plays from hand {} card {}", getName(), handOfCards.getUuid(), card.report());
+        collectMetric("cards-played", 1);
+        collectMetric("%s-cards-played".formatted(card.getType()), 1);
+        collectMetric("%s-effect-played".formatted(card.getEffect().getClass().getSimpleName()), 1);
+        collectMetric("%s-costs-played".formatted(card.getCost().getClass().getSimpleName()), 1);
+
+        handOfCards.remove(card);
+        getVault().getBuiltCards().add(card);
+
+        card.getEffect().scheduleEffect(this);
+
+        var cost = card.getCost().generateCostReport(turnContext);
+        if (cost.getToPayTotal() == 0) {
+            collectMetric("cards-played-for-free", 1);
+            return;
+        }
+        getLeftPlayer().getVault().addCoins(cost.getToPayLeft());
+        collectMetric("to-pay-left", cost.getToPayLeft());
+
+        getRightPlayer().getVault().addCoins(cost.getToPayRight());
+        collectMetric("to-pay-right", cost.getToPayLeft());
+
+        collectMetric("to-pay-bank", cost.getToPayLeft());
+
+        getVault().removeCoins(cost.getToPayTotal());
+
+        if (cost.getToPayBank() > 1) {
+            throw new IllegalStateException("Player %s has %s coins to pay to bank".formatted(getName(), cost.getToPayBank()));
+        }
+
+        log.info(
+                "Player {} pays for card {} \n${} to bank \n${} to L({}) \n${} to R({}) \ntotal {}",
+                getName(),
+                card.getName(),
+                // TODO: this is sometimes wrong, max should be 1
+                cost.getToPayBank(),
+                cost.getToPayLeft(),
+                getLeftPlayer().getName(),
+                cost.getToPayRight(),
+                getRightPlayer().getName(),
+                cost.getToPayTotal()
+        );
+    }
+
     public void applyEffectReward(EffectReward effectReward) {
         log.info("Applying effect reward to player {} ({})", name, effectReward.report());
         vault.addCoins(effectReward.getCoinReward());
         vault.addVictoryPoints(effectReward.getVictoryPointsReward());
         vault.addShields(effectReward.getShields());
+    }
+
+    private void collectMetric(String metricName, double value) {
+        cityStatistics.collectMetric(getWonderContext().getCityName(), metricName, value, this);
     }
 }
