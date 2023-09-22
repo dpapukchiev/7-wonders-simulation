@@ -5,9 +5,11 @@ import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.Optional;
 
+@Getter
 @AllArgsConstructor
 public class CoinRewardEffect extends BaseEffect {
     private final double coins;

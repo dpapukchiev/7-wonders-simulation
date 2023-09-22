@@ -5,14 +5,16 @@ import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.Optional;
 
+@Getter
 @AllArgsConstructor
 public class WarShieldsEffect extends BaseEffect {
 
-    private final int shields;
-    public static WarShieldsEffect of(int shields) {
+    private final double shields;
+    public static WarShieldsEffect of(double shields) {
         return new WarShieldsEffect(shields);
     }
 
