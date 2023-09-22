@@ -2,9 +2,9 @@ package dpapukchiev.sevenwonderssimulation.wonder;
 
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cost.Cost;
+import dpapukchiev.sevenwonderssimulation.cost.CostReport;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
-import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,9 +20,9 @@ public class WonderStage {
     private int     stageNumber;
     private Cost    cost;
     private Effect  effect;
-    private Card consumedCard;
+    private Card    consumedCard;
 
-    public void build(Card consumedCard, TurnContext turnContext) {
+    public void build(Card consumedCard, TurnContext turnContext, CostReport costReport) {
         if (built) {
             return;
         }
@@ -30,7 +30,7 @@ public class WonderStage {
         var player = turnContext.getPlayer();
         player.collectMetric("build-wonder-stage-" + stageNumber, 1);
         effect.scheduleEffect(player);
-        cost.applyCost(turnContext, cost.generateCostReport(turnContext));
+        cost.applyCost(turnContext, costReport);
         turnContext.getHandOfCards().discard(consumedCard);
 
         built = true;

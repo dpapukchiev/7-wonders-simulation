@@ -17,6 +17,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class WonderContext {
     private CityName          cityName;
+    private String            side;
     @Builder.Default
     private List<WonderStage> wonderStages = new ArrayList<>();
 
@@ -34,7 +35,17 @@ public class WonderContext {
                 .count();
     }
 
+    public String getName(){
+        return "%s-%s".formatted(cityName.name(), side);
+    }
+
     public String report() {
-        return String.format("W(%s/%s)", wonderStages.stream().filter(WonderStage::isBuilt).count(), wonderStages.size());
+        return String.format("W(%s %s/%s)",
+                side,
+                wonderStages.stream()
+                        .filter(WonderStage::isBuilt)
+                        .count(),
+                wonderStages.size()
+        );
     }
 }

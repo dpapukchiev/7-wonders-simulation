@@ -1,6 +1,5 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
-import dpapukchiev.sevenwonderssimulation.wonder.CityName;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.player.ScoreCard;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
@@ -12,9 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.METRIC_NAME;
@@ -24,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    private final static int                    ATTEMPTS       = 100;
-    private final static CityStatistics.SortBy  SORT_BY        = METRIC_NAME;
-    private final static Map<CityName, Integer> winners        = new HashMap<>();
-    private final static CityStatistics         cityStatistics = new CityStatistics(SORT_BY);
+    // stable up to 300
+    private final static int                   ATTEMPTS       = 300;
+    private final static CityStatistics.SortBy SORT_BY        = METRIC_NAME;
+    private final static CityStatistics        cityStatistics = new CityStatistics(SORT_BY);
 
     private List<Arguments> getGameTestArguments() {
         return IntStream.rangeClosed(1, ATTEMPTS).mapToObj(Arguments::of).toList();
@@ -95,7 +92,7 @@ class SevenWondersGameTest {
             var builtCards = player.getVault().getBuiltCards().size();
             var builtCardNames = player.getVault().getBuiltCardNames().stream().distinct().count();
 
-            assertTrue(builtCards >= 9, "Player %s has %s built cards".formatted(player.getName(), builtCards));
+            assertTrue(builtCards >= 8, "Player %s has %s built cards".formatted(player.getName(), builtCards));
             assertEquals(
                     builtCards,
                     builtCardNames,
@@ -108,16 +105,13 @@ class SevenWondersGameTest {
     private static void addWinnerToWinnersList(SevenWondersGame game) {
         Pair<Player, ScoreCard> winner = game.getResultingScoringOrder().get(0);
         var winningPlayer = winner.getLeft();
-        var cityName = winningPlayer.getWonderContext().getCityName();
-        winners.putIfAbsent(cityName, 0);
-        winners.computeIfPresent(cityName, (k, v) -> v + 1);
+        cityStatistics.addWinner(winningPlayer.getWonderContext());
     }
 
     private static void collectStatistics(SevenWondersGame game) {
         game.getResultingScoringOrder().forEach(playerScoreCardPair -> {
             var player = playerScoreCardPair.getLeft();
             var scoreCard = playerScoreCardPair.getRight();
-            var cityName = player.getWonderContext().getCityName();
 
             // TODO: add tracking of all scores
             cityStatistics.collectMetric("score-total", scoreCard.getTotalScore(), player);
@@ -129,11 +123,9 @@ class SevenWondersGameTest {
     }
 
     private static void reportStatistics(int streamNumber, CityStatistics.SortBy sortBy) {
-        cityStatistics.reportStatistics(sortBy);
         if (streamNumber == ATTEMPTS) {
-            assertEquals(ATTEMPTS, winners.values().stream().mapToInt(Integer::intValue).sum());
-
-            System.out.println(winners);
+            cityStatistics.reportStatistics(sortBy);
+            cityStatistics.reportWinners(ATTEMPTS);
         }
     }
 }

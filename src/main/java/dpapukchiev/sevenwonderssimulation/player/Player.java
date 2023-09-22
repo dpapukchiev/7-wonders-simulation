@@ -100,10 +100,11 @@ public class Player {
             TurnContext turnContext
     ) {
         var wonderStage = nextAffordableWonderStage.getLeft();
+        var costReport = nextAffordableWonderStage.getRight();
         var handOfCards = turnContext.getHandOfCards();
         var cardToConsume = selectRandomCard(handOfCards.getCards());
 
-        wonderStage.build(cardToConsume, turnContext);
+        wonderStage.build(cardToConsume, turnContext, costReport);
     }
 
     public void executeWar(int age) {
