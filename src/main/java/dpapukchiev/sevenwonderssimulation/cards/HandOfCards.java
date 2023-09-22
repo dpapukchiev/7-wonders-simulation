@@ -33,7 +33,9 @@ public class HandOfCards {
     }
 
     public List<Pair<Card, CostReport>> filterCards(TurnContext turnContext, Predicate<Pair<Card, CostReport>> filter) {
+        var builtCards = turnContext.getPlayer().getVault().getBuiltCardNames();
         return getCostReportsPerCard(turnContext).stream()
+                .filter(card -> !builtCards.contains(card.getKey().getName().name()))
                 .filter(cardCostReportPair -> cardCostReportPair.getValue().isAffordable())
                 .filter(filter)
                 .toList();
@@ -41,7 +43,8 @@ public class HandOfCards {
 
     public List<Card> getCardsWithNoCost(TurnContext turnContext) {
         return filterCards(turnContext, entry -> entry.getValue().getToPayTotal() == 0)
-                .stream().map(Pair::getFirst)
+                .stream()
+                .map(Pair::getFirst)
                 .toList();
     }
 

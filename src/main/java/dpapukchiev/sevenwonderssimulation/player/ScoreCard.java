@@ -2,6 +2,8 @@ package dpapukchiev.sevenwonderssimulation.player;
 
 import lombok.Builder;
 
+import java.util.ArrayList;
+
 @Builder
 public class ScoreCard {
     @Builder.Default
@@ -36,5 +38,22 @@ public class ScoreCard {
         score += Math.pow(scienceTablets, 2);
 
         return score;
+    }
+
+    public String report(){
+        var report = new ArrayList<String>();
+        if (victoryPoints > 0) {
+            report.add("V:" + victoryPoints);
+        }
+        if (coins > 0) {
+            report.add("$:" + getCoinsScore());
+        }
+        if (warPointsScore > 0) {
+            report.add("W:" + warPointsScore);
+        }
+        if(getScienceScore() > 0){
+            report.add("S:" + getScienceScore());
+        }
+        return "Score: %s\n%s".formatted(getTotalScore(), String.join(" ", report));
     }
 }

@@ -4,6 +4,7 @@ import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.player.Player;
+import dpapukchiev.sevenwonderssimulation.player.ScoreCard;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.EventAction;
 import jsl.simulation.EventActionIfc;
@@ -13,21 +14,24 @@ import jsl.simulation.SchedulingElement;
 import jsl.utilities.random.rvariable.NormalRV;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Log4j2
 @Getter
 public class SevenWondersGame extends SchedulingElement {
+    private final List<Pair<Player, ScoreCard>>   resultingScoringOrder = new ArrayList<>();
     private final Deck                            deck;
     private final GameOptions                     gameOptions;
     private final PlayersFactory                  playersFactory;
-    private final Map<Integer, List<HandOfCards>> handsOfCardsPerAge = new HashMap<>();
+    private final Map<Integer, List<HandOfCards>> handsOfCardsPerAge    = new HashMap<>();
 
     public SevenWondersGame(
             ModelElement parent,
@@ -51,11 +55,12 @@ public class SevenWondersGame extends SchedulingElement {
         playersFactory.initialisePlayers(gameOptions);
         dealHands(gameOptions);
 
-        var currentOffset = 1;
+        var nextOffset = 1;
         for (int i = 1; i <= gameOptions.agesToSchedule(); i++) {
-            currentOffset = scheduleTurns(currentOffset, i);
-            currentOffset = scheduleAgeTransition(currentOffset + 1, i);
+            nextOffset = scheduleTurns(nextOffset, i);
+            nextOffset = scheduleAgeTransition(nextOffset + 1, i);
         }
+        scheduleEvent(new ExecuteEndOfAge(), nextOffset);
     }
 
     class ExecutePlayerTurn implements EventActionIfc<TurnContext> {
@@ -74,7 +79,7 @@ public class SevenWondersGame extends SchedulingElement {
             );
             player.executeTurn(turnContext);
 
-            log.info("\n{}=>PlayerTurnEnded {}",getTime(), player.report());
+            log.info("\n{}=>PlayerTurnEnded {}", getTime(), player.report());
         }
     }
 
@@ -98,6 +103,50 @@ public class SevenWondersGame extends SchedulingElement {
                         player.report()
                 );
             });
+        }
+    }
+
+    class ExecuteEndOfAge extends EventAction {
+        @Override
+        public void action(JSLEvent<Object> event) {
+            log.info("\n{}=>ExecuteEndOfAge", getTime());
+            var players = playersFactory.getPlayers();
+            players.forEach(player -> {
+                log.info("\n{}=>ApplyingEndOfGameEffects for player {}", getTime(), player.getName());
+                var efxReportBeforeStart = player.getEffectExecutionContext().report();
+                Optional<EffectReward> effectReward = player.getEffectExecutionContext()
+                        .executeEffectsEndOfGame(player);
+                effectReward.ifPresent(player::applyEffectReward);
+
+                log.info(
+                        "{}=>ApplyingEndOfGameEffects \nreward: {} \nefx before: {}  \nnew state: {}",
+                        getTime(),
+                        effectReward.map(EffectReward::report).
+                                orElse("no rewards"),
+                        efxReportBeforeStart,
+                        player.report()
+                );
+            });
+
+            var scoreReports = players.stream()
+                    .sorted((p1, p2) -> Double.compare(p2.score().getTotalScore(), p1.score().getTotalScore()))
+                    .peek(p -> resultingScoringOrder.add(Pair.of(p, p.score())))
+                    .toList();
+            var winner = scoreReports.get(0);
+            var scoreReportsStrings = scoreReports.stream()
+                    .map(p -> "%s %s %s".formatted(
+                            p.getName(),
+                            p.getWonderContext().report(),
+                            p.score().report()
+                    ))
+                    .collect(Collectors.joining("\n"));
+            log.info("\n{}=>ScoreReport \n{}", getTime(), scoreReportsStrings);
+            log.info("\n{}=>Winner is {} {} with score {}",
+                    getTime(),
+                    winner.getName(),
+                    winner.getWonderContext().report(),
+                    winner.score().getTotalScore()
+            );
         }
     }
 

@@ -129,10 +129,16 @@ public class Player {
         getLeftPlayer().getVault().addCoins(cost.getToPayLeft());
         getRightPlayer().getVault().addCoins(cost.getToPayRight());
         getVault().removeCoins(cost.getToPayTotal());
+
+        if(cost.getToPayBank() > 1){
+            throw new IllegalStateException("Player %s has %s coins to pay to bank".formatted(getName(), cost.getToPayBank()));
+        }
+
         log.info(
-                "Player {} pays for card {} {} to bank {} to L({}), {} to R({}), {} total",
+                "Player {} pays for card {} \n${} to bank \n${} to L({}) \n${} to R({}) \ntotal {}",
                 getName(),
                 card.getName(),
+                // TODO: this is sometimes wrong, max should be 1
                 cost.getToPayBank(),
                 cost.getToPayLeft(),
                 getLeftPlayer().getName(),

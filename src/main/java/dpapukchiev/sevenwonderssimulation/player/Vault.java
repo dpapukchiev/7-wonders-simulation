@@ -1,6 +1,7 @@
 package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Card;
+import dpapukchiev.sevenwonderssimulation.cards.CardName;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
 import lombok.AllArgsConstructor;
@@ -29,11 +30,19 @@ public class Vault {
     @Builder.Default
     private double         shields        = 0;
     @Builder.Default
-    private double     coins          = 3;
+    private double         coins          = 3;
     @Builder.Default
-    private List<Card> builtCards     = new ArrayList<>();
+    private List<Card>     builtCards     = new ArrayList<>();
     @Builder.Default
-    private List<Card> discardedCards = new ArrayList<>();
+    private List<Card>     discardedCards = new ArrayList<>();
+
+    public List<String> getBuiltCardNames() {
+        return getBuiltCards()
+                .stream()
+                .map(Card::getName)
+                .map(CardName::name)
+                .toList();
+    }
 
     public void discardCard(Card card) {
         discardedCards.add(card);
