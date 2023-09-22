@@ -28,6 +28,12 @@ public class WonderContext {
                 .filter(p -> p.getRight().isAffordable());
     }
 
+    public long getBuiltStageCount() {
+        return wonderStages.stream()
+                .filter(WonderStage::isBuilt)
+                .count();
+    }
+
     public String report() {
         return String.format("W(%s/%s)", wonderStages.stream().filter(WonderStage::isBuilt).count(), wonderStages.size());
     }

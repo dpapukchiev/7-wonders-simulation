@@ -1,9 +1,8 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
-import dpapukchiev.sevenwonderssimulation.wonder.CityName;
 import dpapukchiev.sevenwonderssimulation.player.Player;
-import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
+import dpapukchiev.sevenwonderssimulation.wonder.CityName;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderTemplate;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Getter;
@@ -21,21 +20,26 @@ import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 @RequiredArgsConstructor
 public class PlayersFactory {
 
+    private final RandomVariable pickACity;
     private final RandomVariable cityDistribution;
     private final CityStatistics cityStatistics;
     private final List<Player>   players = new ArrayList<>();
 
     public void initialisePlayers(GameOptions options) {
+        var wonderTemplate = new WonderTemplate(pickACity);
+
         players.clear();
 
         var cities = selectRandomCities(options);
         for (int i = 0; i < options.numberOfPlayers(); i++) {
-            players.add(Player.builder()
+            var player = Player.builder()
                     .name("Player-" + i)
-                    .wonderContext(WonderTemplate.build(cities.get(i)))
+                    .wonderContext(wonderTemplate.build(cities.get(i)))
                     .pickACard(options.playerRandomVariables().get(i))
                     .cityStatistics(cityStatistics)
-                    .build());
+                    .build()
+                    .initVault();
+            players.add(player);
         }
 
         for (int i = 0; i < players.size(); i++) {

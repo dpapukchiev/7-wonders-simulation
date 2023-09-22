@@ -39,12 +39,18 @@ public class Player {
     private Player                 rightPlayer;
     @Builder.Default
     private EffectExecutionContext effectExecutionContext = new EffectExecutionContext();
-    @Builder.Default
-    private Vault                  vault                  = new Vault();
+    private Vault                  vault;
     private CityStatistics         cityStatistics;
 
     public ResourceContext resourceContext() {
         return new ResourceContext(this);
+    }
+
+    public Player initVault() {
+        vault = Vault.builder()
+                .wonderContext(wonderContext)
+                .build();
+        return this;
     }
 
     public void executeTurn(TurnContext turnContext) {

@@ -23,6 +23,12 @@ public class ComplexResourceCost implements Cost {
                 .build();
     }
 
+    public static ComplexResourceCost of(List<ManufacturedGood> manufacturedGoodList) {
+        return ComplexResourceCost.builder()
+                .manufacturedGoodsList(manufacturedGoodList)
+                .build();
+    }
+
     public static ComplexResourceCost of(ManufacturedGood... manufacturedGood) {
         return ComplexResourceCost.builder()
                 .manufacturedGoodsList(List.of(manufacturedGood))

@@ -3,6 +3,7 @@ package dpapukchiev.sevenwonderssimulation.effects.core;
 import java.util.List;
 
 public enum EffectMultiplierType {
+    ONE,
     RAW_MATERIAL_CARD,
     MANUFACTURED_GOOD_CARD,
     SCIENCE_CARD,

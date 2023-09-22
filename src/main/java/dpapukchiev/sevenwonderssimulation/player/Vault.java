@@ -4,6 +4,7 @@ import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardName;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
+import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ import static java.util.stream.Collectors.groupingBy;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vault {
+    private WonderContext  wonderContext;
     @Builder.Default
     private List<WarPoint> warPoints      = new ArrayList<>();
     @Builder.Default
@@ -82,6 +84,7 @@ public class Vault {
 
     private long countCards(EffectMultiplierType effectMultiplierType) {
         return switch (effectMultiplierType) {
+            case ONE -> 1;
             case RAW_MATERIAL_CARD -> getCardCount(CardType.RAW_MATERIAL);
             case MANUFACTURED_GOOD_CARD -> getCardCount(CardType.MANUFACTURED_GOOD);
             case MILITARY_CARD -> getCardCount(CardType.MILITARY);
@@ -94,9 +97,7 @@ public class Vault {
             case WAR_WIN_5 -> getWarPointOfType(WarPoint.FIVE);
             case WAR_WIN -> getWarPointOfType(null);
             case GUILD_CARD -> getCardCount(CardType.GUILD);
-            case WONDER_STAGE -> {
-                yield 0;
-            } // TODO: implement
+            case WONDER_STAGE -> wonderContext.getBuiltStageCount();
         };
     }
 

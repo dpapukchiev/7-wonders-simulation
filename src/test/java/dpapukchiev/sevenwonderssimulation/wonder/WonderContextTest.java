@@ -33,7 +33,7 @@ class WonderContextTest extends BasePlayerTest {
                 .build();
 
         var wonderContext = WonderContext.builder()
-                .cityName(CityName.ALEXANDRIA_A)
+                .cityName(CityName.ALEXANDRIA)
                 .wonderStages(List.of(
                         stage1,
                         stage2,
