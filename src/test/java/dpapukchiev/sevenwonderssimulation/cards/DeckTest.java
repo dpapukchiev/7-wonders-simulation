@@ -46,13 +46,15 @@ class DeckTest extends BasePlayerTest {
         var result = deck.getCardsByAge();
 
         IntStream.rangeClosed(1, 3)
-                .forEach(age -> System.out.printf("\nAge %d %d/%d %f%%\n",
+                .forEach(age -> System.out.printf("\nAge %d (%s players) %d/%d %f%%\n",
                         age,
+                        numberOfPlayers,
                         Optional.ofNullable(result.get(age)).orElse(List.of()).size(),
                         maxCardsPerAge,
                         Optional.ofNullable(result.get(age)).orElse(List.of()).size() * 100.0 / maxCardsPerAge
                 ));
-        System.out.printf("\nTotal %d/%d %f%%\n",
+        System.out.printf("\nTotal (%s players) %d/%d %f%%\n",
+                numberOfPlayers,
                 result.values().stream().mapToInt(List::size).sum(),
                 3 * maxCardsPerAge,
                 result.values().stream().mapToInt(List::size).sum() * 100.0 / (3 * maxCardsPerAge)
