@@ -1,9 +1,10 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
-import dpapukchiev.sevenwonderssimulation.city.CityName;
+import dpapukchiev.sevenwonderssimulation.wonder.CityName;
 import dpapukchiev.sevenwonderssimulation.player.Player;
-import dpapukchiev.sevenwonderssimulation.player.WonderContext;
+import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
+import dpapukchiev.sevenwonderssimulation.wonder.WonderTemplate;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +32,7 @@ public class PlayersFactory {
         for (int i = 0; i < options.numberOfPlayers(); i++) {
             players.add(Player.builder()
                     .name("Player-" + i)
-                    .wonderContext(WonderContext.builder()
-                            .cityName(cities.get(i))
-                            .build())
+                    .wonderContext(WonderTemplate.build(cities.get(i)))
                     .pickACard(options.playerRandomVariables().get(i))
                     .cityStatistics(cityStatistics)
                     .build());

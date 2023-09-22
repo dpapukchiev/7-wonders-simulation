@@ -2,18 +2,23 @@ package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
+import dpapukchiev.sevenwonderssimulation.cost.CostReport;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceContext;
+import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
+import dpapukchiev.sevenwonderssimulation.wonder.WonderStage;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Comparator;
+import java.util.List;
 
 import static dpapukchiev.sevenwonderssimulation.player.WarPoint.MINUS_ONE;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COGWHEEL;
@@ -46,11 +51,16 @@ public class Player {
         // get the hand of cards
         var handOfCards = turnContext.getHandOfCards();
 
+        var nextAffordableWonderStage = getWonderContext().getNextAffordableWonderStage(turnContext);
+        if (nextAffordableWonderStage.isPresent()) {
+            buildWonderStage(nextAffordableWonderStage.get(), turnContext);
+            return;
+        }
+
         var noCostCards = handOfCards.getCardsWithNoCost(turnContext);
         if (!noCostCards.isEmpty()) {
             // pick a card
-            var card = randomlySelect(noCostCards, pickACard.getRandomNumberStream());
-            // build the card
+            var card = selectRandomCard(noCostCards);// build the card
             playCard(turnContext, handOfCards, card);
             return;
         }
@@ -62,7 +72,7 @@ public class Player {
                 .toList();
         if (!someCostCards.isEmpty()) {
             // pick a card
-            var card = randomlySelect(someCostCards, pickACard.getRandomNumberStream());
+            var card = selectRandomCard(someCostCards);
             // build the card
             playCard(turnContext, handOfCards, card);
             return;
@@ -77,6 +87,17 @@ public class Player {
         // if a card can be built, build it
         // pay the cost
         // apply the effect
+    }
+
+    private void buildWonderStage(
+            Pair<WonderStage, CostReport> nextAffordableWonderStage,
+            TurnContext turnContext
+    ) {
+        var wonderStage = nextAffordableWonderStage.getLeft();
+        var handOfCards = turnContext.getHandOfCards();
+        var cardToConsume = selectRandomCard(handOfCards.getCards());
+
+        wonderStage.build(cardToConsume, turnContext);
     }
 
     public void executeWar(int age) {
@@ -126,7 +147,7 @@ public class Player {
 
     private void discardCard(HandOfCards handOfCards) {
         var coinsBefore = getVault().getCoins();
-        var cardToDiscard = randomlySelect(handOfCards.getCards(), pickACard.getStreamNumber());
+        var cardToDiscard = selectRandomCard(handOfCards.getCards());
         getVault().addCoins(3);
 
         handOfCards.discard(cardToDiscard);
@@ -138,6 +159,10 @@ public class Player {
                 coinsBefore,
                 getVault().getCoins()
         );
+    }
+
+    private Card selectRandomCard(List<Card> cards) {
+        return randomlySelect(cards, pickACard.getStreamNumber());
     }
 
     private void playCard(TurnContext turnContext, HandOfCards handOfCards, Card card) {
@@ -175,7 +200,6 @@ public class Player {
                 "Player {} pays for card {} \n${} to bank \n${} to L({}) \n${} to R({}) \ntotal {}",
                 getName(),
                 card.getName(),
-                // TODO: this is sometimes wrong, max should be 1
                 cost.getToPayBank(),
                 cost.getToPayLeft(),
                 getLeftPlayer().getName(),
@@ -192,7 +216,7 @@ public class Player {
         vault.addShields(effectReward.getShields());
     }
 
-    private void collectMetric(String metricName, double value) {
-        cityStatistics.collectMetric(getWonderContext().getCityName(), metricName, value, this);
+    public void collectMetric(String metricName, double value) {
+        cityStatistics.collectMetric(metricName, value, this);
     }
 }

@@ -1,4 +1,4 @@
-package dpapukchiev.sevenwonderssimulation.city;
+package dpapukchiev.sevenwonderssimulation.wonder;
 
 public enum CityName {
     BABYLON_A,

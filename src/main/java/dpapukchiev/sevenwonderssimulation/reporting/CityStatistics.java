@@ -1,6 +1,6 @@
 package dpapukchiev.sevenwonderssimulation.reporting;
 
-import dpapukchiev.sevenwonderssimulation.city.CityName;
+import dpapukchiev.sevenwonderssimulation.wonder.CityName;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import jsl.utilities.statistic.Statistic;
 import lombok.extern.log4j.Log4j2;
@@ -38,7 +38,8 @@ public class CityStatistics {
         };
     }
 
-    public void collectMetric(CityName cityName, String statisticName, double value, Player player) {
+    public void collectMetric(String statisticName, double value, Player player) {
+        var cityName = player.getWonderContext().getCityName();
         var metricName = getStatisticName(cityName, statisticName);
         var metric = metrics.getOrDefault(
                 metricName,

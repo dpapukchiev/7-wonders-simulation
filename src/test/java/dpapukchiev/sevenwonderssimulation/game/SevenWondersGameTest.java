@@ -1,6 +1,6 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
-import dpapukchiev.sevenwonderssimulation.city.CityName;
+import dpapukchiev.sevenwonderssimulation.wonder.CityName;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.player.ScoreCard;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.CITY;
 import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.METRIC_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -121,11 +120,11 @@ class SevenWondersGameTest {
             var cityName = player.getWonderContext().getCityName();
 
             // TODO: add tracking of all scores
-            cityStatistics.collectMetric(cityName, "score-total", scoreCard.getTotalScore(), player);
-            cityStatistics.collectMetric(cityName, "coins-score", scoreCard.getCoinsScore(), player);
-            cityStatistics.collectMetric(cityName, "science-score", scoreCard.getScienceScore(), player);
-            cityStatistics.collectMetric(cityName, "built-cards", player.getVault().getBuiltCards().size(), player);
-            cityStatistics.collectMetric(cityName, "discarded-cards", player.getVault().getDiscardedCards().size(), player);
+            cityStatistics.collectMetric("score-total", scoreCard.getTotalScore(), player);
+            cityStatistics.collectMetric("coins-score", scoreCard.getCoinsScore(), player);
+            cityStatistics.collectMetric("science-score", scoreCard.getScienceScore(), player);
+            cityStatistics.collectMetric("built-cards", player.getVault().getBuiltCards().size(), player);
+            cityStatistics.collectMetric("discarded-cards", player.getVault().getDiscardedCards().size(), player);
         });
     }
 
