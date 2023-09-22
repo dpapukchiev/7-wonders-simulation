@@ -3,15 +3,18 @@ package dpapukchiev.sevenwonderssimulation.effects.core;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Builder(toBuilder = true)
 public class EffectReward {
     @Builder.Default
-    private double coinReward          = 0;
+    private double              coinReward          = 0;
     @Builder.Default
-    private double shields             = 0;
+    private double              shields             = 0;
     @Builder.Default
-    private double victoryPointsReward = 0;
+    private double              victoryPointsReward = 0;
 
     public EffectReward merge(EffectReward other) {
         if (other == null) {

@@ -16,23 +16,23 @@ public class GuildVictoryPointsForCardsEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleEffect(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player) {
         player.getEffectExecutionContext()
-                .addEffect(VictoryPointWithModifiersEffect.of(
+                .scheduleRewardEvaluationAndCollection(VictoryPointWithModifiersEffect.of(
                         SELF,
                         RAW_MATERIAL_CARD,
                         1
                 ), EffectTiming.END_OF_GAME);
 
         player.getEffectExecutionContext()
-                .addEffect(VictoryPointWithModifiersEffect.of(
+                .scheduleRewardEvaluationAndCollection(VictoryPointWithModifiersEffect.of(
                         SELF,
                         MANUFACTURED_GOOD_CARD,
                         1
                 ), EffectTiming.END_OF_GAME);
 
         player.getEffectExecutionContext()
-                .addEffect(VictoryPointWithModifiersEffect.of(
+                .scheduleRewardEvaluationAndCollection(VictoryPointWithModifiersEffect.of(
                         SELF,
                         GUILD_CARD,
                         1

@@ -6,9 +6,9 @@ import dpapukchiev.sevenwonderssimulation.resources.ResourceBundle;
 import java.util.Optional;
 
 public interface Effect {
-    void scheduleEffect(Player player);
+    void scheduleRewardEvaluationAndCollection(Player player);
 
-    default Optional<EffectReward> getReward(Player player) {
+    default Optional<EffectReward> collectReward(Player player) {
         return Optional.empty();
     }
 

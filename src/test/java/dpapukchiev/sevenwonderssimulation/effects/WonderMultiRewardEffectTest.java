@@ -23,7 +23,7 @@ class WonderMultiRewardEffectTest extends BasePlayerTest {
     void scheduleEffect() {
         var wonderMultiRewardEffect = WonderMultiRewardEffect.of(1, 3, 4);
 
-        wonderMultiRewardEffect.scheduleEffect(mainPlayer);
+        wonderMultiRewardEffect.scheduleRewardEvaluationAndCollection(mainPlayer);
 
         assertCoinAndVictoryPointsEffectsScheduled();
         assertWarShieldsEffectScheduled();
@@ -31,7 +31,7 @@ class WonderMultiRewardEffectTest extends BasePlayerTest {
 
     private void assertCoinAndVictoryPointsEffectsScheduled() {
         verify(effectExecutionContext, times(2))
-                .addEffect(effectArgumentCaptorEndOfTurn.capture(), eq(EffectTiming.END_OF_TURN));
+                .scheduleRewardEvaluationAndCollection(effectArgumentCaptorEndOfTurn.capture(), eq(EffectTiming.END_OF_TURN));
         var endOfTurnEffects = effectArgumentCaptorEndOfTurn.getAllValues();
         assertEquals(2, endOfTurnEffects.size());
         endOfTurnEffects.stream().filter(effect -> effect instanceof CoinRewardEffect)
@@ -44,7 +44,7 @@ class WonderMultiRewardEffectTest extends BasePlayerTest {
 
     private void assertWarShieldsEffectScheduled() {
         verify(effectExecutionContext, times(1))
-                .addEffect(effectArgumentCaptorPermanent.capture(), eq(EffectTiming.ANYTIME));
+                .scheduleRewardEvaluationAndCollection(effectArgumentCaptorPermanent.capture(), eq(EffectTiming.ANYTIME));
         var permanentEffects = effectArgumentCaptorPermanent.getAllValues();
         assertEquals(1, permanentEffects.size());
         permanentEffects.stream().filter(effect -> effect instanceof WarShieldsEffect)

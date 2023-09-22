@@ -1,11 +1,14 @@
 package dpapukchiev.sevenwonderssimulation.effects;
 
 import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
+import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -18,26 +21,26 @@ public class SpecialActionEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleEffect(Player player) {
-        // TODO:
-//        switch (specialAction){
-//
-//            case PLAY_CARD_WITHOUT_COST -> {
-//            }
-//            case PLAY_CARD_FROM_DISCARD -> {
-//            }
-//            case PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE -> {
-//            }
-//            case COPY_GUILD_CARD -> {
-//            }
-//        }
+    public void scheduleRewardEvaluationAndCollection(Player player) {
+        if(eventTiming.equals(EffectTiming.ANYTIME)){
+            player.getVault().addSpecialActions(specialAction);
+            return;
+        }
+
         player.getEffectExecutionContext()
-                .addEffect(this, eventTiming);
+                .scheduleRewardEvaluationAndCollection(this, eventTiming);
     }
 
     @Override
     public Optional<SpecialAction> getSpecialAction() {
         return Optional.of(specialAction);
+    }
+
+    @Override
+    public Optional<EffectReward> collectReward(Player player) {
+        player.getVault().addSpecialActions(specialAction);
+        return Optional.of(EffectReward.builder()
+                .build());
     }
 
     @Override

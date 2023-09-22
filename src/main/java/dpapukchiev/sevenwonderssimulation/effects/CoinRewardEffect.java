@@ -19,13 +19,13 @@ public class CoinRewardEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleEffect(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player) {
         player.getEffectExecutionContext()
-                .addEffect(this, EffectTiming.END_OF_TURN);
+                .scheduleRewardEvaluationAndCollection(this, EffectTiming.END_OF_TURN);
     }
 
     @Override
-    public Optional<EffectReward> getReward(Player player) {
+    public Optional<EffectReward> collectReward(Player player) {
         return Optional.of(EffectReward.builder()
                 .coinReward(coins)
                 .build());

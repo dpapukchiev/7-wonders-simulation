@@ -1,6 +1,7 @@
 package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Card;
+import dpapukchiev.sevenwonderssimulation.cards.CardName;
 import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
 import dpapukchiev.sevenwonderssimulation.cost.CostReport;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
@@ -63,6 +64,8 @@ public class Player {
             return;
         }
 
+        // get cards to build as extensions of already built cards
+
         var noCostCards = handOfCards.getCardsWithNoCost(turnContext);
         if (!noCostCards.isEmpty()) {
             // pick a card
@@ -70,6 +73,8 @@ public class Player {
             playCard(turnContext, handOfCards, card);
             return;
         }
+
+        // TODO: play with ordering
         var someCostCards = handOfCards.getCardsWithCost(turnContext)
                 .stream()
                 .sorted(Comparator.comparingDouble(c ->
@@ -179,16 +184,37 @@ public class Player {
         collectMetric("%s-effect-played".formatted(card.getEffect().getClass().getSimpleName()), 1);
         collectMetric("%s-costs-played".formatted(card.getCost().getClass().getSimpleName()), 1);
 
-        handOfCards.remove(card);
-        getVault().getBuiltCards().add(card);
+        removeFromHandAndAddToVault(handOfCards, card);
 
-        card.getEffect().scheduleEffect(this);
+        card.getEffect().scheduleRewardEvaluationAndCollection(this);
 
         var cost = card.getCost().generateCostReport(turnContext);
+
+        if (!cost.isAffordable()) {
+            throw new IllegalStateException("Player %s cannot afford card %s".formatted(getName(), card.getCost().report()));
+        }
+
         if (cost.getToPayTotal() == 0) {
             collectMetric("cards-played-for-free", 1);
             return;
         }
+
+//        var availableFreeCostActions = getVault().getSpecialAction(PLAY_CARD_WITHOUT_COST);
+//        if (availableFreeCostActions.isPresent()) {
+//            collectMetric("special-action-play-card-without-cost", 1);
+//            log.info("Player {} uses special action to play card {} with cost {} for free",
+//                    getName(),
+//                    card.getName(),
+//                    cost.getToPayTotal()
+//            );
+//            getVault().useSpecialAction(PLAY_CARD_WITHOUT_COST);
+//            return;
+//        }
+
+        payCost(cost, card.getName());
+    }
+
+    private void payCost(CostReport cost, CardName cardName) {
         getLeftPlayer().getVault().addCoins(cost.getToPayLeft());
         collectMetric("to-pay-left", cost.getToPayLeft());
 
@@ -206,7 +232,7 @@ public class Player {
         log.info(
                 "Player {} pays for card {} \n${} to bank \n${} to L({}) \n${} to R({}) \ntotal {}",
                 getName(),
-                card.getName(),
+                cardName,
                 cost.getToPayBank(),
                 cost.getToPayLeft(),
                 getLeftPlayer().getName(),
@@ -214,6 +240,11 @@ public class Player {
                 getRightPlayer().getName(),
                 cost.getToPayTotal()
         );
+    }
+
+    private void removeFromHandAndAddToVault(HandOfCards handOfCards, Card card) {
+        handOfCards.remove(card);
+        getVault().getBuiltCards().add(card);
     }
 
     public void applyEffectReward(EffectReward effectReward) {

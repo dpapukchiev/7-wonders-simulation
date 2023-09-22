@@ -5,7 +5,6 @@ import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
-import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.player.WarPoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,7 +72,7 @@ class VictoryPointWithModifiersEffectTest extends BasePlayerTest {
 
         mainPlayer.getVault().addWarPoint(WarPoint.MINUS_ONE);
 
-        var reward = effect.getReward(mainPlayer);
+        var reward = effect.collectReward(mainPlayer);
         assertTrue(reward.isPresent());
         assertEquals(expectedPoints, reward.get().getVictoryPointsReward());
     }

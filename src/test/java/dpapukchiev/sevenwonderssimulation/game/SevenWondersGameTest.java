@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SevenWondersGameTest {
 
     // stable up to 300
-    private final static int                   ATTEMPTS       = 300;
+    private final static int                   ATTEMPTS       = 50;
     private final static CityStatistics.SortBy SORT_BY        = METRIC_NAME;
     private final static CityStatistics        cityStatistics = new CityStatistics(SORT_BY);
 

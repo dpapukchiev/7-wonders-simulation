@@ -14,7 +14,7 @@ class VictoryPointEffectTest extends BasePlayerTest {
     void getReward(double i) {
         var effect = new VictoryPointEffect(i);
 
-        var reward = effect.getReward(mainPlayer);
+        var reward = effect.collectReward(mainPlayer);
 
         assertTrue(reward.isPresent());
         assertEquals(i, reward.get().getVictoryPointsReward());

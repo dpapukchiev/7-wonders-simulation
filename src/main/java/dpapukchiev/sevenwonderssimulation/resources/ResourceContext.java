@@ -66,7 +66,7 @@ public class ResourceContext {
                 .filter(bundle -> !bundle.isWildcardScienceSymbol())
                 .count();
         var wildCard = player.getEffectExecutionContext()
-                .getPermanentEffects()
+                .getAvailablePermanentEffects()
                 .stream()
                 .filter(effect -> effect.getResourceBundle(player).isPresent() &&
                         effect.getResourceBundle(player).get().isWildcardScienceSymbol())
@@ -233,7 +233,7 @@ public class ResourceContext {
     }
 
     private List<ResourceBundle> getResourceBundles() {
-        return player.getEffectExecutionContext().getPermanentEffects()
+        return player.getEffectExecutionContext().getAvailablePermanentEffects()
                 .stream()
                 .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
                 .filter(effect -> effect.getResourceBundle(player).isPresent())
@@ -244,7 +244,7 @@ public class ResourceContext {
     }
 
     private List<Effect> getPermanentEffectsProvidingResources() {
-        return player.getEffectExecutionContext().getPermanentEffects()
+        return player.getEffectExecutionContext().getAvailablePermanentEffects()
                 .stream()
                 .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
                 .filter(effect -> effect.getResourceBundle(player).isPresent())

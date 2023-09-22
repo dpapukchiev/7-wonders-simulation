@@ -4,6 +4,7 @@ import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardName;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
+import dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,19 +25,21 @@ import static java.util.stream.Collectors.groupingBy;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vault {
-    private WonderContext  wonderContext;
+    private WonderContext       wonderContext;
     @Builder.Default
-    private List<WarPoint> warPoints      = new ArrayList<>();
+    private List<WarPoint>      warPoints               = new ArrayList<>();
     @Builder.Default
-    private double         victoryPoints  = 0;
+    private double              victoryPoints           = 0;
     @Builder.Default
-    private double         shields        = 0;
+    private double              shields                 = 0;
     @Builder.Default
-    private double         coins          = 3;
+    private double              coins                   = 3;
     @Builder.Default
-    private List<Card>     builtCards     = new ArrayList<>();
+    private List<Card>          builtCards              = new ArrayList<>();
     @Builder.Default
-    private List<Card>     discardedCards = new ArrayList<>();
+    private List<Card>          discardedCards          = new ArrayList<>();
+    @Builder.Default
+    private List<SpecialAction> availableSpecialActions = new ArrayList<>();
 
     public List<String> getBuiltCardNames() {
         return getBuiltCards()
@@ -130,11 +133,31 @@ public class Vault {
                     .map(String::valueOf)
                     .collect(Collectors.joining(",")));
         }
+        if(!availableSpecialActions.isEmpty()) {
+            report.add("SA:" + availableSpecialActions.stream()
+                    .map(SpecialAction::name)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(",")));
+        }
         if (!builtCards.isEmpty()) {
             report.add("\nBuilt cards(%s): \n".formatted(builtCards.size()) + builtCards.stream()
                     .map(Card::report)
                     .collect(Collectors.joining("\n")));
         }
         return "\nVault\n%s".formatted(String.join(" ", report));
+    }
+
+    public void addSpecialActions(SpecialAction... specialActions) {
+        availableSpecialActions.addAll(List.of(specialActions));
+    }
+
+    public Optional<SpecialAction> getSpecialAction(SpecialAction specialAction) {
+        return availableSpecialActions.stream()
+                .filter(action -> action.equals(specialAction))
+                .findFirst();
+    }
+
+    public void useSpecialAction(SpecialAction specialAction) {
+        availableSpecialActions.remove(specialAction);
     }
 }

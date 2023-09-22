@@ -29,7 +29,7 @@ public class WonderStage {
 
         var player = turnContext.getPlayer();
         player.collectMetric("build-wonder-stage-" + stageNumber, 1);
-        effect.scheduleEffect(player);
+        effect.scheduleRewardEvaluationAndCollection(player);
         cost.applyCost(turnContext, costReport);
         turnContext.getHandOfCards().discard(consumedCard);
 

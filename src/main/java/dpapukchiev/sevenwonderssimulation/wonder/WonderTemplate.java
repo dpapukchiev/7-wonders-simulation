@@ -2,9 +2,12 @@ package dpapukchiev.sevenwonderssimulation.wonder;
 
 import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
 import dpapukchiev.sevenwonderssimulation.effects.CoinRewardEffect;
+import dpapukchiev.sevenwonderssimulation.effects.SpecialActionEffect;
 import dpapukchiev.sevenwonderssimulation.effects.VictoryPointEffect;
 import dpapukchiev.sevenwonderssimulation.effects.WarShieldsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.WonderMultiRewardEffect;
+import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
+import dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction;
 import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.AllArgsConstructor;
@@ -32,7 +35,7 @@ public class WonderTemplate {
             case BABYLON -> defaultCity;
             case RHODOS -> shouldUseA ? rhodosA() : rhodosB();
 //            case RHODOS -> defaultCity;
-            case OLIMPIA -> defaultCity;
+            case OLIMPIA -> shouldUseA ? olympiaA() : defaultCity;
             case ALEXANDRIA -> defaultCity;
             case HALIKARNASSOS -> defaultCity;
             case GIZAH -> shouldUseA ? gizahA() : gizahB();
@@ -204,6 +207,33 @@ public class WonderTemplate {
                                         4
                                 ))
                                 .stageNumber(2)
+                                .build()
+                ))
+                .build();
+    }
+
+    private static WonderContext olympiaA() {
+        return WonderContext.builder()
+                .cityName(CityName.OLIMPIA)
+                .side("A")
+                .wonderStages(List.of(
+                        WonderStage.builder()
+                                .cost(ComplexResourceCost.of(WOOD, WOOD))
+                                .effect(VictoryPointEffect.of(3))
+                                .stageNumber(1)
+                                .build(),
+                        WonderStage.builder()
+                                .cost(ComplexResourceCost.of(STONE, STONE))
+                                .effect(SpecialActionEffect.of(
+                                        SpecialAction.PLAY_CARD_WITHOUT_COST,
+                                        EffectTiming.ANYTIME
+                                ))
+                                .stageNumber(2)
+                                .build(),
+                        WonderStage.builder()
+                                .cost(ComplexResourceCost.of(METAL_ORE, METAL_ORE))
+                                .effect(VictoryPointEffect.of(7))
+                                .stageNumber(3)
                                 .build()
                 ))
                 .build();

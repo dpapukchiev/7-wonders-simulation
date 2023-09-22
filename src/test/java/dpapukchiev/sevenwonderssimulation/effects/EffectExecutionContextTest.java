@@ -56,20 +56,20 @@ class EffectExecutionContextTest extends BasePlayerTest {
 
         lenient().when(effect1.getState())
                 .thenReturn(effect1State);
-        lenient().when(effect1.getReward(player))
+        lenient().when(effect1.collectReward(player))
                 .thenReturn(Optional.ofNullable(EffectReward.builder()
                         .coinReward(coinRewardEffect1)
                         .build()));
 
         lenient().when(effect2.getState())
                 .thenReturn(effect2State);
-        lenient().when(effect2.getReward(player))
+        lenient().when(effect2.collectReward(player))
                 .thenReturn(Optional.ofNullable(EffectReward.builder()
                         .victoryPointsReward(victoryPointsRewardEffect2)
                         .build()));
 
-        executionContext.addEffect(effect1, effect1Timing);
-        executionContext.addEffect(effect2, effect2Timing);
+        executionContext.scheduleRewardEvaluationAndCollection(effect1, effect1Timing);
+        executionContext.scheduleRewardEvaluationAndCollection(effect2, effect2Timing);
 
         Optional<EffectReward> result = Optional.empty();
         switch (currentTiming) {
@@ -99,13 +99,13 @@ class EffectExecutionContextTest extends BasePlayerTest {
     void getPermanentEffects() {
         var executionContext = new EffectExecutionContext();
 
-        executionContext.addEffect(effect1, EffectTiming.ANYTIME);
-        executionContext.addEffect(effect2, EffectTiming.ANYTIME);
+        executionContext.scheduleRewardEvaluationAndCollection(effect1, EffectTiming.ANYTIME);
+        executionContext.scheduleRewardEvaluationAndCollection(effect2, EffectTiming.ANYTIME);
 
         when(effect1.getState()).thenReturn(EffectState.AVAILABLE);
         when(effect2.getState()).thenReturn(EffectState.EXHAUSTED);
 
-        var result = executionContext.getPermanentEffects();
+        var result = executionContext.getAvailablePermanentEffects();
         assertEquals(1, result.size());
         assertEquals(effect1, result.get(0));
     }

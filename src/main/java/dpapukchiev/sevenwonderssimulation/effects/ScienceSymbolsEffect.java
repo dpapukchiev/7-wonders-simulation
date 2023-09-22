@@ -30,10 +30,10 @@ public class ScienceSymbolsEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleEffect(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player) {
         var effectTiming = scienceSymbols.stream().distinct().count() > 1 ? EffectTiming.END_OF_GAME : EffectTiming.ANYTIME;
         player.getEffectExecutionContext()
-                .addEffect(this, effectTiming);
+                .scheduleRewardEvaluationAndCollection(this, effectTiming);
     }
 
     @Override

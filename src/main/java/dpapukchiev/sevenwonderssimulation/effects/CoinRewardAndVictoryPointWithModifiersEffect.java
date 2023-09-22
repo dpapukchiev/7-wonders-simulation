@@ -39,15 +39,15 @@ public class CoinRewardAndVictoryPointWithModifiersEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleEffect(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player) {
         player.getEffectExecutionContext()
-                .addEffect(CoinRewardWithModifiersEffect.of(
+                .scheduleRewardEvaluationAndCollection(CoinRewardWithModifiersEffect.of(
                         directionConstraint,
                         multiplierType,
                         coinReward
                 ), EffectTiming.END_OF_TURN);
         player.getEffectExecutionContext()
-                .addEffect(VictoryPointWithModifiersEffect.of(
+                .scheduleRewardEvaluationAndCollection(VictoryPointWithModifiersEffect.of(
                                 directionConstraint,
                                 multiplierType,
                                 victoryPoints

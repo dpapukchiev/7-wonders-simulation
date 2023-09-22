@@ -69,6 +69,8 @@ public class BasePlayerTest {
                 .name("Player")
                 .build();
 
+        mainPlayer.initVault();
+
         mainPlayer.setLeftPlayer(leftPlayer);
         mainPlayer.setRightPlayer(rightPlayer);
 
@@ -123,7 +125,7 @@ public class BasePlayerTest {
     }
 
     protected void assignPermanentEffectsToPlayer(List<Effect> permanentEffects) {
-        when(effectExecutionContext.getPermanentEffects())
+        when(effectExecutionContext.getAvailablePermanentEffects())
                 .thenReturn(permanentEffects);
     }
 
@@ -139,7 +141,7 @@ public class BasePlayerTest {
                         .type(type)
                         .directionConstraint(right)
                         .build()));
-        executionContext.addEffect(effect, EffectTiming.ANYTIME);
+        executionContext.scheduleRewardEvaluationAndCollection(effect, EffectTiming.ANYTIME);
     }
 
     protected void configureResourceBundleEffect(Effect effect, ResourceBundle bundleToReturn) {

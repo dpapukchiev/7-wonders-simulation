@@ -22,7 +22,7 @@ public class EffectExecutionContext {
             throw new IllegalArgumentException("Direction must be LEFT or RIGHT");
         }
 
-        return getPermanentEffects().stream()
+        return getAvailablePermanentEffects().stream()
                 .map(Effect::getPreferentialTrading)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -35,13 +35,13 @@ public class EffectExecutionContext {
                 .orElse(2);
     }
 
-    public List<Effect> getPermanentEffects() {
+    public List<Effect> getAvailablePermanentEffects() {
         return permanentEffects.stream()
                 .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
                 .toList();
     }
 
-    public void addEffect(Effect effect, EffectTiming timing) {
+    public void scheduleRewardEvaluationAndCollection(Effect effect, EffectTiming timing) {
         switch (timing) {
             case END_OF_TURN:
                 effectsEndOfTurn.add(effect);
@@ -97,7 +97,7 @@ public class EffectExecutionContext {
         return effectsToEvaluate.stream()
                 .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
                 .map(effect -> {
-                    var reward = effect.getReward(player);
+                    var reward = effect.collectReward(player);
                     if (reward.isPresent()) {
                         effect.markAsExhausted();
                         log.info("Player {} exhausted effect {} reward {}",

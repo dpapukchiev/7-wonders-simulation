@@ -6,11 +6,6 @@ import dpapukchiev.sevenwonderssimulation.player.Player;
 
 import java.util.ArrayList;
 
-import static dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint.SELF;
-import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.GUILD_CARD;
-import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.MANUFACTURED_GOOD_CARD;
-import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.RAW_MATERIAL_CARD;
-
 public class WonderMultiRewardEffect extends BaseEffect {
     private final double shields;
     private final double coins;
@@ -27,15 +22,15 @@ public class WonderMultiRewardEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleEffect(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player) {
         player.getEffectExecutionContext()
-                .addEffect(CoinRewardEffect.of(coins), EffectTiming.END_OF_TURN);
+                .scheduleRewardEvaluationAndCollection(CoinRewardEffect.of(coins), EffectTiming.END_OF_TURN);
 
         player.getEffectExecutionContext()
-                .addEffect(VictoryPointEffect.of(victoryPoints), EffectTiming.END_OF_TURN);
+                .scheduleRewardEvaluationAndCollection(VictoryPointEffect.of(victoryPoints), EffectTiming.END_OF_TURN);
 
         player.getEffectExecutionContext()
-                .addEffect(WarShieldsEffect.of(shields), EffectTiming.ANYTIME);
+                .scheduleRewardEvaluationAndCollection(WarShieldsEffect.of(shields), EffectTiming.ANYTIME);
 
     }
 

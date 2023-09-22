@@ -42,9 +42,9 @@ public class VictoryPointWithModifiersEffect extends BaseRewardWithModifiersEffe
     }
 
     @Override
-    public void scheduleEffect(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player) {
         player.getEffectExecutionContext()
-                .addEffect(this, EffectTiming.END_OF_TURN);
+                .scheduleRewardEvaluationAndCollection(this, EffectTiming.END_OF_TURN);
     }
 
     @Override

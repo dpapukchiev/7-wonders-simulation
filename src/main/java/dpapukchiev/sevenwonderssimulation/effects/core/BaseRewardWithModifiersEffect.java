@@ -11,7 +11,7 @@ public abstract class BaseRewardWithModifiersEffect extends BaseEffect {
     protected final EffectMultiplierType      multiplierType;
 
     @Override
-    public Optional<EffectReward> getReward(Player player) {
+    public Optional<EffectReward> collectReward(Player player) {
         var left = player.getLeftPlayer();
         var right = player.getRightPlayer();
         var reward = 0.0;

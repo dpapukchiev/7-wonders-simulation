@@ -114,23 +114,7 @@ public class SevenWondersGame extends SchedulingElement {
         @Override
         public void action(JSLEvent<Object> event) {
             log.info("\n{}=>ExecuteEndOfAge", getTime());
-            var players = playersFactory.getPlayers();
-            players.forEach(player -> {
-                log.info("\n{}=>ApplyingEndOfGameEffects for player {}", getTime(), player.getName());
-                var efxReportBeforeStart = player.getEffectExecutionContext().report();
-                Optional<EffectReward> effectReward = player.getEffectExecutionContext()
-                        .executeEffectsEndOfGame(player);
-                effectReward.ifPresent(player::applyEffectReward);
-
-                log.info(
-                        "{}=>ApplyingEndOfGameEffects \nreward: {} \nefx before: {}  \nnew state: {}",
-                        getTime(),
-                        effectReward.map(EffectReward::report).
-                                orElse("no rewards"),
-                        efxReportBeforeStart,
-                        player.report()
-                );
-            });
+            var players = applyEndOfGameEffects();
 
             var scoreReports = players.stream()
                     .sorted((p1, p2) -> Double.compare(p2.score().getTotalScore(), p1.score().getTotalScore()))
@@ -152,6 +136,27 @@ public class SevenWondersGame extends SchedulingElement {
                     winner.score().getTotalScore()
             );
         }
+    }
+
+    private List<Player> applyEndOfGameEffects() {
+        var players = playersFactory.getPlayers();
+        players.forEach(player -> {
+            log.info("\n{}=>ApplyingEndOfGameEffects for player {}", getTime(), player.getName());
+            var efxReportBeforeStart = player.getEffectExecutionContext().report();
+            Optional<EffectReward> effectReward = player.getEffectExecutionContext()
+                    .executeEffectsEndOfGame(player);
+            effectReward.ifPresent(player::applyEffectReward);
+
+            log.info(
+                    "{}=>ApplyingEndOfGameEffects \nreward: {} \nefx before: {}  \nnew state: {}",
+                    getTime(),
+                    effectReward.map(EffectReward::report).
+                            orElse("no rewards"),
+                    efxReportBeforeStart,
+                    player.report()
+            );
+        });
+        return players;
     }
 
     class ExecuteAgeTransitionTurn implements EventActionIfc<Integer> {
