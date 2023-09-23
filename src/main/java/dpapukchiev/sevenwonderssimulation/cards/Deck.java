@@ -27,6 +27,7 @@ import jsl.utilities.random.rvariable.NormalRV;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,7 @@ import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COMPASS
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.TABLET;
 import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
+@Log4j2
 @Getter
 @Builder
 @AllArgsConstructor
@@ -88,7 +90,13 @@ public class Deck {
         allCards.addAll(getAge2Group2());
         allCards.addAll(getAge2Group3());
 
-        allCards.addAll(getRandomSetOfGuildCards(numberOfPlayers));
+        var randomSetOfGuildCards = getRandomSetOfGuildCards(numberOfPlayers);
+        log.info("Random set of guild cards: {}", randomSetOfGuildCards.stream()
+                .map(Card::getName)
+                .map(Enum::name)
+                .collect(Collectors.joining(", ")));
+
+        allCards.addAll(randomSetOfGuildCards);
         allCards.addAll(getAge3Group2());
         allCards.addAll(getAge3Group3());
 
@@ -569,16 +577,16 @@ public class Deck {
                         .age(age)
                         .requiredPlayersCount(3)
                         .cost(CoinCost.of(1))
-                        .effect(ResourceEffect.of(RawMaterial.WOOD))
-                        .name(CardName.HOLZPLATZ)
+                        .effect(ResourceEffect.of(WOOD, WOOD))
+                        .name(CardName.SAGEWERK)
                         .build(),
                 Card.builder()
                         .type(rawMaterial)
                         .age(age)
                         .requiredPlayersCount(4)
                         .cost(CoinCost.of(1))
-                        .effect(ResourceEffect.of(RawMaterial.WOOD))
-                        .name(CardName.HOLZPLATZ)
+                        .effect(ResourceEffect.of(WOOD, WOOD))
+                        .name(CardName.SAGEWERK)
                         .build(),
 
                 Card.builder()
@@ -855,7 +863,7 @@ public class Deck {
 
     public List<Card> getAge2Group3() {
         var military = CardType.MILITARY;
-        var science = CardType.COMMERCIAL;
+        var science = CardType.SCIENCE;
         var age = 2;
 
         return List.of(

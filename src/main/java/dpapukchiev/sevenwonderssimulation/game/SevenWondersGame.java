@@ -1,6 +1,5 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
-import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
@@ -24,8 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction.COPY_GUILD_CARD;
 
 @Log4j2
 @Getter

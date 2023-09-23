@@ -32,9 +32,10 @@ public class WonderStage {
         built = true;
         this.consumedCard = consumedCard;
 
-        log.info("\nPlayer %s builds wonder stage %s for %s and gets %s".formatted(
+        log.info("\nPlayer %s builds wonder stage %s using card %s for %s and gets %s".formatted(
                 player.getName(),
                 stageNumber,
+                consumedCard.getName(),
                 cost.report(),
                 effect.report()
         ));

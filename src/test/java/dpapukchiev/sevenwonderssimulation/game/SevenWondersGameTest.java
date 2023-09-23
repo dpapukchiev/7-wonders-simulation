@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    private final static int                   ATTEMPTS       = 50;
+    private final static int                   ATTEMPTS       = 200;
     private final static CityStatistics.SortBy SORT_BY        = METRIC_NAME;
     private final static CityStatistics        cityStatistics = new CityStatistics(SORT_BY);
 
@@ -51,7 +51,7 @@ class SevenWondersGameTest {
         simulation.setAdvanceStreamNumber(streamNumber);
 
         var gameOptions = GameOptions.builder()
-                .numberOfPlayers(7)
+                .numberOfPlayers(3)
                 .agesToSchedule(3)
                 .cityStatistics(cityStatistics)
                 .build();

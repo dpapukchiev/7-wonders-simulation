@@ -1,6 +1,8 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
+import dpapukchiev.sevenwonderssimulation.cards.FreeUpgrades;
+import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import dpapukchiev.sevenwonderssimulation.wonder.CityName;
@@ -12,7 +14,6 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
@@ -34,11 +35,20 @@ public class PlayersFactory {
 
         var cities = selectRandomCities(options);
         for (int i = 0; i < options.numberOfPlayers(); i++) {
+            var wonderContext = wonderTemplate.build(cities.get(i));
+            var providedResources = FreeUpgrades.getProvidedResources(
+                    wonderContext.getCityName(),
+                    wonderContext.getSide().equals("A")
+            );
             var player = Player.builder()
-                    .name("Player-" + i)
-                    .wonderContext(wonderTemplate.build(cities.get(i)))
+                    .name("Player-%s-%s".formatted(i, wonderContext.getCityName()))
+                    .wonderContext(wonderContext)
                     .pickACard(options.playerRandomVariables().get(i))
                     .cityStatistics(cityStatistics)
+                    .effectExecutionContext(new EffectExecutionContext(
+                            providedResources.getRight(),
+                            providedResources.getLeft()
+                    ))
                     .build()
                     .initVault(deck);
             players.add(player);
@@ -66,7 +76,8 @@ public class PlayersFactory {
 
         for (int i = 0; i < options.numberOfPlayers(); i++) {
 
-            var cityName = randomlySelect(Stream.of(CityName.values())
+            var cityName = randomlySelect(CityName.allCities()
+                            .stream()
                             .filter(city -> !usedCities.contains(city))
                             .toList(),
                     cityDistribution.getStreamNumber()

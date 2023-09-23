@@ -1,5 +1,10 @@
 package dpapukchiev.sevenwonderssimulation.cards;
 
+import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
+import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
+import dpapukchiev.sevenwonderssimulation.wonder.CityName;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.List;
 
 import static dpapukchiev.sevenwonderssimulation.cards.CardName.AKADEMIE;
@@ -32,6 +37,17 @@ public class FreeUpgrades {
     public boolean canBuildForFree(Card card, List<Card> builtCards) {
         return builtCards.stream()
                         .anyMatch(builtCard -> getFreeUpgrades(builtCard).contains(card.getName()));
+    }
+    public static Pair<List<RawMaterial>, List<ManufacturedGood>> getProvidedResources(CityName cityName, boolean isSideA) {
+        return switch (cityName){
+            case BABYLON -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
+            case RHODOS -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
+            case OLIMPIA -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
+            case ALEXANDRIA -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
+            case HALIKARNASSOS -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
+            case GIZAH -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
+            case EPHESOS -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
+        };
     }
 
     private List<CardName> getFreeUpgrades(Card builtCard) {

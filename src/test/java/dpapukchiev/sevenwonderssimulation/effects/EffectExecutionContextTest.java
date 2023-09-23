@@ -52,7 +52,7 @@ class EffectExecutionContextTest extends BasePlayerTest {
             int finalCoinReward,
             int finalVictoryPointsReward
     ) {
-        var executionContext = new EffectExecutionContext();
+        var executionContext = new EffectExecutionContext(null, null);
         var player = Player.builder().build();
 
         lenient().when(effect1.getState())
@@ -92,7 +92,7 @@ class EffectExecutionContextTest extends BasePlayerTest {
 
     @Test
     void getPermanentEffects() {
-        var executionContext = new EffectExecutionContext();
+        var executionContext = new EffectExecutionContext(null, null);
 
         executionContext.scheduleRewardEvaluationAndCollection(effect1, EffectTiming.ANYTIME);
         executionContext.scheduleRewardEvaluationAndCollection(effect2, EffectTiming.ANYTIME);
@@ -101,13 +101,13 @@ class EffectExecutionContextTest extends BasePlayerTest {
         when(effect2.getState()).thenReturn(EffectState.EXHAUSTED);
 
         var result = executionContext.getAvailablePermanentEffects();
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
         assertEquals(effect1, result.get(0));
     }
 
     @Test
     void preferentialTrading() {
-        var executionContext = new EffectExecutionContext();
+        var executionContext = new EffectExecutionContext(null, null);
         assertEquals(2, executionContext.getTradingPrice(LEFT, RAW_MATERIALS));
         assertEquals(2, executionContext.getTradingPrice(RIGHT, RAW_MATERIALS));
 

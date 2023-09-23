@@ -192,7 +192,7 @@ class DeckTest extends BasePlayerTest {
 
         assertListContains(result, 9, CardType.MILITARY);
         assertListContains(result, 2, CardType.CIVIL);
-        assertListContains(result, 8, CardType.COMMERCIAL);
+        assertListContains(result, 8, CardType.SCIENCE);
 
         assertCardEffect(result, 2, VictoryPointEffect.class);
         assertCardEffect(result, 8, ScienceSymbolsEffect.class);

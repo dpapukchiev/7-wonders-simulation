@@ -22,10 +22,10 @@ public class Strategy {
     public static Strategy defaultStrategy() {
         return new Strategy(List.of(
                 new BuildRandomFreeUpgrade(),
+                new BuildRandomWithCostCardIfAffordable(),
                 new BuildMostExpensiveUsingPlayWithoutCost(),
                 new BuildWonderIfAvailableDiscardRandom(),
                 new BuildRandomWithNoCostCard(),
-                new BuildRandomWithCostCardIfAffordable(),
                 new DiscardRandom()
         ));
     }

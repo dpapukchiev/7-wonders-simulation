@@ -3,6 +3,7 @@ package dpapukchiev.sevenwonderssimulation.player;
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
+import dpapukchiev.sevenwonderssimulation.effects.ResourceEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
@@ -36,8 +37,7 @@ public class Player {
     private Player                 leftPlayer;
     @Setter
     private Player                 rightPlayer;
-    @Builder.Default
-    private EffectExecutionContext effectExecutionContext = new EffectExecutionContext();
+    private EffectExecutionContext effectExecutionContext;
     private Vault                  vault;
     private CityStatistics         cityStatistics;
 

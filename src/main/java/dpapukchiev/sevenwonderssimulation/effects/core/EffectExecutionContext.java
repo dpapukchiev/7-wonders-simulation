@@ -1,7 +1,9 @@
 package dpapukchiev.sevenwonderssimulation.effects.core;
 
-import dpapukchiev.sevenwonderssimulation.game.Turn;
+import dpapukchiev.sevenwonderssimulation.effects.ResourceEffect;
 import dpapukchiev.sevenwonderssimulation.player.Player;
+import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
+import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -16,6 +18,13 @@ public class EffectExecutionContext {
     private final List<Effect> effectsEndOfAge  = new ArrayList<>();
     private final List<Effect> effectsEndOfGame = new ArrayList<>();
     private final List<Effect> permanentEffects = new ArrayList<>();
+
+    public EffectExecutionContext(List<ManufacturedGood> producedGoods, List<RawMaterial> producedRawMaterials) {
+        scheduleRewardEvaluationAndCollection(ResourceEffect.of(
+                producedRawMaterials,
+                producedGoods
+        ), EffectTiming.ANYTIME);
+    }
 
     // TODO: replace with separate enum
     public double getTradingPrice(EffectDirectionConstraint direction, PreferentialTradingContract.Type contractType) {
@@ -85,7 +94,7 @@ public class EffectExecutionContext {
         if (!permanentEffects.isEmpty()) {
             report.add("P:%s".formatted(permanentEffects.size()));
         }
-        if(report.isEmpty()) {
+        if (report.isEmpty()) {
             return "Efx(0)";
         }
         return "Efx(%s)".formatted(String.join(" ", report));
@@ -104,7 +113,7 @@ public class EffectExecutionContext {
                     var reward = effect.collectReward(player);
                     if (reward.isPresent()) {
                         effect.markAsExhausted();
-                        log.info("Player {} exhausted effect {} reward {}",
+                        log.info("\nPlayer {} exhausted effect {} reward {}",
                                 player.getName(), effect.report(), reward.get().report());
                     }
                     return reward;
