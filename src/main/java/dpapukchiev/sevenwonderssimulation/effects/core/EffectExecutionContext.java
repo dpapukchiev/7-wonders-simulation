@@ -59,7 +59,7 @@ public class EffectExecutionContext {
         }
     }
 
-    public Optional<EffectReward> executeEffectsEndOfTurn(Player player, Turn message) {
+    public Optional<EffectReward> executeEffectsEndOfTurn(Player player) {
         return getEffectReward(player, effectsEndOfTurn);
     }
 

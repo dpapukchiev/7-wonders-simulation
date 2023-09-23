@@ -73,7 +73,7 @@ class EffectExecutionContextTest extends BasePlayerTest {
         executionContext.scheduleRewardEvaluationAndCollection(effect2, effect2Timing);
 
         Optional<EffectReward> result = switch (currentTiming) {
-            case END_OF_TURN -> executionContext.executeEffectsEndOfTurn(player, new Turn(1, 4));
+            case END_OF_TURN -> executionContext.executeEffectsEndOfTurn(player);
             case END_OF_AGE -> executionContext.executeEffectsEndOfAge(player);
             case END_OF_GAME -> executionContext.executeEffectsEndOfGame(player);
             default -> Optional.empty();

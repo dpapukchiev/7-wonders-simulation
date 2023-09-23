@@ -12,15 +12,15 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @Log4j2
-public class HalikarnassosMultiRewardEffect extends BaseEffect {
+public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
     private final double victoryPoints;
 
-    public HalikarnassosMultiRewardEffect(double victoryPoints) {
+    public PlayFromDiscardedWithVictoryPoints(double victoryPoints) {
         this.victoryPoints = victoryPoints;
     }
 
-    public static HalikarnassosMultiRewardEffect of(double victoryPoints) {
-        return new HalikarnassosMultiRewardEffect(victoryPoints);
+    public static PlayFromDiscardedWithVictoryPoints of(double victoryPoints) {
+        return new PlayFromDiscardedWithVictoryPoints(victoryPoints);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class HalikarnassosMultiRewardEffect extends BaseEffect {
                 .stream()
                 .filter(c -> !player.getVault().getBuiltCardNames().contains(c.getName().name()))
                 .toList();
-        // TODO: make sure this works
+
         if (!discardedCards.isEmpty()) {
             var cardToPlay = player.selectRandomCard(discardedCards);
             player.getVault().useSpecialAction(SpecialAction.PLAY_CARD_FROM_DISCARD);

@@ -1,6 +1,7 @@
 package dpapukchiev.sevenwonderssimulation.effects;
 
 import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
+import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
@@ -21,6 +22,11 @@ public class ResourceEffect extends BaseEffect {
     @Builder.Default
     private final List<ManufacturedGood> manufacturedGoodList = new ArrayList<>();
 
+    public static ResourceEffect ofRawMaterials(List<RawMaterial> rawMaterials) {
+        return ResourceEffect.builder()
+                .rawMaterialList(rawMaterials)
+                .build();
+    }
     public static ResourceEffect of(RawMaterial... rawMaterial) {
         return ResourceEffect.builder()
                 .rawMaterialList(List.of(rawMaterial))
@@ -49,6 +55,12 @@ public class ResourceEffect extends BaseEffect {
         return ResourceEffect.builder()
                 .rawMaterialList(materialList)
                 .manufacturedGoodList(manufacturedGoodsList)
+                .build();
+    }
+
+    public static Effect ofManufacturedGoods(List<ManufacturedGood> manufacturedGoods) {
+        return ResourceEffect.builder()
+                .manufacturedGoodList(manufacturedGoods)
                 .build();
     }
 
