@@ -53,7 +53,7 @@ public class CoinRewardAndVictoryPointWithModifiersEffect extends BaseEffect {
                                 multiplierType,
                                 victoryPoints
                         ), multiplierType.equals(EffectMultiplierType.WONDER_STAGE) ?
-                                EffectTiming.END_OF_GAME : EffectTiming.END_OF_TURN // TODO: check if this works
+                                EffectTiming.END_OF_GAME : EffectTiming.END_OF_TURN
                 );
     }
 

@@ -11,7 +11,7 @@ public enum EffectMultiplierType {
     COMMERCIAL_CARD,
     MILITARY_CARD,
     GUILD_CARD,
-    WONDER_STAGE, // TODO: implement
+    WONDER_STAGE,
     WAR_LOSS,
     WAR_WIN,
     WAR_WIN_1,

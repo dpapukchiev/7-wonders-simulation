@@ -21,8 +21,6 @@ import java.util.List;
 public class Card {
     @ToString.Include
     protected CardName     name;
-    @Builder.Default
-    protected List<String> freeUpgrades = new ArrayList<>();
     protected int          age;
     protected int          requiredPlayersCount;
     protected Cost         cost;

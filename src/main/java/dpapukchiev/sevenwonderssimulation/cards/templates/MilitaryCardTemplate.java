@@ -50,7 +50,6 @@ public class MilitaryCardTemplate extends BaseCardTemplate {
                                     .cost(cost)
                                     .effect(WarShieldsEffect.of(shields))
                                     .type(CardType.MILITARY)
-                                    .freeUpgrades(List.of()) // TODO
                                     .build();
                         }
                 ).toList();

@@ -51,7 +51,7 @@ class SevenWondersGameTest {
         simulation.setAdvanceStreamNumber(streamNumber);
 
         var gameOptions = GameOptions.builder()
-                .numberOfPlayers(3)
+                .numberOfPlayers(7)
                 .agesToSchedule(3)
                 .cityStatistics(cityStatistics)
                 .build();

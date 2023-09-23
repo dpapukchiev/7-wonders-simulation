@@ -52,7 +52,6 @@ public class CommercialCardTemplate extends BaseCardTemplate {
                                     .cost(cost)
                                     .effect(effect)
                                     .type(CardType.COMMERCIAL)
-                                    .freeUpgrades(List.of()) // TODO
                                     .build();
                         }
                 ).toList();

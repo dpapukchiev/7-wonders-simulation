@@ -52,7 +52,6 @@ public class CivilCardTemplate extends BaseCardTemplate{
                                     .cost(cost)
                                     .effect(VictoryPointEffect.of(victoryPoints))
                                     .type(CardType.CIVIL)
-                                    .freeUpgrades(List.of()) // TODO
                                     .build();
                         }
                 ).toList();

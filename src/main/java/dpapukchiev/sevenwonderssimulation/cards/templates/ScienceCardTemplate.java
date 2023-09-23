@@ -53,7 +53,6 @@ public class ScienceCardTemplate extends BaseCardTemplate {
                                     .cost(cost)
                                     .effect(ScienceSymbolsEffect.of(scienceSymbol))
                                     .type(CardType.SCIENCE)
-                                    .freeUpgrades(List.of()) // TODO
                                     .build();
                         }
                 ).toList();

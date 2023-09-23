@@ -95,11 +95,6 @@ public class ResourceContext {
                 .toList();
     }
 
-    public String report() {
-        // TODO: implement
-        return "";
-    }
-
     private CostReport createReportForRawMaterials(List<RawMaterial> rawMaterials, ArrayList<ResourceBundle> usedEffects, CostReport costReport) {
         var countPerRawMaterial = rawMaterials.stream().collect(groupingBy(Function.identity(), Collectors.counting()));
         for (var rawMaterial : countPerRawMaterial.entrySet()) {
