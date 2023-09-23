@@ -18,6 +18,7 @@ public class Strategy {
 
     public static Strategy defaultStrategy() {
         return new Strategy(List.of(
+                new UseSpecialActionIfAvailableBuildMostExpensive(),
                 new BuildWonderIfAvailableDiscardRandom(),
                 new BuildRandomWithNoCostCard(),
                 new BuildRandomWithCostCardIfAffordable(),
@@ -31,11 +32,16 @@ public class Strategy {
             var result = step.execute(turnContext);
             switch (result.action()) {
                 // TODO: card lineage building
-                // TODO: use special effect
-                case BUILD_FOR_FREE, BUILD_WITH_SPECIAL_EFFECT -> {
+                case BUILD_FOR_FREE -> {
                     removeFromHandAndAddToVault(turnContext, result.card());
                     scheduleEffectReward(player, result.card().getEffect());
                     player.collectMetric("free-builds", 1);
+                    return;
+                }
+                case BUILD_WITH_SPECIAL_EFFECT -> {
+                    removeFromHandAndAddToVault(turnContext, result.card());
+                    scheduleEffectReward(player, result.card().getEffect());
+                    player.collectMetric("build-card-with-special-effect", 1);
                     return;
                 }
                 case BUILD_WITH_COST -> {
