@@ -26,7 +26,6 @@ public abstract class BaseRewardWithModifiersEffect extends BaseEffect {
             case ALL -> (leftCount + rightCount + selfCount) * getReward();
             case BOTH -> (leftCount + rightCount) * getReward();
             case SELF -> selfCount * getReward();
-            default -> reward;
         };
 
         return buildEffectReward(reward);

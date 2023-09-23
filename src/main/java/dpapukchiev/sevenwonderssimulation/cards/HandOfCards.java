@@ -41,6 +41,14 @@ public class HandOfCards {
                 .toList();
     }
 
+    public List<Card> getCardsWithoutAlreadyBuilt(TurnContext turnContext) {
+        var result = getCards()
+                .stream()
+                .filter(card -> !turnContext.getPlayer().getVault().getBuiltCardNames().contains(card.getName().name()))
+                .toList();
+        return result;
+    }
+
     public List<Card> getCardsWithNoCost(TurnContext turnContext) {
         return filterCards(turnContext, entry -> entry.getValue().getToPayTotal() == 0)
                 .stream()

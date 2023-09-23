@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CardName {
-    APHOTEKE("Aphoteke"),
+    APOTEKE("Aphoteke"),
     AQUADUKT("Aquadukt"),
     ARZNEIAUSGABE("Arzneiausgabe"),
     AUSGRABUNGSTTATTE("Ausgrabungsttatte"),

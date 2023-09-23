@@ -8,6 +8,7 @@ import dpapukchiev.sevenwonderssimulation.effects.ScienceSymbolsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.VictoryPointWithModifiersEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
+import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
 import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
 import dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol;
@@ -72,7 +73,7 @@ public class GuildCardTemplate extends BaseCardTemplate {
                         effectDirectionConstraint,
                         effectMultiplierType,
                         victoryPoints
-                ))
+                ).setEffectTiming(EffectTiming.END_OF_GAME))
                 .type(CardType.GUILD)
                 .build();
 

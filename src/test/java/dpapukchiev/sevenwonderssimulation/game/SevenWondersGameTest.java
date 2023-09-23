@@ -21,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    // stable up to 300
-    private final static int                   ATTEMPTS       = 50;
+    private final static int                   ATTEMPTS       = 200;
     private final static CityStatistics.SortBy SORT_BY        = METRIC_NAME;
     private final static CityStatistics        cityStatistics = new CityStatistics(SORT_BY);
 
@@ -37,8 +36,6 @@ class SevenWondersGameTest {
 
         var players = result.game().getPlayersFactory().getPlayers();
         assertEquals(result.gameOptions().numberOfPlayers(), players.size());
-
-        assertAllPlayersHave1LeftoverAtEndOfAge(result.game(), result.gameOptions());
 
         assertPlayersPlayedDistinctCards(players);
 
@@ -69,20 +66,6 @@ class SevenWondersGameTest {
     }
 
     private record GameResult(GameOptions gameOptions, SevenWondersGame game) {
-    }
-
-    private static void assertAllPlayersHave1LeftoverAtEndOfAge(SevenWondersGame game, GameOptions gameOptions) {
-        // All players have 1 left over card from each age
-        game.getHandsOfCardsPerAge().entrySet()
-                .stream()
-                .filter(e -> e.getKey() <= gameOptions.agesToSchedule())
-                .forEach(e -> {
-                    var handsOfCards = e.getValue();
-                    assertEquals(gameOptions.numberOfPlayers(), handsOfCards.size());
-                    handsOfCards.forEach(handOfCards -> assertTrue(handOfCards.getCards().size() == 1,
-                            "hand %s has %s left over cards"
-                                    .formatted(handOfCards.getUuid(), handOfCards.getCards().size())));
-                });
     }
 
     private static void assertPlayersPlayedDistinctCards(List<Player> players) {

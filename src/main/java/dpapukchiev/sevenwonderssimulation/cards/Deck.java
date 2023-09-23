@@ -509,7 +509,7 @@ public class Deck {
                         .requiredPlayersCount(3)
                         .cost(ComplexResourceCost.of(ManufacturedGood.TEXTILE))
                         .effect(ScienceSymbolsEffect.of(COMPASS))
-                        .name(CardName.APHOTEKE)
+                        .name(CardName.APOTEKE)
                         .build(),
                 Card.builder()
                         .type(science)
@@ -517,7 +517,7 @@ public class Deck {
                         .requiredPlayersCount(5)
                         .cost(ComplexResourceCost.of(ManufacturedGood.TEXTILE))
                         .effect(ScienceSymbolsEffect.of(COMPASS))
-                        .name(CardName.APHOTEKE)
+                        .name(CardName.APOTEKE)
                         .build(),
 
                 Card.builder()

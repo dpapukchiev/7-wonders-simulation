@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public class VictoryPointWithModifiersEffect extends BaseRewardWithModifiersEffect {
     private final double victoryPoints;
+    private EffectTiming effectTiming = EffectTiming.END_OF_TURN;
 
     public VictoryPointWithModifiersEffect(
             EffectDirectionConstraint directionConstraint,
@@ -21,13 +22,17 @@ public class VictoryPointWithModifiersEffect extends BaseRewardWithModifiersEffe
         super(directionConstraint, multiplierType);
         this.victoryPoints = victoryPoints;
     }
-
     public static VictoryPointWithModifiersEffect of(
             EffectDirectionConstraint directionConstraint,
             EffectMultiplierType multiplierType,
             double victoryPoints
     ) {
         return new VictoryPointWithModifiersEffect(directionConstraint, multiplierType, victoryPoints);
+    }
+
+    public VictoryPointWithModifiersEffect setEffectTiming(EffectTiming effectTiming) {
+        this.effectTiming = effectTiming;
+        return this;
     }
 
     @Override
@@ -45,7 +50,7 @@ public class VictoryPointWithModifiersEffect extends BaseRewardWithModifiersEffe
     @Override
     public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
         player.getEffectExecutionContext()
-                .scheduleRewardEvaluationAndCollection(this, EffectTiming.END_OF_TURN);
+                .scheduleRewardEvaluationAndCollection(this, effectTiming);
     }
 
     @Override
