@@ -1,6 +1,7 @@
 package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Card;
+import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
@@ -17,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 
+import static dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction.COPY_GUILD_CARD;
 import static dpapukchiev.sevenwonderssimulation.player.WarPoint.MINUS_ONE;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COGWHEEL;
 import static dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol.COMPASS;
@@ -96,6 +98,30 @@ public class Player {
         getEffectExecutionContext()
                 .getPermanentEffects()
                 .add(cardEffect);
+    }
+
+    public void copyGuildCardEffectIfHasSpecialAction(List<Player> players){
+        var vault = getVault();
+        vault.getSpecialAction(COPY_GUILD_CARD)
+                .ifPresent(specialAction -> {
+                    var cardsToCopyFrom = players.stream()
+                            .flatMap(p -> p.getVault().getBuiltCards().stream())
+                            .filter(c -> c.getType().equals(CardType.GUILD))
+                            .filter(c -> !vault.getBuiltCardNames().contains(c.getName().name()))
+                            .toList();
+                    if (cardsToCopyFrom.isEmpty()) {
+                        log.info("No guild cards to copy from. Player {} will not copy a guild card", getName());
+                        return;
+                    }
+                    var cardToCopy = selectRandomCard(cardsToCopyFrom);
+                    var reward = cardToCopy.getEffect().collectReward(this);
+                    if (reward.isPresent()) {
+                        applyEffectReward(reward.get());
+                        log.info("Player {} gets reward {} for copying guild card {}", getName(), reward.get().report(), cardToCopy.getName());
+                    } else {
+                        log.info("Player {} gets no reward for copying guild card {}", getName(), cardToCopy.getName());
+                    }
+                });
     }
 
     public Card selectRandomCard(List<Card> cards) {

@@ -1,5 +1,6 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
+import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction.COPY_GUILD_CARD;
 
 @Log4j2
 @Getter
@@ -63,9 +66,9 @@ public class SevenWondersGame extends SchedulingElement {
         var nextOffset = 1;
         for (int i = 1; i <= gameOptions.agesToSchedule(); i++) {
             nextOffset = scheduleTurns(nextOffset, i);
-            nextOffset = scheduleAgeTransition(nextOffset + 1, i);
+            nextOffset = scheduleEndOfAge(nextOffset + 1, i);
         }
-        scheduleEvent(new ExecuteEndOfAge(), nextOffset);
+        scheduleEvent(new ExecuteEndOfGame(), nextOffset);
     }
 
     class ExecutePlayerTurn implements EventActionIfc<TurnContext> {
@@ -112,10 +115,10 @@ public class SevenWondersGame extends SchedulingElement {
         }
     }
 
-    class ExecuteEndOfAge extends EventAction {
+    class ExecuteEndOfGame extends EventAction {
         @Override
         public void action(JSLEvent<Object> event) {
-            log.info("\n{}=>ExecuteEndOfAge", getTime());
+            log.info("\n{}=>ExecuteEndOfGame", getTime());
             var players = applyEndOfGameEffects();
 
             var scoreReports = players.stream()
@@ -142,14 +145,33 @@ public class SevenWondersGame extends SchedulingElement {
         }
     }
 
+    class ExecuteEndOfAge implements EventActionIfc<Integer> {
+
+        @Override
+        public void action(JSLEvent<Integer> event) {
+            var age = event.getMessage();
+            log.info("{}=>ExecuteEndOfAge {}", getTime(), age);
+            playersFactory.getPlayers()
+                    .forEach(player -> player
+                            .getEffectExecutionContext()
+                            .executeEffectsEndOfAge(player)
+                    );
+            playersFactory.getPlayers().forEach(player -> player.executeWar(age));
+            playersFactory.getPlayers().forEach(player -> log.info(player.report()));
+        }
+    }
+
     private List<Player> applyEndOfGameEffects() {
         var players = playersFactory.getPlayers();
         players.forEach(player -> {
             log.info("\n{}=>ApplyingEndOfGameEffects for player {}", getTime(), player.getName());
+
             var efxReportBeforeStart = player.getEffectExecutionContext().report();
             Optional<EffectReward> effectReward = player.getEffectExecutionContext()
                     .executeEffectsEndOfGame(player);
             effectReward.ifPresent(player::applyEffectReward);
+
+            player.copyGuildCardEffectIfHasSpecialAction(players);
 
             log.info(
                     "{}=>ApplyingEndOfGameEffects \nreward: {} \nefx before: {}  \nnew state: {}",
@@ -161,22 +183,6 @@ public class SevenWondersGame extends SchedulingElement {
             );
         });
         return players;
-    }
-
-    class ExecuteAgeTransitionTurn implements EventActionIfc<Integer> {
-
-        @Override
-        public void action(JSLEvent<Integer> event) {
-            var age = event.getMessage();
-            log.info("{}=>ExecuteAgeTransitionTurn {}", getTime(), age);
-            playersFactory.getPlayers()
-                    .forEach(player -> player
-                            .getEffectExecutionContext()
-                            .executeEffectsEndOfAge(player)
-                    );
-            playersFactory.getPlayers().forEach(player -> player.executeWar(age));
-            playersFactory.getPlayers().forEach(player -> log.info(player.report()));
-        }
     }
 
     public void dealHands(GameOptions options) {
@@ -192,8 +198,8 @@ public class SevenWondersGame extends SchedulingElement {
         });
     }
 
-    private int scheduleAgeTransition(int currentOffset, int age) {
-        scheduleEvent(new ExecuteAgeTransitionTurn(), currentOffset, 0, age);
+    private int scheduleEndOfAge(int currentOffset, int age) {
+        scheduleEvent(new ExecuteEndOfAge(), currentOffset, 0, age);
         currentOffset++;
         return currentOffset;
     }

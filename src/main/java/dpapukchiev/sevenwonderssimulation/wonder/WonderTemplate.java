@@ -375,7 +375,7 @@ public class WonderTemplate {
                                 )
                                 .effect(SpecialActionEffect.of(
                                         SpecialAction.COPY_GUILD_CARD,
-                                        EffectTiming.END_OF_GAME
+                                        EffectTiming.END_OF_TURN
                                 ))
                                 .stageNumber(3)
                                 .build()
