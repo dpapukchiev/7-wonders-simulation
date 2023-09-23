@@ -9,7 +9,7 @@ import java.util.Comparator;
 import static dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction.PLAY_CARD_WITHOUT_COST;
 
 @Log4j2
-public class UseSpecialActionIfAvailableBuildMostExpensive implements StrategyStep {
+public class BuildMostExpensiveUsingPlayWithoutCost implements StrategyStep {
     @Override
     public Result execute(TurnContext turnContext) {
         var player = turnContext.getPlayer();

@@ -19,7 +19,7 @@ public class Strategy {
 
     public static Strategy defaultStrategy() {
         return new Strategy(List.of(
-                new UseSpecialActionIfAvailableBuildMostExpensive(),
+                new BuildMostExpensiveUsingPlayWithoutCost(),
                 new BuildWonderIfAvailableDiscardRandom(),
                 new BuildRandomWithNoCostCard(),
                 new BuildRandomWithCostCardIfAffordable(),

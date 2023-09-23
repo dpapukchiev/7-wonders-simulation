@@ -1,5 +1,6 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
+import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import dpapukchiev.sevenwonderssimulation.wonder.CityName;
@@ -20,6 +21,7 @@ import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 @RequiredArgsConstructor
 public class PlayersFactory {
 
+    private final Deck           deck;
     private final RandomVariable pickACity;
     private final RandomVariable cityDistribution;
     private final CityStatistics cityStatistics;
@@ -38,7 +40,7 @@ public class PlayersFactory {
                     .pickACard(options.playerRandomVariables().get(i))
                     .cityStatistics(cityStatistics)
                     .build()
-                    .initVault();
+                    .initVault(deck);
             players.add(player);
         }
 

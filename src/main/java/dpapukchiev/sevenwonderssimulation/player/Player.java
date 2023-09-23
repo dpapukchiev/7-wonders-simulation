@@ -1,8 +1,11 @@
 package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Card;
+import dpapukchiev.sevenwonderssimulation.cards.Deck;
+import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
+import dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import dpapukchiev.sevenwonderssimulation.player.strategy.Strategy;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
@@ -42,15 +45,16 @@ public class Player {
         return new ResourceContext(this);
     }
 
-    public Player initVault() {
+    public Player initVault(Deck deck) {
         vault = Vault.builder()
                 .wonderContext(wonderContext)
+                .deck(deck)
                 .build();
         return this;
     }
 
     public void applyEffectReward(EffectReward effectReward) {
-        log.info("Applying effect reward to player {} ({})", name, effectReward.report());
+        log.info("\nApplying effect reward to player {} ({})", name, effectReward.report());
         vault.addCoins(effectReward.getCoinReward());
         vault.addVictoryPoints(effectReward.getVictoryPointsReward());
         vault.addShields(effectReward.getShields());
@@ -85,6 +89,16 @@ public class Player {
         }
     }
 
+    public void playExtraCard(Card card){
+        getVault().addBuiltCard(card);
+        var cardEffect = card.getEffect();
+        cardEffect.collectReward(this)
+                .ifPresent(this::applyEffectReward);
+        cardEffect.markAsExhausted();
+        getEffectExecutionContext()
+                .getPermanentEffects()
+                .add(cardEffect);
+    }
     public Card selectRandomCard(List<Card> cards) {
         return randomlySelect(cards, pickACard.getStreamNumber());
     }

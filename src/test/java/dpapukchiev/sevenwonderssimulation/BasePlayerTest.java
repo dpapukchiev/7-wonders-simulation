@@ -1,5 +1,6 @@
 package dpapukchiev.sevenwonderssimulation;
 
+import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
@@ -73,7 +74,7 @@ public class BasePlayerTest {
                 .wonderContext(wonderContext)
                 .build();
 
-        mainPlayer.initVault();
+        mainPlayer.initVault(null);
 
         mainPlayer.setLeftPlayer(leftPlayer);
         mainPlayer.setRightPlayer(rightPlayer);

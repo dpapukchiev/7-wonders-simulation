@@ -3,6 +3,7 @@ package dpapukchiev.sevenwonderssimulation.player;
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardName;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
+import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
 import dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
@@ -26,6 +27,7 @@ import static java.util.stream.Collectors.groupingBy;
 @AllArgsConstructor
 public class Vault {
     private WonderContext       wonderContext;
+    private Deck                deck;
     @Builder.Default
     private List<WarPoint>      warPoints               = new ArrayList<>();
     @Builder.Default
@@ -133,7 +135,7 @@ public class Vault {
                     .map(String::valueOf)
                     .collect(Collectors.joining(",")));
         }
-        if(!availableSpecialActions.isEmpty()) {
+        if (!availableSpecialActions.isEmpty()) {
             report.add("SA:" + availableSpecialActions.stream()
                     .map(SpecialAction::name)
                     .map(String::valueOf)

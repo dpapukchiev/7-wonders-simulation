@@ -38,11 +38,6 @@ public class SevenWondersGame extends SchedulingElement {
             GameOptions gameOptions
     ) {
         super(parent);
-        this.playersFactory = new PlayersFactory(
-                new RandomVariable(parent, new NormalRV()),
-                new RandomVariable(parent, new NormalRV()),
-                gameOptions.cityStatistics()
-        );
 
         this.gameOptions = gameOptions.toBuilder()
                 .playerRandomVariables(
@@ -52,6 +47,12 @@ public class SevenWondersGame extends SchedulingElement {
                 )
                 .build();
         this.deck = new Deck(getParentModelElement());
+        this.playersFactory = new PlayersFactory(
+                this.deck,
+                new RandomVariable(parent, new NormalRV()),
+                new RandomVariable(parent, new NormalRV()),
+                gameOptions.cityStatistics()
+        );
     }
 
     @Override
@@ -92,14 +93,14 @@ public class SevenWondersGame extends SchedulingElement {
         public void action(JSLEvent<Turn> event) {
             log.info("\n{}=>ExecuteEndOfTurn", getTime());
             playersFactory.getPlayers().forEach(player -> {
-                log.info("\n{}=>ApplyingEndOfTurnEffects for player {}", getTime(), player.getName());
+                log.info("\n{}=>ApplyingEndOfTurnEffects {}", getTime(), player.report());
                 var efxReportBeforeStart = player.getEffectExecutionContext().report();
                 Optional<EffectReward> effectReward = player.getEffectExecutionContext()
                         .executeEffectsEndOfTurn(player, event.getMessage());
                 effectReward.ifPresent(player::applyEffectReward);
 
                 log.info(
-                        "{}=>AppliedEndOfTurnEffects \nreward: {} \nefx before: {}  \nnew state: {}",
+                        "\n{}=>AppliedEndOfTurnEffects \nreward: {} \nefx before: {}  \nnew state: {}",
                         getTime(),
                         effectReward.map(EffectReward::report).
                                 orElse("no rewards"),

@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.wonder;
 
 import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
 import dpapukchiev.sevenwonderssimulation.effects.CoinRewardEffect;
+import dpapukchiev.sevenwonderssimulation.effects.HalikarnassosMultiRewardEffect;
 import dpapukchiev.sevenwonderssimulation.effects.SpecialActionEffect;
 import dpapukchiev.sevenwonderssimulation.effects.VictoryPointEffect;
 import dpapukchiev.sevenwonderssimulation.effects.WarShieldsEffect;
@@ -37,7 +38,7 @@ public class WonderTemplate {
 //            case RHODOS -> defaultCity;
             case OLIMPIA -> shouldUseA ? olympiaA() : defaultCity;
             case ALEXANDRIA -> defaultCity;
-            case HALIKARNASSOS -> defaultCity;
+            case HALIKARNASSOS -> shouldUseA ? halikarnassosA() : defaultCity;
             case GIZAH -> shouldUseA ? gizahA() : gizahB();
 //            case GIZAH -> defaultCity;
             case EPHESOS -> shouldUseA ? ephesosA() : ephesosB();
@@ -233,6 +234,33 @@ public class WonderTemplate {
                         WonderStage.builder()
                                 .cost(ComplexResourceCost.of(METAL_ORE, METAL_ORE))
                                 .effect(VictoryPointEffect.of(7))
+                                .stageNumber(3)
+                                .build()
+                ))
+                .build();
+    }
+
+    private static WonderContext halikarnassosA() {
+        return WonderContext.builder()
+                .cityName(CityName.HALIKARNASSOS)
+                .side("A")
+                .wonderStages(List.of(
+                        WonderStage.builder()
+                                .cost(ComplexResourceCost.of(METAL_ORE, METAL_ORE))
+                                .effect(HalikarnassosMultiRewardEffect.of(2))
+                                .stageNumber(1)
+                                .build(),
+                        WonderStage.builder()
+                                .cost(ComplexResourceCost.of(CLAY, CLAY, CLAY))
+                                .effect(HalikarnassosMultiRewardEffect.of(2))
+                                .stageNumber(2)
+                                .build(),
+                        WonderStage.builder()
+                                .cost(ComplexResourceCost.of(ManufacturedGood.all()))
+                                .effect(SpecialActionEffect.of(
+                                        SpecialAction.PLAY_CARD_FROM_DISCARD,
+                                        EffectTiming.ANYTIME
+                                ))
                                 .stageNumber(3)
                                 .build()
                 ))
