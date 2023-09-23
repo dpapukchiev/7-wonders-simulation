@@ -3,6 +3,7 @@ package dpapukchiev.sevenwonderssimulation.player.strategy;
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cost.CostReport;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderStage;
@@ -34,20 +35,20 @@ public class Strategy {
                 // TODO: card lineage building
                 case BUILD_FOR_FREE -> {
                     removeFromHandAndAddToVault(turnContext, result.card());
-                    scheduleEffectReward(player, result.card().getEffect());
+                    scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
                     player.collectMetric("free-builds", 1);
                     return;
                 }
                 case BUILD_WITH_SPECIAL_EFFECT -> {
                     removeFromHandAndAddToVault(turnContext, result.card());
-                    scheduleEffectReward(player, result.card().getEffect());
+                    scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
                     player.collectMetric("build-card-with-special-effect", 1);
                     return;
                 }
                 case BUILD_WITH_COST -> {
                     payCost(turnContext, result.card());
                     removeFromHandAndAddToVault(turnContext, result.card());
-                    scheduleEffectReward(player, result.card().getEffect());
+                    scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
                     player.collectMetric("build-with-cost", 1);
                     return;
                 }
@@ -75,8 +76,8 @@ public class Strategy {
         throw new RuntimeException("StrategyStep no action to execute");
     }
 
-    private void scheduleEffectReward(Player player, Effect cardEffect) {
-        cardEffect.scheduleRewardEvaluationAndCollection(player);
+    private void scheduleEffectReward(Player player, Effect cardEffect, Turn turn) {
+        cardEffect.scheduleRewardEvaluationAndCollection(player, turn);
 
         log.info("Effect {} scheduled for player {}", cardEffect.report(), player.getName());
     }
@@ -159,7 +160,7 @@ public class Strategy {
         var costReport = wonderStage.getCost().generateCostReport(turnContext);
         wonderStage.build(cardToConsume, turnContext);
         turnContext.getHandOfCards().remove(cardToConsume);
-        scheduleEffectReward(turnContext.getPlayer(), wonderStage.getEffect());
+        scheduleEffectReward(turnContext.getPlayer(), wonderStage.getEffect(), turnContext.getTurn());
         payCost(
                 turnContext,
                 "wonder stage %s-%s".formatted(

@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.effects;
 
 import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class WonderMultiRewardEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleRewardEvaluationAndCollection(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(CoinRewardEffect.of(coins), EffectTiming.END_OF_TURN);
 

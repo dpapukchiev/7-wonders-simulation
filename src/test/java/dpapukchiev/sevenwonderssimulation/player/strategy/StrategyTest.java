@@ -6,6 +6,7 @@ import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
 import dpapukchiev.sevenwonderssimulation.cost.Cost;
 import dpapukchiev.sevenwonderssimulation.cost.CostReport;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.player.Vault;
@@ -119,7 +120,8 @@ class StrategyTest {
 
         strategy.execute(turnContext);
 
-        verify(wonderStageEffect, times(1)).scheduleRewardEvaluationAndCollection(player);
+        verify(wonderStageEffect, times(1))
+                .scheduleRewardEvaluationAndCollection(player, new Turn(1, 4));
         verify(wonderStage, times(1)).build(card, turnContext);
         verify(handOfCards, times(1)).remove(card);
 
@@ -137,7 +139,8 @@ class StrategyTest {
 
         strategy.execute(turnContext);
 
-        verify(cardEffect, times(1)).scheduleRewardEvaluationAndCollection(player);
+        verify(cardEffect, times(1))
+                .scheduleRewardEvaluationAndCollection(player, new Turn(1, 4));
         verify(handOfCards, times(1)).remove(card);
         verify(vault, times(1)).addBuiltCard(card);
     }
@@ -155,7 +158,8 @@ class StrategyTest {
 
         strategy.execute(turnContext);
 
-        verify(cardEffect, times(1)).scheduleRewardEvaluationAndCollection(player);
+        verify(cardEffect, times(1))
+                .scheduleRewardEvaluationAndCollection(player, new Turn(1, 4));
         verify(handOfCards, times(1)).remove(card);
         verify(vault, times(1)).addBuiltCard(card);
 

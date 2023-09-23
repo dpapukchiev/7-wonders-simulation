@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.effects;
 
 import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.reporting.Reporters;
 import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
@@ -52,7 +53,7 @@ public class ResourceEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleRewardEvaluationAndCollection(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(this, EffectTiming.ANYTIME);
     }

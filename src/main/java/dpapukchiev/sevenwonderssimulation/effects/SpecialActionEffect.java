@@ -4,11 +4,10 @@ import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.AllArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -21,19 +20,17 @@ public class SpecialActionEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleRewardEvaluationAndCollection(Player player) {
-        if(eventTiming.equals(EffectTiming.ANYTIME)){
-            player.getVault().addSpecialActions(specialAction);
+    public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
+        if (specialAction.equals(SpecialAction.PLAY_CARD_WITHOUT_COST)) {
+            var times = 4 - turn.age();
+            for (int i = 0; i < times; i++) {
+                player.getVault().addSpecialActions(specialAction);
+            }
             return;
         }
 
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(this, eventTiming);
-    }
-
-    @Override
-    public Optional<SpecialAction> getSpecialAction() {
-        return Optional.of(specialAction);
     }
 
     @Override

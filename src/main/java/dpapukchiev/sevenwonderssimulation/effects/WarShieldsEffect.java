@@ -3,6 +3,7 @@ package dpapukchiev.sevenwonderssimulation.effects;
 import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class WarShieldsEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleRewardEvaluationAndCollection(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(this, EffectTiming.END_OF_TURN);
     }

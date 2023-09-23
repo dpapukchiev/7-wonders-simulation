@@ -5,6 +5,7 @@ import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class CoinRewardWithModifiersEffect extends BaseRewardWithModifiersEffect
     }
 
     @Override
-    public void scheduleRewardEvaluationAndCollection(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(this, EffectTiming.END_OF_TURN);
     }

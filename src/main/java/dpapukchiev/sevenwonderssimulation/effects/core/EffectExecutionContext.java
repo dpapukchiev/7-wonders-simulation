@@ -1,5 +1,6 @@
 package dpapukchiev.sevenwonderssimulation.effects.core;
 
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -58,7 +59,7 @@ public class EffectExecutionContext {
         }
     }
 
-    public Optional<EffectReward> executeEffectsEndOfTurn(Player player) {
+    public Optional<EffectReward> executeEffectsEndOfTurn(Player player, Turn message) {
         return getEffectReward(player, effectsEndOfTurn);
     }
 

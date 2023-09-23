@@ -1,12 +1,13 @@
 package dpapukchiev.sevenwonderssimulation.effects.core;
 
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceBundle;
 
 import java.util.Optional;
 
 public interface Effect {
-    void scheduleRewardEvaluationAndCollection(Player player);
+    void scheduleRewardEvaluationAndCollection(Player player, Turn turn);
 
     default Optional<EffectReward> collectReward(Player player) {
         return Optional.empty();
@@ -17,10 +18,6 @@ public interface Effect {
     }
 
     default Optional<PreferentialTradingContract> getPreferentialTrading() {
-        return Optional.empty();
-    }
-
-    default Optional<SpecialAction> getSpecialAction() {
         return Optional.empty();
     }
 

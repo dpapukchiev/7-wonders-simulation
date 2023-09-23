@@ -4,6 +4,7 @@ import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
 import dpapukchiev.sevenwonderssimulation.effects.core.PreferentialTradingContract;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.AllArgsConstructor;
 
@@ -23,7 +24,7 @@ public class PreferentialTradingEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleRewardEvaluationAndCollection(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(this, EffectTiming.ANYTIME);
     }

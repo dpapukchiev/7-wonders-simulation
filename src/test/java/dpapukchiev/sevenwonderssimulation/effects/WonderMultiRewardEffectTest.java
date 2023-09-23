@@ -3,6 +3,7 @@ package dpapukchiev.sevenwonderssimulation.effects;
 import dpapukchiev.sevenwonderssimulation.BasePlayerTest;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -23,7 +24,7 @@ class WonderMultiRewardEffectTest extends BasePlayerTest {
     void scheduleEffect() {
         var wonderMultiRewardEffect = WonderMultiRewardEffect.of(1, 3, 4);
 
-        wonderMultiRewardEffect.scheduleRewardEvaluationAndCollection(mainPlayer);
+        wonderMultiRewardEffect.scheduleRewardEvaluationAndCollection(mainPlayer, new Turn(2, 1));
 
         assertCoinAndVictoryPointsEffectsScheduled();
         assertWarShieldsEffectScheduled();

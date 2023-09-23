@@ -87,15 +87,15 @@ public class SevenWondersGame extends SchedulingElement {
         }
     }
 
-    class ExecuteEndOfTurn extends EventAction {
+    class ExecuteEndOfTurn implements EventActionIfc<Turn> {
         @Override
-        public void action(JSLEvent<Object> event) {
+        public void action(JSLEvent<Turn> event) {
             log.info("\n{}=>ExecuteEndOfTurn", getTime());
             playersFactory.getPlayers().forEach(player -> {
                 log.info("\n{}=>ApplyingEndOfTurnEffects for player {}", getTime(), player.getName());
                 var efxReportBeforeStart = player.getEffectExecutionContext().report();
                 Optional<EffectReward> effectReward = player.getEffectExecutionContext()
-                        .executeEffectsEndOfTurn(player);
+                        .executeEffectsEndOfTurn(player, event.getMessage());
                 effectReward.ifPresent(player::applyEffectReward);
 
                 log.info(
@@ -218,7 +218,7 @@ public class SevenWondersGame extends SchedulingElement {
                 scheduleEvent(new ExecutePlayerTurn(), lastOffset, playerIndex, turnContext);
                 lastOffset++;
             }
-            scheduleEvent(new ExecuteEndOfTurn(), lastOffset);
+            scheduleEvent(new ExecuteEndOfTurn(), lastOffset, 0, new Turn(age, turnInAge + 1));
             lastOffset++;
         }
         return lastOffset;

@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.effects;
 
 import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
+import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceBundle;
 import dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol;
@@ -30,7 +31,7 @@ public class ScienceSymbolsEffect extends BaseEffect {
     }
 
     @Override
-    public void scheduleRewardEvaluationAndCollection(Player player) {
+    public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
         var effectTiming = scienceSymbols.stream().distinct().count() > 1 ? EffectTiming.END_OF_GAME : EffectTiming.ANYTIME;
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(this, effectTiming);
