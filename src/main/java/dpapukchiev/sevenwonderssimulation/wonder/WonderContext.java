@@ -1,16 +1,16 @@
 package dpapukchiev.sevenwonderssimulation.wonder;
 
-import dpapukchiev.sevenwonderssimulation.cost.CostReport;
+import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -21,12 +21,11 @@ public class WonderContext {
     @Builder.Default
     private List<WonderStage> wonderStages = new ArrayList<>();
 
-    public Optional<Pair<WonderStage, CostReport>> getNextAffordableWonderStage(TurnContext turnContext) {
+    public Optional<WonderStage> getNextWonderStage(TurnContext turnContext) {
         return wonderStages.stream()
                 .filter(ws -> !ws.isBuilt())
-                .map(ws -> Pair.of(ws, ws.getCost().generateCostReport(turnContext)))
-                .min(Comparator.comparingDouble(p -> p.getLeft().getStageNumber()))
-                .filter(p -> p.getRight().isAffordable());
+                .min(Comparator.comparingDouble(WonderStage::getStageNumber))
+                .filter(ws -> ws.getCost().generateCostReport(turnContext).isAffordable());
     }
 
     public long getBuiltStageCount() {
@@ -35,17 +34,34 @@ public class WonderContext {
                 .count();
     }
 
-    public String getName(){
+    public String getName() {
         return "%s-%s".formatted(cityName.name(), side);
     }
 
     public String report() {
-        return String.format("W(%s %s/%s)",
+        var report = new ArrayList<String>();
+        report.add("W(%s %s/%s)".formatted(
                 side,
                 wonderStages.stream()
                         .filter(WonderStage::isBuilt)
                         .count(),
                 wonderStages.size()
-        );
+        ));
+        var builtWonderStagesEffects = getBuiltWonderStagesEffects();
+        if (!builtWonderStagesEffects.isEmpty()) {
+            report.add("wonder efx: \n%s".formatted(builtWonderStagesEffects
+                    .stream()
+                    .map(Effect::report)
+                    .filter(s -> !s.isBlank())
+                    .collect(Collectors.joining(" "))));
+        }
+        return String.join("\n", report);
+    }
+
+    private List<Effect> getBuiltWonderStagesEffects() {
+        return wonderStages.stream()
+                .filter(WonderStage::isBuilt)
+                .map(WonderStage::getEffect)
+                .toList();
     }
 }

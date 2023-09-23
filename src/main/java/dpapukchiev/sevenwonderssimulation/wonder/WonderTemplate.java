@@ -95,7 +95,7 @@ public class WonderTemplate {
                                         .manufacturedGoodsList(List.of(SCRIPTS))
                                         .build())
                                 .effect(VictoryPointEffect.of(3))
-                                .stageNumber(7)
+                                .stageNumber(4)
                                 .build()
                 ))
                 .build();

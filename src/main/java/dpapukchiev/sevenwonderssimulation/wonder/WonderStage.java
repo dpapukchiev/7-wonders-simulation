@@ -22,16 +22,12 @@ public class WonderStage {
     private Effect  effect;
     private Card    consumedCard;
 
-    public void build(Card consumedCard, TurnContext turnContext, CostReport costReport) {
+    public void build(Card consumedCard, TurnContext turnContext) {
         if (built) {
             return;
         }
 
         var player = turnContext.getPlayer();
-        player.collectMetric("build-wonder-stage-" + stageNumber, 1);
-        effect.scheduleRewardEvaluationAndCollection(player);
-        cost.applyCost(turnContext, costReport);
-        turnContext.getHandOfCards().discard(consumedCard);
 
         built = true;
         this.consumedCard = consumedCard;

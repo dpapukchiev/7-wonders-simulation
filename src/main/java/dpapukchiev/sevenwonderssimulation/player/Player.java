@@ -1,24 +1,19 @@
 package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Card;
-import dpapukchiev.sevenwonderssimulation.cards.CardName;
-import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
-import dpapukchiev.sevenwonderssimulation.cost.CostReport;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
+import dpapukchiev.sevenwonderssimulation.player.strategy.Strategy;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceContext;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
-import dpapukchiev.sevenwonderssimulation.wonder.WonderStage;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Comparator;
 import java.util.List;
 
 import static dpapukchiev.sevenwonderssimulation.player.WarPoint.MINUS_ONE;
@@ -54,62 +49,15 @@ public class Player {
         return this;
     }
 
-    public void executeTurn(TurnContext turnContext) {
-        // get the hand of cards
-        var handOfCards = turnContext.getHandOfCards();
-
-        var nextAffordableWonderStage = getWonderContext().getNextAffordableWonderStage(turnContext);
-        if (nextAffordableWonderStage.isPresent()) {
-            buildWonderStage(nextAffordableWonderStage.get(), turnContext);
-            return;
-        }
-
-        // get cards to build as extensions of already built cards
-
-        var noCostCards = handOfCards.getCardsWithNoCost(turnContext);
-        if (!noCostCards.isEmpty()) {
-            // pick a card
-            var card = selectRandomCard(noCostCards);// build the card
-            playCard(turnContext, handOfCards, card);
-            return;
-        }
-
-        // TODO: play with ordering
-        var someCostCards = handOfCards.getCardsWithCost(turnContext)
-                .stream()
-                .sorted(Comparator.comparingDouble(c ->
-                        c.getCost().generateCostReport(turnContext).getToPayTotal())
-                )
-                .toList();
-        if (!someCostCards.isEmpty()) {
-            // pick a card
-            var card = selectRandomCard(someCostCards);
-            // build the card
-            playCard(turnContext, handOfCards, card);
-            return;
-        }
-
-        discardCard(handOfCards);
-
-        // get the cards that can be built for free (effect)
-        // get the cards that can be built for free (previous card)
-
-        // if no cards can be built, discard a card
-        // if a card can be built, build it
-        // pay the cost
-        // apply the effect
+    public void applyEffectReward(EffectReward effectReward) {
+        log.info("Applying effect reward to player {} ({})", name, effectReward.report());
+        vault.addCoins(effectReward.getCoinReward());
+        vault.addVictoryPoints(effectReward.getVictoryPointsReward());
+        vault.addShields(effectReward.getShields());
     }
 
-    private void buildWonderStage(
-            Pair<WonderStage, CostReport> nextAffordableWonderStage,
-            TurnContext turnContext
-    ) {
-        var wonderStage = nextAffordableWonderStage.getLeft();
-        var costReport = nextAffordableWonderStage.getRight();
-        var handOfCards = turnContext.getHandOfCards();
-        var cardToConsume = selectRandomCard(handOfCards.getCards());
-
-        wonderStage.build(cardToConsume, turnContext, costReport);
+    public void executeTurn(TurnContext turnContext) {
+        Strategy.defaultStrategy().execute(turnContext);
     }
 
     public void executeWar(int age) {
@@ -137,6 +85,10 @@ public class Player {
         }
     }
 
+    public Card selectRandomCard(List<Card> cards) {
+        return randomlySelect(cards, pickACard.getStreamNumber());
+    }
+
     public ScoreCard score() {
         return ScoreCard.builder()
                 .coins(vault.getCoins())
@@ -149,7 +101,7 @@ public class Player {
     }
 
     public String report() {
-        return String.format("\n%s: %s %s %s",
+        return String.format("\n%s: %s\n%s %s",
                 name,
                 wonderContext.report(),
                 effectExecutionContext.report(),
@@ -157,104 +109,16 @@ public class Player {
         );
     }
 
-    private void discardCard(HandOfCards handOfCards) {
-        var coinsBefore = getVault().getCoins();
-        var cardToDiscard = selectRandomCard(handOfCards.getCards());
-        getVault().addCoins(3);
-
-        handOfCards.discard(cardToDiscard);
-        getVault().discardCard(cardToDiscard);
-
-        log.info("\nPlayer {} discards card {} and gets 3 coins. {} => {}",
-                name,
-                cardToDiscard.report(),
-                coinsBefore,
-                getVault().getCoins()
-        );
-    }
-
-    private Card selectRandomCard(List<Card> cards) {
-        return randomlySelect(cards, pickACard.getStreamNumber());
-    }
-
-    private void playCard(TurnContext turnContext, HandOfCards handOfCards, Card card) {
-        log.info("\nPlayer {} plays from hand {} card {}", getName(), handOfCards.getUuid(), card.report());
-        collectMetric("cards-played", 1);
-        collectMetric("%s-cards-played".formatted(card.getType()), 1);
-        collectMetric("%s-effect-played".formatted(card.getEffect().getClass().getSimpleName()), 1);
-        collectMetric("%s-costs-played".formatted(card.getCost().getClass().getSimpleName()), 1);
-
-        removeFromHandAndAddToVault(handOfCards, card);
-
-        card.getEffect().scheduleRewardEvaluationAndCollection(this);
-
-        var cost = card.getCost().generateCostReport(turnContext);
-
-        if (!cost.isAffordable()) {
-            throw new IllegalStateException("Player %s cannot afford card %s".formatted(getName(), card.getCost().report()));
-        }
-
-        if (cost.getToPayTotal() == 0) {
-            collectMetric("cards-played-for-free", 1);
-            return;
-        }
-
-//        var availableFreeCostActions = getVault().getSpecialAction(PLAY_CARD_WITHOUT_COST);
-//        if (availableFreeCostActions.isPresent()) {
-//            collectMetric("special-action-play-card-without-cost", 1);
-//            log.info("Player {} uses special action to play card {} with cost {} for free",
-//                    getName(),
-//                    card.getName(),
-//                    cost.getToPayTotal()
-//            );
-//            getVault().useSpecialAction(PLAY_CARD_WITHOUT_COST);
-//            return;
-//        }
-
-        payCost(cost, card.getName());
-    }
-
-    private void payCost(CostReport cost, CardName cardName) {
-        getLeftPlayer().getVault().addCoins(cost.getToPayLeft());
-        collectMetric("to-pay-left", cost.getToPayLeft());
-
-        getRightPlayer().getVault().addCoins(cost.getToPayRight());
-        collectMetric("to-pay-right", cost.getToPayLeft());
-
-        collectMetric("to-pay-bank", cost.getToPayLeft());
-
-        getVault().removeCoins(cost.getToPayTotal());
-
-        if (cost.getToPayBank() > 1) {
-            throw new IllegalStateException("Player %s has %s coins to pay to bank".formatted(getName(), cost.getToPayBank()));
-        }
-
-        log.info(
-                "Player {} pays for card {} \n${} to bank \n${} to L({}) \n${} to R({}) \ntotal {}",
-                getName(),
-                cardName,
-                cost.getToPayBank(),
-                cost.getToPayLeft(),
-                getLeftPlayer().getName(),
-                cost.getToPayRight(),
-                getRightPlayer().getName(),
-                cost.getToPayTotal()
-        );
-    }
-
-    private void removeFromHandAndAddToVault(HandOfCards handOfCards, Card card) {
-        handOfCards.remove(card);
-        getVault().getBuiltCards().add(card);
-    }
-
-    public void applyEffectReward(EffectReward effectReward) {
-        log.info("Applying effect reward to player {} ({})", name, effectReward.report());
-        vault.addCoins(effectReward.getCoinReward());
-        vault.addVictoryPoints(effectReward.getVictoryPointsReward());
-        vault.addShields(effectReward.getShields());
-    }
-
     public void collectMetric(String metricName, double value) {
         cityStatistics.collectMetric(metricName, value, this);
+    }
+
+    public void collectFinalMetrics() {
+        var scoreCard = score();
+        cityStatistics.collectMetric("score-total", scoreCard.getTotalScore(), this);
+        cityStatistics.collectMetric("coins-score", scoreCard.getCoinsScore(), this);
+        cityStatistics.collectMetric("science-score", scoreCard.getScienceScore(), this);
+        cityStatistics.collectMetric("built-cards", getVault().getBuiltCards().size(), this);
+        cityStatistics.collectMetric("discarded-cards", getVault().getDiscardedCards().size(), this);
     }
 }

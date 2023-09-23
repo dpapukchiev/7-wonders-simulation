@@ -23,8 +23,7 @@ public class ResourceContext {
     private final Player player;
 
     public CostReport calculateResourcesCost(List<RawMaterial> rawMaterials, List<ManufacturedGood> manufacturedGoods) {
-        var costReport = CostReport.builder().build();
-        var coins = player.getVault().getCoins();
+        var costReport = CostReport.builder().affordable(false).build();
         var usedEffects = new ArrayList<ResourceBundle>();
 
         var rawMaterialsReport = createReportForRawMaterials(rawMaterials, usedEffects, costReport);
@@ -33,6 +32,7 @@ public class ResourceContext {
         var manufacturedGoodsReport = createReportForManufacturedGoods(manufacturedGoods, usedEffects, costReport);
         if (manufacturedGoodsReport != null) return manufacturedGoodsReport;
 
+        var coins = player.getVault().getCoins();
         if (costReport.getToPayTotal() <= coins) {
             return costReport.toBuilder()
                     .affordable(true)

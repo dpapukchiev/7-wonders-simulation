@@ -56,7 +56,7 @@ public class PlayersFactory {
             );
         }
 
-        players.forEach(player -> log.info("Initialised Player {}", player.report()));
+        players.forEach(player -> log.info("\nInitialised Player {}", player.report()));
     }
 
     private List<CityName> selectRandomCities(GameOptions options) {

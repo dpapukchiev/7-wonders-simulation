@@ -2,10 +2,9 @@ package dpapukchiev.sevenwonderssimulation.wonder;
 
 import dpapukchiev.sevenwonderssimulation.BasePlayerTest;
 import dpapukchiev.sevenwonderssimulation.cost.CoinCost;
-import dpapukchiev.sevenwonderssimulation.cost.Cost;
 import dpapukchiev.sevenwonderssimulation.effects.VictoryPointEffect;
+import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,9 +60,9 @@ class WonderContextTest extends BasePlayerTest {
     }
 
     private void assertNextAvailableStage(WonderContext wonderContext, Optional<WonderStage> expectedStage) {
-        var result = wonderContext.getNextAffordableWonderStage(getTurnContext());
+        var result = wonderContext.getNextWonderStage(TurnContext.builder().build());
         assertEquals(result.isPresent(), expectedStage.isPresent());
 
-        expectedStage.ifPresent(wonderStage -> assertEquals(wonderStage, result.get().getLeft()));
+        expectedStage.ifPresent(wonderStage -> assertEquals(wonderStage, result.get()));
     }
 }

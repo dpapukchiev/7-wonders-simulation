@@ -84,6 +84,9 @@ public class EffectExecutionContext {
         if (!permanentEffects.isEmpty()) {
             report.add("P:%s".formatted(permanentEffects.size()));
         }
+        if(report.isEmpty()) {
+            return "Efx(0)";
+        }
         return "Efx(%s)".formatted(String.join(" ", report));
     }
 

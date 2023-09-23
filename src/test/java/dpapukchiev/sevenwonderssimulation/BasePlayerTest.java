@@ -14,6 +14,7 @@ import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceBundle;
 import dpapukchiev.sevenwonderssimulation.resources.ResourceContext;
 import dpapukchiev.sevenwonderssimulation.resources.ScienceSymbol;
+import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -48,6 +49,8 @@ public class BasePlayerTest {
     @Mock
     protected EffectExecutionContext effectExecutionContext;
     @Mock
+    protected WonderContext          wonderContext;
+    @Mock
     protected Vault                  leftPlayerVault;
     @Mock
     protected Vault                  rightPlayerVault;
@@ -67,6 +70,7 @@ public class BasePlayerTest {
         mainPlayer = Player.builder()
                 .effectExecutionContext(effectExecutionContext)
                 .name("Player")
+                .wonderContext(wonderContext)
                 .build();
 
         mainPlayer.initVault();

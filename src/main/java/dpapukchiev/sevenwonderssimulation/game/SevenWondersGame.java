@@ -119,6 +119,7 @@ public class SevenWondersGame extends SchedulingElement {
             var scoreReports = players.stream()
                     .sorted((p1, p2) -> Double.compare(p2.score().getTotalScore(), p1.score().getTotalScore()))
                     .peek(p -> resultingScoringOrder.add(Pair.of(p, p.score())))
+                    .peek(Player::collectFinalMetrics)
                     .toList();
             var winner = scoreReports.get(0);
             var scoreReportsStrings = scoreReports.stream()
@@ -128,6 +129,7 @@ public class SevenWondersGame extends SchedulingElement {
                             p.score().report()
                     ))
                     .collect(Collectors.joining("\n"));
+
             log.info("\n{}=>ScoreReport \n{}", getTime(), scoreReportsStrings);
             log.info("\n{}=>Winner is {} {} with score {}",
                     getTime(),

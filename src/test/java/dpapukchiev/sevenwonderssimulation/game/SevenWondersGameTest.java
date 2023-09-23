@@ -43,9 +43,8 @@ class SevenWondersGameTest {
         assertPlayersPlayedDistinctCards(players);
 
         addWinnerToWinnersList(result.game());
-        collectStatistics(result.game());
 
-        reportStatistics(streamNumber, SORT_BY);
+        reportStatistics(streamNumber);
     }
 
     @NotNull
@@ -108,23 +107,9 @@ class SevenWondersGameTest {
         cityStatistics.addWinner(winningPlayer.getWonderContext());
     }
 
-    private static void collectStatistics(SevenWondersGame game) {
-        game.getResultingScoringOrder().forEach(playerScoreCardPair -> {
-            var player = playerScoreCardPair.getLeft();
-            var scoreCard = playerScoreCardPair.getRight();
-
-            // TODO: add tracking of all scores
-            cityStatistics.collectMetric("score-total", scoreCard.getTotalScore(), player);
-            cityStatistics.collectMetric("coins-score", scoreCard.getCoinsScore(), player);
-            cityStatistics.collectMetric("science-score", scoreCard.getScienceScore(), player);
-            cityStatistics.collectMetric("built-cards", player.getVault().getBuiltCards().size(), player);
-            cityStatistics.collectMetric("discarded-cards", player.getVault().getDiscardedCards().size(), player);
-        });
-    }
-
-    private static void reportStatistics(int streamNumber, CityStatistics.SortBy sortBy) {
+    private static void reportStatistics(int streamNumber) {
         if (streamNumber == ATTEMPTS) {
-            cityStatistics.reportStatistics(sortBy);
+            cityStatistics.reportStatistics(SORT_BY);
             cityStatistics.reportWinners(ATTEMPTS);
         }
     }
