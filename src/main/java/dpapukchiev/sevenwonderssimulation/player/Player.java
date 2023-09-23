@@ -2,10 +2,8 @@ package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
-import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
-import dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import dpapukchiev.sevenwonderssimulation.player.strategy.Strategy;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
@@ -89,7 +87,7 @@ public class Player {
         }
     }
 
-    public void playExtraCard(Card card){
+    public void playExtraCard(Card card) {
         getVault().addBuiltCard(card);
         var cardEffect = card.getEffect();
         cardEffect.collectReward(this)
@@ -99,6 +97,7 @@ public class Player {
                 .getPermanentEffects()
                 .add(cardEffect);
     }
+
     public Card selectRandomCard(List<Card> cards) {
         return randomlySelect(cards, pickACard.getStreamNumber());
     }
@@ -111,6 +110,7 @@ public class Player {
                 .scienceTablets(resourceContext().getScienceSymbolCount(TABLET))
                 .scienceCompasses(resourceContext().getScienceSymbolCount(COMPASS))
                 .scienceCogwheels(resourceContext().getScienceSymbolCount(COGWHEEL))
+                .scienceWildcards(resourceContext().getScienceSymbolWildcardCount())
                 .build();
     }
 

@@ -94,6 +94,7 @@ public class SevenWondersGame extends SchedulingElement {
             log.info("\n{}=>ExecuteEndOfTurn", getTime());
             playersFactory.getPlayers().forEach(player -> {
                 log.info("\n{}=>ApplyingEndOfTurnEffects {}", getTime(), player.report());
+
                 var efxReportBeforeStart = player.getEffectExecutionContext().report();
                 Optional<EffectReward> effectReward = player.getEffectExecutionContext()
                         .executeEffectsEndOfTurn(player);

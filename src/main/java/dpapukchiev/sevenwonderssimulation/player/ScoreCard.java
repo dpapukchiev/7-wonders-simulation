@@ -18,6 +18,8 @@ public class ScoreCard {
     private double scienceCompasses = 0;
     @Builder.Default
     private double scienceTablets   = 0;
+    @Builder.Default
+    private double scienceWildcards = 0;
 
     public double getTotalScore() {
         return getScienceScore() + getCoinsScore() + warPointsScore + victoryPoints;
@@ -33,14 +35,27 @@ public class ScoreCard {
             score += 7;
         }
 
-        score += Math.pow(scienceCogwheels, 2);
-        score += Math.pow(scienceCompasses, 2);
-        score += Math.pow(scienceTablets, 2);
+        var max = Math.max(scienceCogwheels, Math.max(scienceCompasses, scienceTablets));
+        var finalCogwheels = scienceCogwheels;
+        var finalCompasses = scienceCompasses;
+        var finalTablets = scienceTablets;
+
+        if(max == scienceCogwheels){
+            finalCogwheels += scienceWildcards;
+        } else if(max == scienceCompasses){
+            finalCompasses += scienceWildcards;
+        } else if(max == scienceTablets){
+            finalTablets += scienceWildcards;
+        }
+
+        score += Math.pow(finalCogwheels, 2);
+        score += Math.pow(finalCompasses, 2);
+        score += Math.pow(finalTablets, 2);
 
         return score;
     }
 
-    public String report(){
+    public String report() {
         var report = new ArrayList<String>();
         if (victoryPoints > 0) {
             report.add("V:" + victoryPoints);
@@ -51,7 +66,7 @@ public class ScoreCard {
         if (warPointsScore > 0) {
             report.add("W:" + warPointsScore);
         }
-        if(getScienceScore() > 0){
+        if (getScienceScore() > 0) {
             report.add("S:" + getScienceScore());
         }
         return "Score: %s\n%s".formatted(getTotalScore(), String.join(" ", report));

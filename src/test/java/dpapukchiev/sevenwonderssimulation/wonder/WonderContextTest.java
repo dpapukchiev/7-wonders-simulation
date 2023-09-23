@@ -60,7 +60,7 @@ class WonderContextTest extends BasePlayerTest {
     }
 
     private void assertNextAvailableStage(WonderContext wonderContext, Optional<WonderStage> expectedStage) {
-        var result = wonderContext.getNextWonderStage(TurnContext.builder().build());
+        var result = wonderContext.getNextWonderStage(getTurnContext());
         assertEquals(result.isPresent(), expectedStage.isPresent());
 
         expectedStage.ifPresent(wonderStage -> assertEquals(wonderStage, result.get()));

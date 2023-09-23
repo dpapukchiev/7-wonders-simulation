@@ -36,10 +36,16 @@ class PlayerTest extends BasePlayerTest {
         var wildCard = ScienceSymbolsEffect.of(ScienceSymbol.all());
         assignPermanentEffectsToPlayer(List.of(wildCard, effect1, effect2, effect3));
 
-        assertEquals(37, mainPlayer.score().getTotalScore());
+        assertEquals(42, mainPlayer.score().getTotalScore());
 
-        wildCard.setChosenSymbol(COMPASS); // 1 + 7 (combo)
+        assignPermanentEffectsToPlayer(List.of(
+                ScienceSymbolsEffect.of(COMPASS),
+                wildCard,
+                effect1,
+                effect2,
+                effect3
+        )); // 1 + 7 (combo)
 
-        assertEquals(45, mainPlayer.score().getTotalScore());
+        assertEquals(50, mainPlayer.score().getTotalScore());
     }
 }
