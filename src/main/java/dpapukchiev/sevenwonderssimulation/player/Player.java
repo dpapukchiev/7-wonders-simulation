@@ -69,22 +69,26 @@ public class Player {
         var myShields = getVault().getShields();
         var leftShields = getLeftPlayer().getVault().getShields();
         var rightShields = getRightPlayer().getVault().getShields();
-        log("Evaluating war for player %s has %s shields, left %s and right %s".formatted(
+        log("\nEvaluating war for player %s has %s shields, left %s and right %s".formatted(
                 name, myShields, leftShields, rightShields));
 
         if (myShields > leftShields) {
             getVault().addWarPoint(warPoint);
+            log("Player %s gets %s war points from left player".formatted(name, warPoint.getValue()));
             collectMetric("war-wins-from-left", warPoint.getValue());
         } else if (myShields < leftShields) {
             getVault().addWarPoint(MINUS_ONE);
+            log("Player %s gets -1 war point from left player".formatted(name));
             collectMetric("war-loss-from-left", MINUS_ONE.getValue());
         }
 
         if (myShields > rightShields) {
             getVault().addWarPoint(warPoint);
+            log("Player %s gets %s war points from right player".formatted(name, warPoint.getValue()));
             collectMetric("war-wins-from-left", warPoint.getValue());
         } else if (myShields < rightShields) {
             getVault().addWarPoint(MINUS_ONE);
+            log("Player %s gets -1 war point from right player".formatted(name));
             collectMetric("war-loss-from-right", MINUS_ONE.getValue());
         }
     }

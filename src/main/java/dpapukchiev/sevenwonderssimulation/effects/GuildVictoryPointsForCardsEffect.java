@@ -42,7 +42,7 @@ public class GuildVictoryPointsForCardsEffect extends BaseEffect {
 
     @Override
     public String report() {
-        return "VP(1x{} + 1x{} + 1x{})".formatted(
+        return "VP(1x#%s + 1x#%s + 1x#%s)".formatted(
                 RAW_MATERIAL_CARD,
                 MANUFACTURED_GOOD_CARD,
                 GUILD_CARD

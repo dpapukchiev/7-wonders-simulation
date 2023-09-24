@@ -1,6 +1,7 @@
 package dpapukchiev.sevenwonderssimulation.wonder;
 
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
+import dpapukchiev.sevenwonderssimulation.effects.core.EffectState;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,7 +52,7 @@ public class WonderContext {
         if (!builtWonderStagesEffects.isEmpty()) {
             report.add("wonder efx: \n%s".formatted(builtWonderStagesEffects
                     .stream()
-                    .map(Effect::report)
+                    .map(e -> "%s-%s".formatted(e.getState().equals(EffectState.AVAILABLE) ? "1" : "0", e.report()))
                     .filter(s -> !s.isBlank())
                     .collect(Collectors.joining(" "))));
         }

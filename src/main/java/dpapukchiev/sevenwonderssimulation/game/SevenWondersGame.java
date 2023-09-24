@@ -84,6 +84,8 @@ public class SevenWondersGame extends SchedulingElement {
                     turnContext.getHandOfCards().report(),
                     player.report()
             ));
+            // TODO: add some metrics interface which can get the player and then collect metrics
+            // this will be a snapshot in the simulation time which can be replayed
             player.executeTurn(turnContext);
 
             player.log("\n%s=>PlayerTurnEnded %s".formatted(String.valueOf(getTime()), player.report()));
@@ -158,7 +160,8 @@ public class SevenWondersGame extends SchedulingElement {
                             .executeEffectsEndOfAge(player)
                     );
             playersFactory.getPlayers().forEach(player -> player.executeWar(age));
-            playersFactory.getPlayers().forEach(player -> log.info(player.report()));
+            playersFactory.getPlayers()
+                    .forEach(player -> player.log("EndOfAgePlayerState %s".formatted(player.report())));
         }
     }
 
@@ -174,18 +177,21 @@ public class SevenWondersGame extends SchedulingElement {
             var efxReportBeforeStart = player.getEffectExecutionContext().report();
             Optional<EffectReward> effectReward = player.getEffectExecutionContext()
                     .executeEffectsEndOfGame(player);
-            effectReward.ifPresent(player::applyEffectReward);
+            effectReward.ifPresent(er -> {
+                player.log("\nEndOfGame: Player %s gets reward %s".formatted(player.getName(), er.report()));
+                player.applyEffectReward(er);
+            });
 
             player.copyGuildCardEffectIfHasSpecialAction(players);
 
-            log.info(
-                    "{}=>ApplyingEndOfGameEffects \nreward: {} \nefx before: {}  \nnew state: {}",
-                    getTime(),
-                    effectReward.map(EffectReward::report).
-                            orElse("no rewards"),
-                    efxReportBeforeStart,
-                    player.report()
-            );
+            player.log(
+                    "%s=>FinishedEndOfGameEffects \nreward: %s \nefx before: %s  \nnew state: %s".formatted(
+                            String.valueOf(getTime()),
+                            effectReward.map(EffectReward::report).
+                                    orElse("no rewards"),
+                            efxReportBeforeStart,
+                            player.report()
+                    ));
         });
         return players;
     }

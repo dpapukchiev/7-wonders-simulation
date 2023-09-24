@@ -32,91 +32,101 @@ public class Strategy {
 
     public void execute(TurnContext turnContext) {
         var player = turnContext.getPlayer();
+
+        boolean cardPlayed = play1Card(turnContext, player);
+        if (turnContext.getTurnCountAge() == 6) {
+            if (player.getVault().getSpecialAction(PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE).isPresent()) {
+                playRemainingCard(turnContext, player);
+            }
+        }
+        if (cardPlayed) return;
+
+        throw new RuntimeException("StrategyStep no action to execute");
+    }
+
+    private boolean play1Card(TurnContext turnContext, Player player) {
         for (StrategyStep step : steps) {
             var result = step.execute(turnContext);
             switch (result.action()) {
                 case BUILD_FOR_FREE -> {
                     removeFromHandAndAddToVault(turnContext, result.card());
                     scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
+
                     player.collectMetric("free-builds", 1);
-                    playLastCardIfHasSpecialAction(turnContext, player);
-                    return;
+                    return true;
                 }
                 case BUILD_WITH_SPECIAL_EFFECT -> {
                     removeFromHandAndAddToVault(turnContext, result.card());
                     scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
-                    playLastCardIfHasSpecialAction(turnContext, player);
 
                     player.collectMetric("build-card-with-special-effect", 1);
-                    return;
+                    return true;
                 }
                 case BUILD_WITH_COST -> {
                     payCost(turnContext, result.card());
                     removeFromHandAndAddToVault(turnContext, result.card());
                     scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
-                    playLastCardIfHasSpecialAction(turnContext, player);
 
                     player.collectMetric("build-with-cost", 1);
-                    return;
+                    return true;
                 }
                 case DISCARD -> {
                     discardCard(turnContext, result.card());
-                    playLastCardIfHasSpecialAction(turnContext, player);
 
                     player.collectMetric("discarded", 1);
-                    return;
+                    return true;
                 }
                 case WONDER -> {
                     var wonderStage = player
                             .getWonderContext()
                             .getNextWonderStage(turnContext);
                     if (wonderStage.isEmpty()) {
-                        throw new RuntimeException("StrategyStep no wonder stage to build");
+                        throw new RuntimeException("StrategyStep selected wonder but no wonder stage to build");
                     }
                     buildWonderStage(turnContext, wonderStage.get(), result.card());
-                    playLastCardIfHasSpecialAction(turnContext, player);
 
                     player.collectMetric("wonder-stages-" + wonderStage.get().getStageNumber(), 1);
-                    return;
+                    return true;
                 }
                 case SKIP -> {
                 }
             }
         }
-
-        throw new RuntimeException("StrategyStep no action to execute");
+        return false;
     }
 
-    private static void playLastCardIfHasSpecialAction(TurnContext turnContext, Player player) {
-        if (turnContext.getTurnCountAge() == 6) {
-            if (player.getVault().getSpecialAction(PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE).isPresent()) {
-                player.getVault().useSpecialAction(PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE);
-                List<Card> cardList = turnContext
-                        .getHandOfCards()
-                        .getCardsWithoutAlreadyBuilt(turnContext);
+    private void playRemainingCard(TurnContext turnContext, Player player) {
+        var cardList = turnContext
+                .getHandOfCards()
+                .getCardsWithNoCost(turnContext);
 
-                if (cardList.size() > 1) {
-                    throw new RuntimeException("More than one card to play: %s".formatted(cardList));
-                }
-                if (cardList.isEmpty()) {
-                    log.info("Player {} can play 0/{} cards at last turn in age {}",
-                            player.getName(),
-                            turnContext.getHandOfCards().getCards().size(),
-                            turnContext.getAge()
-                    );
-                    return;
-                }
+        if (cardList.isEmpty()) {
+            log.info("Player {} can play 0/{} cards at last turn in age {}",
+                    player.getName(),
+                    turnContext.getHandOfCards().getCards().size(),
+                    turnContext.getAge()
+            );
+            return;
+        }
+        if (cardList.size() > 1) {
+            throw new RuntimeException("More than one card to play: %s".formatted(cardList));
+        }
 
-                var cartToPlay = cardList.get(0);
-                if (cartToPlay == null) {
-                    throw new RuntimeException("No leftover card to play");
-                }
-                player.playExtraCard(cartToPlay);
-                turnContext.getHandOfCards().remove(cartToPlay);
-                if (!turnContext.getHandOfCards().getCards().isEmpty()) {
-                    throw new RuntimeException(("%s cards left in hand").formatted(turnContext.getHandOfCards().getCards().size()));
-                }
-            }
+        var cardToPlay = cardList.get(0);
+
+        removeFromHandAndAddToVault(turnContext, cardToPlay);
+        scheduleEffectReward(player, cardToPlay.getEffect(), turnContext.getTurn());
+
+        player.getVault().useSpecialAction(PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE);
+
+        player.log("Player %s plays card %s at last turn in age %s".formatted(
+                player.getName(),
+                cardToPlay.report(),
+                turnContext.getAge()
+        ));
+
+        if (!turnContext.getHandOfCards().getCards().isEmpty()) {
+            throw new RuntimeException(("%s cards left in hand").formatted(turnContext.getHandOfCards().getCards().size()));
         }
     }
 

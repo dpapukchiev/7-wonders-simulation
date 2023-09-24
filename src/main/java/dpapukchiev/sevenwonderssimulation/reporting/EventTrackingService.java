@@ -11,22 +11,27 @@ import java.nio.file.Path;
 public class EventTrackingService {
     private final String runId;
     private final double replicationNumber;
-    private File logFile;
+    // check if log file exists
+// if not, create it
+// if yes, clear it
+    private final int    LOG_EVERY_N_GAMES = 100;
+    private File         logFile;
 
     @SneakyThrows
     public EventTrackingService(String runId, double replicationNumber) {
         this.runId = runId;
         this.replicationNumber = replicationNumber;
-        var getRunDirectory = new File("run-%s".formatted(runId));
+//        var getRunDirectory = new File("run-%s".formatted(runId));
+        var getRunDirectory = new File("run-log");
         if (getRunDirectory.exists()) {
             getRunDirectory.delete();
         }
         getRunDirectory.mkdir();
 
         var traceId = "R" + replicationNumber;
-        // check if log file exists
-        // if not, create it
-        // if yes, clear it
+        if(replicationNumber % LOG_EVERY_N_GAMES != 0) {
+            return;
+        }
         logFile = new File(Path.of("%s/%s.log".formatted(getRunDirectory, traceId)).toString());
         if (logFile.exists()) {
             logFile.delete();
@@ -37,9 +42,17 @@ public class EventTrackingService {
         }
     }
 
+    // TODO: create json serialisable records of all decisions made by players
+    // think about context and outcome
+    // it can be used to verify the simulation for accuracy of the game rules
+
     @SneakyThrows
     public void logEvent(String event) {
         log.info("R{} {}: {}", replicationNumber, runId, event);
+        if(replicationNumber % LOG_EVERY_N_GAMES != 0) {
+            return;
+        }
+
         try(var fileWriter = new FileWriter(logFile, true)) {
             fileWriter.append("%s\n".formatted(event));
         }

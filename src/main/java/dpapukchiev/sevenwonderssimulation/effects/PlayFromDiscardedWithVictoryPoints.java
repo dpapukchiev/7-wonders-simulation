@@ -25,6 +25,7 @@ public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
 
     @Override
     public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
+        player.getVault().addSpecialActions(SpecialAction.PLAY_CARD_FROM_DISCARD);
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(
                         this,
@@ -42,8 +43,8 @@ public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
 
         if (!discardedCards.isEmpty()) {
             var cardToPlay = player.selectRandomCard(discardedCards);
-            player.getVault().useSpecialAction(SpecialAction.PLAY_CARD_FROM_DISCARD);
             player.playExtraCard(cardToPlay);
+            player.getVault().useSpecialAction(SpecialAction.PLAY_CARD_FROM_DISCARD);
             log.info("Player {} used special action {} to build card {} and got {}",
                     player.getName(), SpecialAction.PLAY_CARD_FROM_DISCARD,
                     cardToPlay.getName(), cardToPlay.getEffect().report()

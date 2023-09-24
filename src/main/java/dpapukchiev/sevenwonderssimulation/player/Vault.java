@@ -160,6 +160,9 @@ public class Vault {
     }
 
     public void useSpecialAction(SpecialAction specialAction) {
-        availableSpecialActions.remove(specialAction);
+        var removed = availableSpecialActions.remove(specialAction);
+        if(!removed) {
+            throw new IllegalStateException("Special action %s is not available".formatted(specialAction));
+        }
     }
 }

@@ -89,8 +89,8 @@ public class CityStatistics {
                         s.getMin(),
                         s.getMax()
                 ))
-//                .forEach(eventTrackingService::logEvent);
-                .forEach(log::info);
+                .forEach(eventTrackingService::logEvent);
+//                .forEach(log::info);
     }
 
     public void reportWinners(int attempts) {
@@ -100,7 +100,7 @@ public class CityStatistics {
                 .sorted((e1, e2) -> Comparator.comparingInt(
                         Map.Entry<String, Integer>::getValue
                 ).reversed().compare(e1, e2))
-                .forEach(e -> log.info("{} won {}/{} games", e.getKey(), e.getValue(), attempts));
+                .forEach(e -> eventTrackingService.logEvent("%s won %s/%s games".formatted(e.getKey(), e.getValue(), attempts)));
 
         eventTrackingService.logEvent("\nFINAL RANKING BY AVERAGE SCORE");
         var finalRanking = metrics.values().stream()
