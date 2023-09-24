@@ -1,22 +1,31 @@
 package dpapukchiev.sevenwonderssimulation.reporting;
 
+import dpapukchiev.sevenwonderssimulation.game.GameOptions;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import jsl.utilities.statistic.Statistic;
 import lombok.extern.log4j.Log4j2;
 
+import java.time.Clock;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 @Log4j2
 public class CityStatistics {
-    private final SortBy sortBy;
-    private final Map<String, Integer>  winners        = new HashMap<>();
-
+    private final SortBy               sortBy;
+    private final Map<String, Integer> winners = new HashMap<>();
+    private       EventTrackingService eventTrackingService;
 
     public CityStatistics(SortBy sortBy) {
         this.sortBy = sortBy;
+    }
+
+    public void refreshEventTrackingService(GameOptions gameOptions, double replicationNumber) {
+        eventTrackingService = new EventTrackingService(
+                "%s-%s".formatted(gameOptions.startTime().toString(), gameOptions.runId()),
+                replicationNumber
+        );
     }
 
     public enum SortBy {
@@ -42,6 +51,12 @@ public class CityStatistics {
                 new Metric(new Statistic(metricName), wonderContext, player.getName())
         );
 
+//        eventTrackingService.logEvent("%s %s %s-%s".formatted(
+//                player.getName(),
+//                player.getWonderContext().getName(),
+//                name,
+//                value
+//        ));
         metric.statistic().collect(value);
         metrics.put(metricName, metric);
     }
@@ -50,8 +65,13 @@ public class CityStatistics {
         winners.putIfAbsent(wonderContext.getName(), 0);
         winners.computeIfPresent(wonderContext.getName(), (k, v) -> v + 1);
     }
+
+    public void log(String event){
+        eventTrackingService.logEvent(event);
+    }
+
     public void reportStatistics(SortBy sortBy) {
-        log.info("\nSTATISTICS BY %s".formatted(sortBy));
+        eventTrackingService.logEvent("\nSTATISTICS BY %s".formatted(sortBy));
 
         metrics.values().stream()
                 .sorted((s1, s2) -> switch (sortBy) {
@@ -69,11 +89,12 @@ public class CityStatistics {
                         s.getMin(),
                         s.getMax()
                 ))
+//                .forEach(eventTrackingService::logEvent);
                 .forEach(log::info);
     }
 
     public void reportWinners(int attempts) {
-        log.info("\nFINAL RANKING BY WINS");
+        eventTrackingService.logEvent("\nFINAL RANKING BY WINS");
         winners.entrySet().stream()
                 // sort by number of wins desc
                 .sorted((e1, e2) -> Comparator.comparingInt(
@@ -81,7 +102,7 @@ public class CityStatistics {
                 ).reversed().compare(e1, e2))
                 .forEach(e -> log.info("{} won {}/{} games", e.getKey(), e.getValue(), attempts));
 
-        log.info("\nFINAL RANKING BY AVERAGE SCORE");
+        eventTrackingService.logEvent("\nFINAL RANKING BY AVERAGE SCORE");
         var finalRanking = metrics.values().stream()
                 .filter(m -> m.statistic().getName().contains("score-total"))
                 .sorted(Comparator.comparing(Metric::statistic)
@@ -91,7 +112,7 @@ public class CityStatistics {
 
         for (int i = 1; i <= finalRanking.size(); i++) {
             var statistic = finalRanking.get(i - 1);
-            log.info("Place: %s %s avg=%s (n=%s min=%s max=%s)"
+            eventTrackingService.logEvent("Place: %s %s avg=%s (n=%s min=%s max=%s)"
                     .formatted(i,
                             statistic.getName(),
                             Math.round(statistic.getAverage() * 100.0) / 100.0,

@@ -57,8 +57,9 @@ public class SevenWondersGame extends SchedulingElement {
 
     @Override
     public void initialize() {
+        gameOptions.cityStatistics().refreshEventTrackingService(getGameOptions(), getCurrentReplicationNumber());
         log.info("\n{}=>SevenWondersGame initialize game {}", getTime(), getCurrentReplicationNumber());
-                playersFactory.initialisePlayers(gameOptions);
+        playersFactory.initialisePlayers(gameOptions);
         dealHands(gameOptions);
 
         var nextOffset = 1;
@@ -75,17 +76,17 @@ public class SevenWondersGame extends SchedulingElement {
         public void action(JSLEvent<TurnContext> event) {
             var turnContext = event.getMessage();
             var player = turnContext.getPlayer();
-            log.info("\n{}=>PlayerTurnStarted p({}) turn {}-{} {} \n{}",
-                    getTime(),
+            player.log("\n%s=>PlayerTurnStarted p(%s) turn %s-%s %s \n%s".formatted(
+                    String.valueOf(getTime()),
                     player.getName(),
-                    turnContext.getAge(),
-                    turnContext.getTurnCountAge(),
+                    String.valueOf(turnContext.getAge()),
+                    String.valueOf(turnContext.getTurnCountAge()),
                     turnContext.getHandOfCards().report(),
                     player.report()
-            );
+            ));
             player.executeTurn(turnContext);
 
-            log.info("\n{}=>PlayerTurnEnded {}", getTime(), player.report());
+            player.log("\n%s=>PlayerTurnEnded %s".formatted(String.valueOf(getTime()), player.report()));
         }
     }
 

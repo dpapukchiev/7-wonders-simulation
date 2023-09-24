@@ -54,7 +54,7 @@ public class Player {
     }
 
     public void applyEffectReward(EffectReward effectReward) {
-        log.info("\nApplying effect reward to player {} ({})", name, effectReward.report());
+        log("Applying effect reward to player %s (%s)".formatted(name, effectReward.report()));
         vault.addCoins(effectReward.getCoinReward());
         vault.addVictoryPoints(effectReward.getVictoryPointsReward());
         vault.addShields(effectReward.getShields());
@@ -69,8 +69,8 @@ public class Player {
         var myShields = getVault().getShields();
         var leftShields = getLeftPlayer().getVault().getShields();
         var rightShields = getRightPlayer().getVault().getShields();
-        log.info("Evaluating war for player {} has {} shields, left {} and right {}",
-                name, myShields, leftShields, rightShields);
+        log("Evaluating war for player %s has %s shields, left %s and right %s".formatted(
+                name, myShields, leftShields, rightShields));
 
         if (myShields > leftShields) {
             getVault().addWarPoint(warPoint);
@@ -110,16 +110,16 @@ public class Player {
                             .filter(c -> !vault.getBuiltCardNames().contains(c.getName().name()))
                             .toList();
                     if (cardsToCopyFrom.isEmpty()) {
-                        log.info("No guild cards to copy from. Player {} will not copy a guild card", getName());
+                        log("No guild cards to copy from. Player %s will not copy a guild card".formatted(getName()));
                         return;
                     }
                     var cardToCopy = selectRandomCard(cardsToCopyFrom);
                     var reward = cardToCopy.getEffect().collectReward(this);
                     if (reward.isPresent()) {
                         applyEffectReward(reward.get());
-                        log.info("Player {} gets reward {} for copying guild card {}", getName(), reward.get().report(), cardToCopy.getName());
+                        log("Player %s gets reward %s for copying guild card %s".formatted(getName(), reward.get().report(), cardToCopy.getName()));
                     } else {
-                        log.info("Player {} gets no reward for copying guild card {}", getName(), cardToCopy.getName());
+                        log("Player %s gets no reward for copying guild card %s".formatted(getName(), cardToCopy.getName()));
                     }
                 });
     }
@@ -160,5 +160,9 @@ public class Player {
         cityStatistics.collectMetric("science-score", scoreCard.getScienceScore(), this);
         cityStatistics.collectMetric("built-cards", getVault().getBuiltCards().size(), this);
         cityStatistics.collectMetric("discarded-cards", getVault().getDiscardedCards().size(), this);
+    }
+
+    public void log(String message) {
+        cityStatistics.log(message);
     }
 }

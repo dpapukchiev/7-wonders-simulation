@@ -38,3 +38,4 @@ out/
 jslOutput/
 ./sim-log.txt
 ./simulation.log
+/run-**/

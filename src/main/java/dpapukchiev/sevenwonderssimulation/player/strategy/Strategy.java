@@ -123,19 +123,19 @@ public class Strategy {
     private void scheduleEffectReward(Player player, Effect cardEffect, Turn turn) {
         cardEffect.scheduleRewardEvaluationAndCollection(player, turn);
 
-        log.info("Effect {} scheduled for player {}", cardEffect.report(), player.getName());
+        player.getCityStatistics().log("Effect %s scheduled for player %s".formatted(cardEffect.report(), player.getName()));
     }
 
     private void removeFromHandAndAddToVault(TurnContext turnContext, Card card) {
         turnContext.getHandOfCards().remove(card);
         turnContext.getPlayer().getVault().addBuiltCard(card);
 
-        log.info("\nPlayer {} builds card {}", turnContext.getPlayer().getName(), card.report());
+        turnContext.getPlayer().getCityStatistics().log("\nPlayer %s builds card %s".formatted(turnContext.getPlayer().getName(), card.report()));
     }
 
     private void payCost(TurnContext turnContext, Card card) {
         var costReport = card.getCost().generateCostReport(turnContext);
-        payCost(turnContext, "card" + card.getName().name(), costReport);
+        payCost(turnContext, card.getName().name(), costReport);
     }
 
     private void payCost(TurnContext turnContext, String name, CostReport costReport) {
@@ -149,7 +149,7 @@ public class Strategy {
                     .formatted(player.getName(), player.getVault().getCoins(), costReport.getToPayTotal(), name));
         }
         if (costReport.getToPayTotal() == 0) {
-            log.info("Player {} plays card {} for FREE", player.getName(), name);
+            player.getCityStatistics().log("Player %s plays card %s for FREE".formatted(player.getName(), name));
             return;
         }
 
@@ -167,17 +167,17 @@ public class Strategy {
             throw new IllegalStateException("Player %s has %s coins to pay to bank".formatted(player.getName(), costReport.getToPayBank()));
         }
 
-        log.info(
-                "Player {} pays for {} \n${} to bank \n${} to L({}) \n${} to R({}) \ntotal {}",
-                player.getName(),
-                name,
-                costReport.getToPayBank(),
-                costReport.getToPayLeft(),
-                player.getLeftPlayer().getName(),
-                costReport.getToPayRight(),
-                player.getRightPlayer().getName(),
-                costReport.getToPayTotal()
-        );
+        player.getCityStatistics().log(
+                "Player %s pays for %s \n$%s to bank \n$%s to L(%s) \n$%s to R(%s) \ntotal %s".formatted(
+                        player.getName(),
+                        name,
+                        costReport.getToPayBank(),
+                        costReport.getToPayLeft(),
+                        player.getLeftPlayer().getName(),
+                        costReport.getToPayRight(),
+                        player.getRightPlayer().getName(),
+                        costReport.getToPayTotal()
+                ));
     }
 
     private void discardCard(TurnContext turnContext, Card cardToDiscard) {
@@ -188,12 +188,12 @@ public class Strategy {
         turnContext.getHandOfCards().discard(cardToDiscard);
         player.getVault().discardCard(cardToDiscard);
 
-        log.info("\nPlayer {} discards card {} and gets 3 coins. {} => {}",
+        player.getCityStatistics().log("\nPlayer %s discards card %s and gets 3 coins. %s => %s".formatted(
                 player.getName(),
                 cardToDiscard.report(),
                 coinsBefore,
                 player.getVault().getCoins()
-        );
+        ));
     }
 
     private void buildWonderStage(
