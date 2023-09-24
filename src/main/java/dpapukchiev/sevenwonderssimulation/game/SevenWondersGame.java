@@ -57,7 +57,8 @@ public class SevenWondersGame extends SchedulingElement {
 
     @Override
     public void initialize() {
-        playersFactory.initialisePlayers(gameOptions);
+        log.info("\n{}=>SevenWondersGame initialize game {}", getTime(), getCurrentReplicationNumber());
+                playersFactory.initialisePlayers(gameOptions);
         dealHands(gameOptions);
 
         var nextOffset = 1;
@@ -139,6 +140,8 @@ public class SevenWondersGame extends SchedulingElement {
                     winner.getWonderContext().report(),
                     winner.score().getTotalScore()
             );
+
+            addWinnerToWinnersList(winner);
         }
     }
 
@@ -156,6 +159,10 @@ public class SevenWondersGame extends SchedulingElement {
             playersFactory.getPlayers().forEach(player -> player.executeWar(age));
             playersFactory.getPlayers().forEach(player -> log.info(player.report()));
         }
+    }
+
+    private void addWinnerToWinnersList(Player winner) {
+        gameOptions.cityStatistics().addWinner(winner.getWonderContext());
     }
 
     private List<Player> applyEndOfGameEffects() {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="CONSOLE" class="ch.qos.logback.core.FileAppender">
+<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
         <file>./simulation.log</file>
         <append>false</append>
         <encoder>

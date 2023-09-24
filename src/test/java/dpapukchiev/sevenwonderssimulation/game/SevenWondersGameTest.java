@@ -1,16 +1,16 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
 import dpapukchiev.sevenwonderssimulation.player.Player;
-import dpapukchiev.sevenwonderssimulation.player.ScoreCard;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
+import jsl.observers.textfile.LogReport;
+import jsl.simulation.Executive;
 import jsl.simulation.Simulation;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -21,34 +21,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    private final static int                   ATTEMPTS       = 200;
+    private final static int                   ATTEMPTS       = 2000;
     private final static CityStatistics.SortBy SORT_BY        = METRIC_NAME;
     private final static CityStatistics        cityStatistics = new CityStatistics(SORT_BY);
 
-    private List<Arguments> getGameTestArguments() {
-        return IntStream.rangeClosed(1, ATTEMPTS).mapToObj(Arguments::of).toList();
-    }
-
-    @ParameterizedTest
-    @MethodSource("getGameTestArguments")
-    void play(int streamNumber) {
-        var result = runGameSimulation(streamNumber);
+    @Test
+    void play() {
+        var result = runGameSimulation(ATTEMPTS);
 
         var players = result.game().getPlayersFactory().getPlayers();
         assertEquals(result.gameOptions().numberOfPlayers(), players.size());
 
         assertPlayersPlayedDistinctCards(players);
 
-        addWinnerToWinnersList(result.game());
-
-        reportStatistics(streamNumber);
+        cityStatistics.reportStatistics(SORT_BY);
+        cityStatistics.reportWinners(ATTEMPTS);
     }
 
     @NotNull
-    private static GameResult runGameSimulation(int streamNumber) {
+    private static GameResult runGameSimulation(int gamesToRun) {
         var simulation = new Simulation();
-        simulation.setNumberOfReplications(1);
-        simulation.setAdvanceStreamNumber(streamNumber);
+        simulation.setNumberOfReplications(gamesToRun);
+//        simulation.getModel().addObserver(new LogReport(Path.of("./sim-log.txt")));
 
         var gameOptions = GameOptions.builder()
                 .numberOfPlayers(7)
@@ -82,18 +76,5 @@ class SevenWondersGameTest {
                             .formatted(player.getName(), builtCards, builtCardNames)
             );
         });
-    }
-
-    private static void addWinnerToWinnersList(SevenWondersGame game) {
-        Pair<Player, ScoreCard> winner = game.getResultingScoringOrder().get(0);
-        var winningPlayer = winner.getLeft();
-        cityStatistics.addWinner(winningPlayer.getWonderContext());
-    }
-
-    private static void reportStatistics(int streamNumber) {
-        if (streamNumber == ATTEMPTS) {
-            cityStatistics.reportStatistics(SORT_BY);
-            cityStatistics.reportWinners(ATTEMPTS);
-        }
     }
 }
