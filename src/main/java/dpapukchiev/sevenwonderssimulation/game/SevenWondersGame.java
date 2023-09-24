@@ -4,6 +4,7 @@ import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.cards.HandOfCards;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.player.Player;
+import dpapukchiev.sevenwonderssimulation.player.PlayersFactory;
 import dpapukchiev.sevenwonderssimulation.player.ScoreCard;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.EventAction;
@@ -11,6 +12,7 @@ import jsl.simulation.EventActionIfc;
 import jsl.simulation.JSLEvent;
 import jsl.simulation.ModelElement;
 import jsl.simulation.SchedulingElement;
+import jsl.utilities.random.rvariable.DUniformRV;
 import jsl.utilities.random.rvariable.NormalRV;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -53,8 +55,9 @@ public class SevenWondersGame extends SchedulingElement {
         this.deck = new Deck(getParentModelElement());
         this.playersFactory = new PlayersFactory(
                 this.deck,
-                new RandomVariable(parent, new NormalRV()),
-                new RandomVariable(parent, new NormalRV()),
+                new RandomVariable(parent, new NormalRV(), "pickACity"),
+                new RandomVariable(parent, new DUniformRV(1, 3), "pickAStrategy"),
+                new RandomVariable(parent, new NormalRV(), "cityDistribution"),
                 gameOptions.cityStatistics()
         );
     }

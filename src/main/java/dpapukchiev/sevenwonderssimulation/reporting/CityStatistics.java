@@ -1,8 +1,8 @@
 package dpapukchiev.sevenwonderssimulation.reporting;
 
 import dpapukchiev.sevenwonderssimulation.game.GameOptions;
-import dpapukchiev.sevenwonderssimulation.game.GamePhase;
 import dpapukchiev.sevenwonderssimulation.player.Player;
+import dpapukchiev.sevenwonderssimulation.player.strategy.Strategy;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import jsl.utilities.statistic.Statistic;
 import lombok.Getter;
@@ -51,7 +51,7 @@ public class CityStatistics {
 
     public void collectMetric(String name, double value, Player player) {
         var wonderContext = player.getWonderContext();
-        var metricName = getMetricName(wonderContext, name);
+        var metricName = getMetricName(wonderContext, name, player.getStrategy());
         var metric = metrics.getOrDefault(
                 metricName,
                 new Metric(new Statistic(metricName), wonderContext, player.getName())
@@ -72,7 +72,7 @@ public class CityStatistics {
         winners.computeIfPresent(wonderContext.getName(), (k, v) -> v + 1);
     }
 
-    public void log(String event){
+    public void log(String event) {
         eventTrackingService.logEvent(event);
     }
 
@@ -132,10 +132,11 @@ public class CityStatistics {
         }
     }
 
-    private String getMetricName(WonderContext wonderContext, String statisticName) {
+    private String getMetricName(WonderContext wonderContext, String statisticName, Strategy strategy) {
         return switch (sortBy) {
-            case CITY -> "%s-%s".formatted(wonderContext.getName(), statisticName);
-            case METRIC, METRIC_NAME -> "%s-%s".formatted(statisticName, wonderContext.getName());
+            case CITY -> "%s-%s-%s".formatted(wonderContext.getName(), statisticName, strategy.getName().name());
+            case METRIC, METRIC_NAME ->
+                    "%s-%s-%s".formatted(statisticName, wonderContext.getName(), strategy.getName().name());
         };
     }
 

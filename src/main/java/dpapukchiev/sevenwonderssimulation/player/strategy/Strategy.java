@@ -7,6 +7,7 @@ import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderStage;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -14,18 +15,47 @@ import java.util.List;
 
 import static dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction.PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE;
 
+@Getter
 @Log4j2
 @RequiredArgsConstructor
 public class Strategy {
+    public enum StrategyName {
+        DEFAULT,
+        V2
+    }
+
+    private final StrategyName       name;
     private final List<StrategyStep> steps;
 
     public static Strategy defaultStrategy() {
-        return new Strategy(List.of(
+        return new Strategy(StrategyName.DEFAULT, List.of(
                 new BuildRandomFreeUpgrade(),
                 new BuildRandomWithCostCardIfAffordable(),
                 new BuildMostExpensiveUsingPlayWithoutCost(),
                 new BuildWonderIfAvailableDiscardRandom(),
                 new BuildRandomWithNoCostCard(),
+                new DiscardRandom()
+        ));
+    }
+
+    public static Strategy v2() {
+        return new Strategy(StrategyName.V2, List.of(
+                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildRandomWithNoCostCard(),
+                new BuildRandomFreeUpgrade(),
+                new BuildRandomWithCostCardIfAffordable(),
+                new BuildWonderIfAvailableDiscardRandom(),
+                new DiscardRandom()
+        ));
+    }
+
+    public static Strategy v3() {
+        return new Strategy(StrategyName.V2, List.of(
+                new BuildWonderIfAvailableDiscardRandom(),
+                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildRandomWithNoCostCard(),
+                new BuildRandomFreeUpgrade(),
+                new BuildRandomWithCostCardIfAffordable(),
                 new DiscardRandom()
         ));
     }
@@ -165,15 +195,15 @@ public class Strategy {
             return;
         }
 
+        player.getVault().removeCoins(costReport.getToPayTotal());
+
         player.getLeftPlayer().getVault().addCoins(costReport.getToPayLeft());
         player.collectMetric("to-pay-left", costReport.getToPayLeft());
 
         player.getRightPlayer().getVault().addCoins(costReport.getToPayRight());
         player.collectMetric("to-pay-right", costReport.getToPayLeft());
 
-        player.collectMetric("to-pay-bank", costReport.getToPayLeft());
-
-        player.getVault().removeCoins(costReport.getToPayTotal());
+        player.collectMetric("to-pay-bank", costReport.getToPayBank());
 
         if (costReport.getToPayBank() > 1) {
             throw new IllegalStateException("Player %s has %s coins to pay to bank".formatted(player.getName(), costReport.getToPayBank()));

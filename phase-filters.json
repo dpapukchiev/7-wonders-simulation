@@ -1,0 +1,194 @@
+[
+  {
+    "displayName": "Player discards card",
+    "expression": "discards card"
+  },
+  {
+    "displayName": "Player pays for card",
+    "expression": "pays for"
+  },
+  {
+    "displayName": "Player builds wonder",
+    "expression": "builds wonder stage"
+  },
+  {
+    "displayName": "Player used special action",
+    "expression": "used special action"
+  },
+  {
+    "displayName": "Initialize players",
+    "expression": "INITIALIZE_PLAYERS"
+  },
+  {
+    "displayName": "Players turn age 1 turn 1",
+    "expression": "PLAYER_TURN_AGE_1_TURN_1"
+  },
+  {
+    "displayName": "End of age 1 turn 1",
+    "expression": "END_OF_TURN_AGE_1_TURN_1"
+  },
+  {
+    "displayName": "Players turn age 1 turn 2",
+    "expression": "PLAYER_TURN_AGE_1_TURN_2"
+  },
+  {
+    "displayName": "End of age 1 turn 2",
+    "expression": "END_OF_TURN_AGE_1_TURN_2"
+  },
+  {
+    "displayName": "Players turn age 1 turn 3",
+    "expression": "PLAYER_TURN_AGE_1_TURN_3"
+  },
+  {
+    "displayName": "End of age 1 turn 3",
+    "expression": "END_OF_TURN_AGE_1_TURN_3"
+  },
+  {
+    "displayName": "Players turn age 1 turn 4",
+    "expression": "PLAYER_TURN_AGE_1_TURN_4"
+  },
+  {
+    "displayName": "End of age 1 turn 4",
+    "expression": "END_OF_TURN_AGE_1_TURN_4"
+  },
+  {
+    "displayName": "Players turn age 1 turn 5",
+    "expression": "PLAYER_TURN_AGE_1_TURN_5"
+  },
+  {
+    "displayName": "End of age 1 turn 5",
+    "expression": "END_OF_TURN_AGE_1_TURN_5"
+  },
+  {
+    "displayName": "Players turn age 1 turn 6",
+    "expression": "PLAYER_TURN_AGE_1_TURN_6"
+  },
+  {
+    "displayName": "End of age 1 turn 6",
+    "expression": "END_OF_TURN_AGE_1_TURN_6"
+  },
+  {
+    "displayName": "End of age 1",
+    "expression": "END_OF_AGE_1"
+  },
+  {
+    "displayName": "Players turn age 2 turn 1",
+    "expression": "PLAYER_TURN_AGE_2_TURN_1"
+  },
+  {
+    "displayName": "End of age 2 turn 1",
+    "expression": "END_OF_TURN_AGE_2_TURN_1"
+  },
+  {
+    "displayName": "Players turn age 2 turn 2",
+    "expression": "PLAYER_TURN_AGE_2_TURN_2"
+  },
+  {
+    "displayName": "End of age 2 turn 2",
+    "expression": "END_OF_TURN_AGE_2_TURN_2"
+  },
+  {
+    "displayName": "Players turn age 2 turn 3",
+    "expression": "PLAYER_TURN_AGE_2_TURN_3"
+  },
+  {
+    "displayName": "End of age 2 turn 3",
+    "expression": "END_OF_TURN_AGE_2_TURN_3"
+  },
+  {
+    "displayName": "Players turn age 2 turn 4",
+    "expression": "PLAYER_TURN_AGE_2_TURN_4"
+  },
+  {
+    "displayName": "End of age 2 turn 4",
+    "expression": "END_OF_TURN_AGE_2_TURN_4"
+  },
+  {
+    "displayName": "Players turn age 2 turn 5",
+    "expression": "PLAYER_TURN_AGE_2_TURN_5"
+  },
+  {
+    "displayName": "End of age 2 turn 5",
+    "expression": "END_OF_TURN_AGE_2_TURN_5"
+  },
+  {
+    "displayName": "Players turn age 2 turn 6",
+    "expression": "PLAYER_TURN_AGE_2_TURN_6"
+  },
+  {
+    "displayName": "End of age 2 turn 6",
+    "expression": "END_OF_TURN_AGE_2_TURN_6"
+  },
+  {
+    "displayName": "End of age 2",
+    "expression": "END_OF_AGE_2"
+  },
+  {
+    "displayName": "Players turn age 3 turn 1",
+    "expression": "PLAYER_TURN_AGE_3_TURN_1"
+  },
+  {
+    "displayName": "End of age 3 turn 1",
+    "expression": "END_OF_TURN_AGE_3_TURN_1"
+  },
+  {
+    "displayName": "Players turn age 3 turn 2",
+    "expression": "PLAYER_TURN_AGE_3_TURN_2"
+  },
+  {
+    "displayName": "End of age 3 turn 2",
+    "expression": "END_OF_TURN_AGE_3_TURN_2"
+  },
+  {
+    "displayName": "Players turn age 3 turn 3",
+    "expression": "PLAYER_TURN_AGE_3_TURN_3"
+  },
+  {
+    "displayName": "End of age 3 turn 3",
+    "expression": "END_OF_TURN_AGE_3_TURN_3"
+  },
+  {
+    "displayName": "Players turn age 3 turn 4",
+    "expression": "PLAYER_TURN_AGE_3_TURN_4"
+  },
+  {
+    "displayName": "End of age 3 turn 4",
+    "expression": "END_OF_TURN_AGE_3_TURN_4"
+  },
+  {
+    "displayName": "Players turn age 3 turn 5",
+    "expression": "PLAYER_TURN_AGE_3_TURN_5"
+  },
+  {
+    "displayName": "End of age 3 turn 5",
+    "expression": "END_OF_TURN_AGE_3_TURN_5"
+  },
+  {
+    "displayName": "Players turn age 3 turn 6",
+    "expression": "PLAYER_TURN_AGE_3_TURN_6"
+  },
+  {
+    "displayName": "End of age 3 turn 6",
+    "expression": "END_OF_TURN_AGE_3_TURN_6"
+  },
+  {
+    "displayName": "End of age 3",
+    "expression": "END_OF_AGE_3"
+  },
+  {
+    "displayName": "End of Game",
+    "expression": "END_OF_GAME"
+  },
+  {
+    "displayName": "Scoring",
+    "expression": "SCORING"
+  },
+  {
+    "displayName": "Statistics",
+    "expression": "STATISTICS"
+  },
+  {
+    "displayName": "Winners",
+    "expression": "WINNERS"
+  }
+]

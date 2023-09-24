@@ -1,11 +1,13 @@
-package dpapukchiev.sevenwonderssimulation.game;
+package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
 import dpapukchiev.sevenwonderssimulation.cards.FreeUpgrades;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
-import dpapukchiev.sevenwonderssimulation.player.Player;
+import dpapukchiev.sevenwonderssimulation.game.GameOptions;
+import dpapukchiev.sevenwonderssimulation.player.strategy.Strategy;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import dpapukchiev.sevenwonderssimulation.wonder.CityName;
+import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderTemplate;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Getter;
@@ -24,6 +26,7 @@ public class PlayersFactory {
 
     private final Deck           deck;
     private final RandomVariable pickACity;
+    private final RandomVariable pickAStrategy;
     private final RandomVariable cityDistribution;
     private final CityStatistics cityStatistics;
     private final List<Player>   players = new ArrayList<>();
@@ -40,8 +43,9 @@ public class PlayersFactory {
                     wonderContext.getCityName(),
                     wonderContext.getSide().equals("A")
             );
+            var strategy = getStrategyForPlayer(wonderContext);
             var player = Player.builder()
-                    .name("Player-%s-%s".formatted(i, wonderContext.getCityName()))
+                    .name("Player-%s-%s-%s".formatted(i, wonderContext.getCityName(), strategy.getName()))
                     .wonderContext(wonderContext)
                     .pickACard(options.playerRandomVariables().get(i))
                     .cityStatistics(cityStatistics)
@@ -49,6 +53,7 @@ public class PlayersFactory {
                             providedResources.getRight(),
                             providedResources.getLeft()
                     ))
+                    .strategy(strategy)
                     .build()
                     .initVault(deck);
             players.add(player);
@@ -69,6 +74,18 @@ public class PlayersFactory {
         }
 
         players.forEach(player -> log.info("\nInitialised Player {}", player.report()));
+    }
+
+    private Strategy getStrategyForPlayer(WonderContext wonderContext) {
+        var strategyNumber = pickAStrategy.getValue();
+        if (strategyNumber == 1) {
+            return Strategy.defaultStrategy();
+        } else if (strategyNumber == 2) {
+            return Strategy.v2();
+        } else if (strategyNumber == 3) {
+            return Strategy.v3();
+        }
+        return Strategy.defaultStrategy();
     }
 
     private List<CityName> selectRandomCities(GameOptions options) {

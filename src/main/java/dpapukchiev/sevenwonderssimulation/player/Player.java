@@ -3,7 +3,6 @@ package dpapukchiev.sevenwonderssimulation.player;
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
-import dpapukchiev.sevenwonderssimulation.effects.ResourceEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
@@ -40,6 +39,7 @@ public class Player {
     private EffectExecutionContext effectExecutionContext;
     private Vault                  vault;
     private CityStatistics         cityStatistics;
+    private Strategy               strategy;
 
     public ResourceContext resourceContext() {
         return new ResourceContext(this);
@@ -61,7 +61,7 @@ public class Player {
     }
 
     public void executeTurn(TurnContext turnContext) {
-        Strategy.defaultStrategy().execute(turnContext);
+        strategy.execute(turnContext);
     }
 
     public void executeWar(int age) {
@@ -104,7 +104,7 @@ public class Player {
                 .add(cardEffect);
     }
 
-    public void copyGuildCardEffectIfHasSpecialAction(List<Player> players){
+    public void copyGuildCardEffectIfHasSpecialAction(List<Player> players) {
         var vault = getVault();
         vault.getSpecialAction(COPY_GUILD_CARD)
                 .ifPresent(specialAction -> {
