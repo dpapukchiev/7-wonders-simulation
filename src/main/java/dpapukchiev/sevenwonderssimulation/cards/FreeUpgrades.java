@@ -32,6 +32,13 @@ import static dpapukchiev.sevenwonderssimulation.cards.CardName.TEMPEL;
 import static dpapukchiev.sevenwonderssimulation.cards.CardName.UNIVERSTAT;
 import static dpapukchiev.sevenwonderssimulation.cards.CardName.VERTEIDIGUNGSANLAGE;
 import static dpapukchiev.sevenwonderssimulation.cards.CardName.ZIRKUS;
+import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.GLASS;
+import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.SCRIPTS;
+import static dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood.TEXTILE;
+import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.CLAY;
+import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.METAL_ORE;
+import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.STONE;
+import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.WOOD;
 
 public class FreeUpgrades {
     public boolean canBuildForFree(Card card, List<Card> builtCards) {
@@ -40,13 +47,13 @@ public class FreeUpgrades {
     }
     public static Pair<List<RawMaterial>, List<ManufacturedGood>> getProvidedResources(CityName cityName, boolean isSideA) {
         return switch (cityName){
-            case BABYLON -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
-            case RHODOS -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
-            case OLIMPIA -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
-            case ALEXANDRIA -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
-            case HALIKARNASSOS -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
-            case GIZAH -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
-            case EPHESOS -> isSideA ? Pair.of(List.of(), List.of()) : Pair.of(List.of(), List.of());
+            case BABYLON -> Pair.of(List.of(CLAY), List.of());
+            case RHODOS -> Pair.of(List.of(METAL_ORE), List.of());
+            case OLIMPIA -> Pair.of(List.of(WOOD), List.of());
+            case GIZAH -> Pair.of(List.of(STONE), List.of());
+            case ALEXANDRIA -> Pair.of(List.of(), List.of(GLASS));
+            case HALIKARNASSOS -> Pair.of(List.of(), List.of(TEXTILE));
+            case EPHESOS -> Pair.of(List.of(), List.of(SCRIPTS));
         };
     }
 

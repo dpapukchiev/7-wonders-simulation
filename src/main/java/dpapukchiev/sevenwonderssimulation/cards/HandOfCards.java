@@ -32,7 +32,7 @@ public class HandOfCards {
                 .toList();
     }
 
-    public List<Pair<Card, CostReport>> filterCards(TurnContext turnContext, Predicate<Pair<Card, CostReport>> filter) {
+    public List<Pair<Card, CostReport>> getAffordableNotBuiltCards(TurnContext turnContext, Predicate<Pair<Card, CostReport>> filter) {
         var builtCards = turnContext.getPlayer().getVault().getBuiltCardNames();
         return getCostReportsPerCard(turnContext).stream()
                 .filter(card -> !builtCards.contains(card.getKey().getName().name()))
@@ -42,22 +42,21 @@ public class HandOfCards {
     }
 
     public List<Card> getCardsWithoutAlreadyBuilt(TurnContext turnContext) {
-        var result = getCards()
+        return getCards()
                 .stream()
                 .filter(card -> !turnContext.getPlayer().getVault().getBuiltCardNames().contains(card.getName().name()))
                 .toList();
-        return result;
     }
 
     public List<Card> getCardsWithNoCost(TurnContext turnContext) {
-        return filterCards(turnContext, entry -> entry.getValue().getToPayTotal() == 0)
+        return getAffordableNotBuiltCards(turnContext, entry -> entry.getValue().getToPayTotal() == 0)
                 .stream()
                 .map(Pair::getFirst)
                 .toList();
     }
 
     public List<Card> getCardsWithCost(TurnContext turnContext) {
-        return filterCards(turnContext, entry -> entry.getValue().getToPayTotal() > 0)
+        return getAffordableNotBuiltCards(turnContext, entry -> entry.getValue().getToPayTotal() > 0)
                 .stream().map(Pair::getFirst)
                 .toList();
     }

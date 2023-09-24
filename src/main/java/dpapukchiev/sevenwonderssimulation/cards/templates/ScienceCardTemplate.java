@@ -3,8 +3,6 @@ package dpapukchiev.sevenwonderssimulation.cards.templates;
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardName;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
-import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
-import dpapukchiev.sevenwonderssimulation.cost.FreeToPlayCost;
 import dpapukchiev.sevenwonderssimulation.effects.ScienceSymbolsEffect;
 import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
 import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
@@ -19,20 +17,6 @@ public class ScienceCardTemplate extends BaseCardTemplate {
 
     public static ScienceCardTemplate create(int age) {
         return new ScienceCardTemplate(age);
-    }
-
-    public List<Card> createCards(
-            CardName name,
-            List<Integer> requiredPlayerCounts,
-            ScienceSymbol scienceSymbol
-    ) {
-        return createCards(
-                name,
-                requiredPlayerCounts,
-                List.of(),
-                List.of(),
-                scienceSymbol
-        );
     }
 
     public List<Card> createCards(

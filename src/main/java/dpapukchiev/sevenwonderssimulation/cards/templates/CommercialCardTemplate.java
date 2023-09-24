@@ -3,8 +3,6 @@ package dpapukchiev.sevenwonderssimulation.cards.templates;
 import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.cards.CardName;
 import dpapukchiev.sevenwonderssimulation.cards.CardType;
-import dpapukchiev.sevenwonderssimulation.cost.ComplexResourceCost;
-import dpapukchiev.sevenwonderssimulation.cost.FreeToPlayCost;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
 import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
 import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
@@ -18,20 +16,6 @@ public class CommercialCardTemplate extends BaseCardTemplate {
 
     public static CommercialCardTemplate create(int age) {
         return new CommercialCardTemplate(age);
-    }
-
-    public List<Card> createCards(
-            CardName name,
-            List<Integer> requiredPlayerCounts,
-            Effect effect
-    ) {
-        return createCards(
-                name,
-                requiredPlayerCounts,
-                List.of(),
-                List.of(),
-                effect
-        );
     }
 
     public List<Card> createCards(

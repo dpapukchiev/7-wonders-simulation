@@ -21,20 +21,6 @@ public class MilitaryCardTemplate extends BaseCardTemplate {
     public List<Card> createCards(
             CardName name,
             List<Integer> requiredPlayerCounts,
-            int shields
-    ) {
-        return createCards(
-                name,
-                requiredPlayerCounts,
-                List.of(),
-                List.of(),
-                shields
-        );
-    }
-
-    public List<Card> createCards(
-            CardName name,
-            List<Integer> requiredPlayerCounts,
             List<RawMaterial> rawMaterialsCost,
             List<ManufacturedGood> manufacturedGoodsCost,
             int shields

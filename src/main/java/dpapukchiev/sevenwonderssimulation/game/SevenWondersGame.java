@@ -235,6 +235,9 @@ public class SevenWondersGame extends SchedulingElement {
         handsOfCardsPerAge.forEach((age, hands) -> {
             for (int i = 0; i < options.numberOfPlayers(); i++) {
                 var handOfCards = deck.prepareHandOfCards(age);
+                if (handOfCards.getCards().isEmpty()){
+                    throw new IllegalStateException("No cards in hand");
+                }
                 hands.add(handOfCards);
             }
         });
