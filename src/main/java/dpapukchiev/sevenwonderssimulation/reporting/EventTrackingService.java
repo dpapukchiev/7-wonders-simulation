@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.reporting;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import dpapukchiev.sevenwonderssimulation.game.GamePhase;
 import jsl.simulation.ModelElement;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -18,10 +19,11 @@ public class EventTrackingService {
     // check if log file exists
 // if not, create it
 // if yes, clear it
-    private final        int          LOG_EVERY_N_GAMES = 100;
+    private final        int          LOG_EVERY_N_GAMES = 500;
     private              double       currentLogNumber;
     private              File         logFile;
     private final        ModelElement simulation;
+    private              GamePhase    phase;
 
     @SneakyThrows
     public EventTrackingService(String runId, double replicationNumber, ModelElement simulation) {
@@ -49,11 +51,6 @@ public class EventTrackingService {
             throw new IllegalStateException("Could not create log file for run %s".formatted(traceId));
         }
     }
-
-    // TODO: create json serialisable records of all decisions made by players
-    // think about context and outcome
-    // it can be used to verify the simulation for accuracy of the game rules
-
     @SneakyThrows
     public void logEvent(String event) {
         if (replicationNumber % LOG_EVERY_N_GAMES != 0) {
@@ -62,20 +59,17 @@ public class EventTrackingService {
 
         currentLogNumber++;
         try (var fileWriter = new FileWriter(logFile, true)) {
-            fileWriter.append("%s,\n".formatted(objectMapper.writeValueAsString(
-                    new Event(event, currentLogNumber, simulation.getCurrentReplicationNumber(), simulation.getTime())
+            fileWriter.append("%s\n".formatted(objectMapper.writeValueAsString(
+                    new Event(phase.name(), event, currentLogNumber, simulation.getCurrentReplicationNumber(), simulation.getTime())
             )));
-//            fileWriter.append("%s ==> %s\n".formatted(
-//                    "%s-%s".formatted(
-//                            simulation.getCurrentReplicationNumber(),
-//                            simulation.getTime()
-//                    ),
-//                    event)
-//            );
         }
     }
 
+    public void transitionPhase(GamePhase phase) {
+        this.phase = phase;
+    }
+
     @JsonSerialize
-    record Event(String event, double logNumber, double replicationNumber, double time) {
+    record Event(String phase, String event, double logNumber, double replicationNumber, double time) {
     }
 }

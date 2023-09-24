@@ -47,6 +47,8 @@ public class Strategy {
     private boolean play1Card(TurnContext turnContext, Player player) {
         for (StrategyStep step : steps) {
             var result = step.execute(turnContext);
+            player.log("Player %s executing strategy step %s => %s"
+                    .formatted(player.getName(), step.getClass().getSimpleName(), result.action()));
             switch (result.action()) {
                 case BUILD_FOR_FREE -> {
                     removeFromHandAndAddToVault(turnContext, result.card());

@@ -24,6 +24,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static dpapukchiev.sevenwonderssimulation.game.GamePhase.END_OF_GAME;
+import static dpapukchiev.sevenwonderssimulation.game.GamePhase.SCORING;
+import static dpapukchiev.sevenwonderssimulation.game.GamePhase.WINNERS;
+
 @Log4j2
 @Getter
 public class SevenWondersGame extends SchedulingElement {
@@ -58,8 +62,11 @@ public class SevenWondersGame extends SchedulingElement {
     @Override
     public void initialize() {
         gameOptions.cityStatistics().refreshEventTrackingService(getGameOptions(), getCurrentReplicationNumber());
+        transitionIntoTrackingPhase(GamePhase.INITIALIZE_PLAYERS);
+
         log.info("\n{}=>SevenWondersGame initialize game {}", getTime(), getCurrentReplicationNumber());
         playersFactory.initialisePlayers(gameOptions);
+
         dealHands(gameOptions);
 
         var nextOffset = 1;
@@ -70,13 +77,22 @@ public class SevenWondersGame extends SchedulingElement {
         scheduleEvent(new ExecuteEndOfGame(), nextOffset);
     }
 
+    private void transitionIntoTrackingPhase(GamePhase phase) {
+        getGameOptions().cityStatistics().getEventTrackingService().transitionPhase(phase);
+    }
+
     class ExecutePlayerTurn implements EventActionIfc<TurnContext> {
 
         @Override
         public void action(JSLEvent<TurnContext> event) {
+            transitionIntoTrackingPhase(GamePhase.playerTurn(
+                    event.getMessage().getAge(),
+                    event.getMessage().getTurnCountAge()
+            ));
+
             var turnContext = event.getMessage();
             var player = turnContext.getPlayer();
-            player.log("\n%s=>PlayerTurnStarted p(%s) turn %s-%s %s %s".formatted(
+            player.log("\n%s=>PlayerTurnStarted p(%s) turn %s-%s \n%s \n%s".formatted(
                     String.valueOf(getTime()),
                     player.getName(),
                     String.valueOf(turnContext.getAge()),
@@ -95,6 +111,11 @@ public class SevenWondersGame extends SchedulingElement {
     class ExecuteEndOfTurn implements EventActionIfc<Turn> {
         @Override
         public void action(JSLEvent<Turn> event) {
+            transitionIntoTrackingPhase(GamePhase.endOfTurn(
+                    event.getMessage().age(),
+                    event.getMessage().turn()
+            ));
+
             log.info("\n{}=>ExecuteEndOfTurn", getTime());
             playersFactory.getPlayers().forEach(player -> {
                 log.info("\n{}=>ApplyingEndOfTurnEffects {}", getTime(), player.report());
@@ -119,9 +140,12 @@ public class SevenWondersGame extends SchedulingElement {
     class ExecuteEndOfGame extends EventAction {
         @Override
         public void action(JSLEvent<Object> event) {
+            transitionIntoTrackingPhase(END_OF_GAME);
+
             log.info("\n{}=>ExecuteEndOfGame", getTime());
             var players = applyEndOfGameEffects();
 
+            transitionIntoTrackingPhase(SCORING);
             var scoreReports = players.stream()
                     .sorted((p1, p2) -> Double.compare(p2.score().getTotalScore(), p1.score().getTotalScore()))
                     .peek(p -> resultingScoringOrder.add(Pair.of(p, p.score())))
@@ -136,16 +160,21 @@ public class SevenWondersGame extends SchedulingElement {
                     ))
                     .collect(Collectors.joining("\n"));
 
-            log.info("\n{}=>ScoreReport \n{}", getTime(), scoreReportsStrings);
-            log.info("\n{}=>Winner is {} {} with score {}",
+            transitionIntoTrackingPhase(WINNERS);
+            logEvent("\n%s=>ScoreReport \n%s".formatted(getTime(), scoreReportsStrings));
+            logEvent("\n%s=>Winner is %s %s with score %s".formatted(
                     getTime(),
                     winner.getName(),
                     winner.getWonderContext().report(),
                     winner.score().getTotalScore()
-            );
+            ));
 
             addWinnerToWinnersList(winner);
         }
+    }
+
+    private void logEvent(String scoreReportsStrings) {
+        getGameOptions().cityStatistics().getEventTrackingService().logEvent(scoreReportsStrings);
     }
 
     class ExecuteEndOfAge implements EventActionIfc<Integer> {
@@ -153,6 +182,8 @@ public class SevenWondersGame extends SchedulingElement {
         @Override
         public void action(JSLEvent<Integer> event) {
             var age = event.getMessage();
+            transitionIntoTrackingPhase(GamePhase.endOfAge(age));
+
             log.info("{}=>ExecuteEndOfAge {}", getTime(), age);
             playersFactory.getPlayers()
                     .forEach(player -> player

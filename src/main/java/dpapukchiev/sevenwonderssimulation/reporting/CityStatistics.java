@@ -1,16 +1,21 @@
 package dpapukchiev.sevenwonderssimulation.reporting;
 
 import dpapukchiev.sevenwonderssimulation.game.GameOptions;
+import dpapukchiev.sevenwonderssimulation.game.GamePhase;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import jsl.utilities.statistic.Statistic;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import static dpapukchiev.sevenwonderssimulation.game.GamePhase.STATISTICS;
+
 @Log4j2
+@Getter
 public class CityStatistics {
     private final SortBy               sortBy;
     private final Map<String, Integer> winners = new HashMap<>();
@@ -71,6 +76,7 @@ public class CityStatistics {
     }
 
     public void reportStatistics(SortBy sortBy) {
+        eventTrackingService.transitionPhase(STATISTICS);
         eventTrackingService.logEvent("\nSTATISTICS BY %s".formatted(sortBy));
 
         metrics.values().stream()
