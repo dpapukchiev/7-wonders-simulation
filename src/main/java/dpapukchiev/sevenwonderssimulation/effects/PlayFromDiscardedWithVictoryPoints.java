@@ -1,15 +1,19 @@
 package dpapukchiev.sevenwonderssimulation.effects;
 
+import dpapukchiev.sevenwonderssimulation.cards.Card;
 import dpapukchiev.sevenwonderssimulation.effects.core.BaseEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectTiming;
-import dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction;
 import dpapukchiev.sevenwonderssimulation.game.Turn;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction.PLAY_CARD_FROM_DISCARD;
 
 @Log4j2
 public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
@@ -25,7 +29,7 @@ public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
 
     @Override
     public void scheduleRewardEvaluationAndCollection(Player player, Turn turn) {
-        player.getVault().addSpecialActions(SpecialAction.PLAY_CARD_FROM_DISCARD);
+        player.getVault().addSpecialActions(PLAY_CARD_FROM_DISCARD);
         player.getEffectExecutionContext()
                 .scheduleRewardEvaluationAndCollection(
                         this,
@@ -36,19 +40,33 @@ public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
 
     @Override
     public Optional<EffectReward> collectReward(Player player) {
-        var discardedCards = player.getVault().getDeck().getDiscardedCards()
+        player.getVault().useSpecialAction(PLAY_CARD_FROM_DISCARD);
+
+        var allDiscardedCards = player.getVault().getDeck().getDiscardedCards();
+        var discardedCardsToPickFrom = allDiscardedCards
                 .stream()
                 .filter(c -> !player.getVault().getBuiltCardNames().contains(c.getName().name()))
                 .toList();
 
-        if (!discardedCards.isEmpty()) {
-            var cardToPlay = player.selectRandomCard(discardedCards);
+        if (!discardedCardsToPickFrom.isEmpty()) {
+            var cardToPlay = player.selectRandomCard(discardedCardsToPickFrom);
+            player.log("Player %s used special action %s to build card %s and got %s\nother options\n%s".formatted(
+                    player.getName(), PLAY_CARD_FROM_DISCARD,
+                    cardToPlay.getName(),
+                    cardToPlay.getEffect().report(),
+                    discardedCardsToPickFrom.stream()
+                            .filter(c -> !c.getName().equals(cardToPlay.getName()))
+                            .map(Card::report)
+                            .collect(Collectors.joining("\n"))
+            ));
+
             player.playExtraCard(cardToPlay);
-            player.getVault().useSpecialAction(SpecialAction.PLAY_CARD_FROM_DISCARD);
             player.collectMetric("play-from-discard", 1);
-            player.log("Player %s used special action %s to build card %s and got %s".formatted(
-                    player.getName(), SpecialAction.PLAY_CARD_FROM_DISCARD,
-                    cardToPlay.getName(), cardToPlay.getEffect().report()
+        }else{
+            player.log("Player %s used special action %s but 0/%s can be built.".formatted(
+                    player.getName(),
+                    PLAY_CARD_FROM_DISCARD,
+                    allDiscardedCards.size()
             ));
         }
 
@@ -63,6 +81,6 @@ public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
         if (victoryPoints > 0) {
             report.add("VP:%s ".formatted(victoryPoints));
         }
-        return "HMR(%s)".formatted(String.join(",", report));
+        return "HMR(%s %s)".formatted(String.join(",", report), PLAY_CARD_FROM_DISCARD);
     }
 }

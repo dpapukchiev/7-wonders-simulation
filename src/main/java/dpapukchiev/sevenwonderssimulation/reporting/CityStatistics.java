@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static dpapukchiev.sevenwonderssimulation.game.GamePhase.STATISTICS;
+import static dpapukchiev.sevenwonderssimulation.game.GamePhase.WINNERS;
 
 @Log4j2
 @Getter
@@ -100,6 +101,8 @@ public class CityStatistics {
     }
 
     public void reportWinners(int attempts) {
+        eventTrackingService.transitionPhase(WINNERS);
+
         eventTrackingService.logEvent("\nFINAL RANKING BY WINS");
         winners.entrySet().stream()
                 // sort by number of wins desc

@@ -153,12 +153,12 @@ public class SevenWondersGame extends SchedulingElement {
                     .toList();
             var winner = scoreReports.get(0);
             var scoreReportsStrings = scoreReports.stream()
-                    .map(p -> "%s %s %s".formatted(
+                    .map(p -> "\n%s %s %s\n".formatted(
                             p.getName(),
                             p.getWonderContext().report(),
                             p.score().report()
                     ))
-                    .collect(Collectors.joining("\n"));
+                    .collect(Collectors.joining());
 
             transitionIntoTrackingPhase(WINNERS);
             logEvent("\n%s=>ScoreReport \n%s".formatted(getTime(), scoreReportsStrings));

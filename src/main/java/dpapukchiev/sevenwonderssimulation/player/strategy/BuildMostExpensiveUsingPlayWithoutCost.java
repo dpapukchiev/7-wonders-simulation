@@ -28,8 +28,9 @@ public class BuildMostExpensiveUsingPlayWithoutCost implements StrategyStep {
             return Result.skip();
         }
 
-        log.info("Player {} used special action {} to build card {}",
-                player.getName(), specialAction.get(), cardToPlay.get().getName());
+        player.log("Player %s used special action %s to build card %s".formatted(
+                player.getName(), specialAction.get(), cardToPlay.get().getName())
+        );
         player.getVault().useSpecialAction(PLAY_CARD_WITHOUT_COST);
 
         return Result.buildWithSpecialEffect(cardToPlay.get());

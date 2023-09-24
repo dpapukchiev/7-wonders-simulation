@@ -19,7 +19,7 @@ public class EventTrackingService {
     // check if log file exists
 // if not, create it
 // if yes, clear it
-    private final        int          LOG_EVERY_N_GAMES = 500;
+    private final        int          LOG_EVERY_N_GAMES = 50;
     private              double       currentLogNumber;
     private              File         logFile;
     private final        ModelElement simulation;
