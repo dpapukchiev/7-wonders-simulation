@@ -6,7 +6,6 @@ import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import jsl.utilities.statistic.Statistic;
 import lombok.extern.log4j.Log4j2;
 
-import java.time.Clock;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +23,8 @@ public class CityStatistics {
     public void refreshEventTrackingService(GameOptions gameOptions, double replicationNumber) {
         eventTrackingService = new EventTrackingService(
                 "%s-%s".formatted(gameOptions.startTime().toString(), gameOptions.runId()),
-                replicationNumber
+                replicationNumber,
+                gameOptions.simulation()
         );
     }
 

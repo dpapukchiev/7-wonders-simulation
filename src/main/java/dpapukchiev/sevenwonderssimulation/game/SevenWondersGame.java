@@ -76,13 +76,13 @@ public class SevenWondersGame extends SchedulingElement {
         public void action(JSLEvent<TurnContext> event) {
             var turnContext = event.getMessage();
             var player = turnContext.getPlayer();
-            player.log("\n%s=>PlayerTurnStarted p(%s) turn %s-%s %s \n%s".formatted(
+            player.log("\n%s=>PlayerTurnStarted p(%s) turn %s-%s %s %s".formatted(
                     String.valueOf(getTime()),
                     player.getName(),
                     String.valueOf(turnContext.getAge()),
                     String.valueOf(turnContext.getTurnCountAge()),
-                    turnContext.getHandOfCards().report(),
-                    player.report()
+                    player.report(),
+                    turnContext.getHandOfCards().report()
             ));
             // TODO: add some metrics interface which can get the player and then collect metrics
             // this will be a snapshot in the simulation time which can be replayed

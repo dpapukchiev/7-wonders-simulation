@@ -45,10 +45,11 @@ public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
             var cardToPlay = player.selectRandomCard(discardedCards);
             player.playExtraCard(cardToPlay);
             player.getVault().useSpecialAction(SpecialAction.PLAY_CARD_FROM_DISCARD);
-            log.info("Player {} used special action {} to build card {} and got {}",
+            player.collectMetric("play-from-discard", 1);
+            player.log("Player %s used special action %s to build card %s and got %s".formatted(
                     player.getName(), SpecialAction.PLAY_CARD_FROM_DISCARD,
                     cardToPlay.getName(), cardToPlay.getEffect().report()
-            );
+            ));
         }
 
         return Optional.of(EffectReward.builder()
