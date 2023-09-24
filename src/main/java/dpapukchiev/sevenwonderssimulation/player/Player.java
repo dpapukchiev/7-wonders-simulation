@@ -41,6 +41,14 @@ public class Player {
     private CityStatistics         cityStatistics;
     private Strategy               strategy;
 
+    public String getReportName() {
+        return "%s-%s-%s".formatted(
+                name,
+                wonderContext.getName(),
+                strategy.getName()
+        );
+    }
+
     public ResourceContext resourceContext() {
         return new ResourceContext(this);
     }

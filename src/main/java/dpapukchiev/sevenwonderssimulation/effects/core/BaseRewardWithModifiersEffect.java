@@ -28,6 +28,20 @@ public abstract class BaseRewardWithModifiersEffect extends BaseEffect {
             case SELF -> selfCount * getReward();
         };
 
+        player.log("%s collecting reward for each %s on %s side %s (base) x %s (multiplier) = %s \n%s (self count: %s, left count: %s, right count: %s)"
+                .formatted(
+                        player.getReportName(),
+                        multiplierType,
+                        directionConstraint,
+                        getReward(),
+                        reward / getReward(),
+                        reward,
+                        multiplierType,
+                        selfCount,
+                        leftCount,
+                        rightCount
+                ));
+
         return buildEffectReward(reward);
     }
 

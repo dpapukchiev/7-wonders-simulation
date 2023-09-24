@@ -87,39 +87,6 @@ public class Vault {
         return countCards(effectMultiplierType);
     }
 
-    private long countCards(EffectMultiplierType effectMultiplierType) {
-        return switch (effectMultiplierType) {
-            case ONE -> 1;
-            case RAW_MATERIAL_CARD -> getCardCount(CardType.RAW_MATERIAL);
-            case MANUFACTURED_GOOD_CARD -> getCardCount(CardType.MANUFACTURED_GOOD);
-            case MILITARY_CARD -> getCardCount(CardType.MILITARY);
-            case SCIENCE_CARD -> getCardCount(CardType.SCIENCE);
-            case COMMERCIAL_CARD -> getCardCount(CardType.COMMERCIAL);
-            case CIVIL_CARD -> getCardCount(CardType.CIVIL);
-            case WAR_LOSS -> getWarPointOfType(WarPoint.MINUS_ONE);
-            case WAR_WIN_1 -> getWarPointOfType(WarPoint.ONE);
-            case WAR_WIN_3 -> getWarPointOfType(WarPoint.THREE);
-            case WAR_WIN_5 -> getWarPointOfType(WarPoint.FIVE);
-            case WAR_WIN -> getWarPointOfType(null);
-            case GUILD_CARD -> getCardCount(CardType.GUILD);
-            case WONDER_STAGE -> wonderContext.getBuiltStageCount();
-        };
-    }
-
-    private long getWarPointOfType(WarPoint warPointType) {
-        return getWarPoints()
-                .stream()
-                .filter(warPoint -> (warPointType == null && warPoint.getValue() > 0) || warPoint.equals(warPointType))
-                .count();
-    }
-
-    private long getCardCount(CardType cardType) {
-        return Optional.ofNullable(getBuiltCards().stream().collect(groupingBy(Card::getType))
-                        .get(cardType))
-                .map(List::size)
-                .orElse(0);
-    }
-
     public String report() {
         var report = new ArrayList<String>();
         report.add("$" + coins);
@@ -164,5 +131,38 @@ public class Vault {
         if(!removed) {
             throw new IllegalStateException("Special action %s is not available".formatted(specialAction));
         }
+    }
+
+    private long countCards(EffectMultiplierType effectMultiplierType) {
+        return switch (effectMultiplierType) {
+            case ONE -> 1;
+            case RAW_MATERIAL_CARD -> getCardCount(CardType.RAW_MATERIAL);
+            case MANUFACTURED_GOOD_CARD -> getCardCount(CardType.MANUFACTURED_GOOD);
+            case MILITARY_CARD -> getCardCount(CardType.MILITARY);
+            case SCIENCE_CARD -> getCardCount(CardType.SCIENCE);
+            case COMMERCIAL_CARD -> getCardCount(CardType.COMMERCIAL);
+            case CIVIL_CARD -> getCardCount(CardType.CIVIL);
+            case WAR_LOSS -> getWarPointOfType(WarPoint.MINUS_ONE);
+            case WAR_WIN_1 -> getWarPointOfType(WarPoint.ONE);
+            case WAR_WIN_3 -> getWarPointOfType(WarPoint.THREE);
+            case WAR_WIN_5 -> getWarPointOfType(WarPoint.FIVE);
+            case WAR_WIN -> getWarPointOfType(null);
+            case GUILD_CARD -> getCardCount(CardType.GUILD);
+            case WONDER_STAGE -> wonderContext.getBuiltStageCount();
+        };
+    }
+
+    private long getWarPointOfType(WarPoint warPointType) {
+        return getWarPoints()
+                .stream()
+                .filter(warPoint -> (warPointType == null && warPoint.getValue() > 0) || warPoint.equals(warPointType))
+                .count();
+    }
+
+    private long getCardCount(CardType cardType) {
+        return Optional.ofNullable(getBuiltCards().stream().collect(groupingBy(Card::getType))
+                        .get(cardType))
+                .map(List::size)
+                .orElse(0);
     }
 }

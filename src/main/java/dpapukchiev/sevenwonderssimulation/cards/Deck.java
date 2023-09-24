@@ -19,6 +19,7 @@ import dpapukchiev.sevenwonderssimulation.effects.WarShieldsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType;
 import dpapukchiev.sevenwonderssimulation.effects.core.PreferentialTradingContract;
+import dpapukchiev.sevenwonderssimulation.game.GameOptions;
 import dpapukchiev.sevenwonderssimulation.resources.ManufacturedGood;
 import dpapukchiev.sevenwonderssimulation.resources.RawMaterial;
 import jsl.modeling.elements.variable.RandomVariable;
@@ -30,10 +31,12 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectDirectionConstraint.SELF;
 import static dpapukchiev.sevenwonderssimulation.effects.core.EffectMultiplierType.CIVIL_CARD;
@@ -66,12 +69,30 @@ public class Deck {
     @Builder.Default
     private List<Card> allCards       = new ArrayList<>();
 
+    private final Map<Integer, List<HandOfCards>> handsOfCardsPerAge = new HashMap<>();
+
     private final RandomVariable cardDistribution;
 
     public Deck(ModelElement parent) {
         cardDistribution = new RandomVariable(parent, new NormalRV());
         allCards = new ArrayList<>();
         discardedCards = new ArrayList<>();
+    }
+
+    public void dealHands(GameOptions options) {
+        resetDeck(options.numberOfPlayers());
+        IntStream.rangeClosed(1, options.agesToSchedule())
+                .forEach(age -> handsOfCardsPerAge.put(age, new ArrayList<>()));
+
+        handsOfCardsPerAge.forEach((age, hands) -> {
+            for (int i = 0; i < options.numberOfPlayers(); i++) {
+                var handOfCards = prepareHandOfCards(age);
+                if (handOfCards.getCards().isEmpty()){
+                    throw new IllegalStateException("No cards in hand");
+                }
+                hands.add(handOfCards);
+            }
+        });
     }
 
     public void discard(Card card) {

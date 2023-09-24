@@ -9,7 +9,6 @@ import dpapukchiev.sevenwonderssimulation.player.Player;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,12 +39,13 @@ public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
 
     @Override
     public Optional<EffectReward> collectReward(Player player) {
-        player.getVault().useSpecialAction(PLAY_CARD_FROM_DISCARD);
+        var playerVault = player.getVault();
+        playerVault.useSpecialAction(PLAY_CARD_FROM_DISCARD);
 
-        var allDiscardedCards = player.getVault().getDeck().getDiscardedCards();
+        var allDiscardedCards = playerVault.getDeck().getDiscardedCards();
         var discardedCardsToPickFrom = allDiscardedCards
                 .stream()
-                .filter(c -> !player.getVault().getBuiltCardNames().contains(c.getName().name()))
+                .filter(c -> !playerVault.getBuiltCardNames().contains(c.getName().name()))
                 .toList();
 
         if (!discardedCardsToPickFrom.isEmpty()) {
@@ -62,7 +62,7 @@ public class PlayFromDiscardedWithVictoryPoints extends BaseEffect {
 
             player.playExtraCard(cardToPlay);
             player.collectMetric("play-from-discard", 1);
-        }else{
+        } else {
             player.log("Player %s used special action %s but 0/%s can be built.".formatted(
                     player.getName(),
                     PLAY_CARD_FROM_DISCARD,

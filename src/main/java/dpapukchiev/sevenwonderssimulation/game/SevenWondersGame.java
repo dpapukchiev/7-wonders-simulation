@@ -21,7 +21,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,11 +32,10 @@ import static dpapukchiev.sevenwonderssimulation.game.GamePhase.WINNERS;
 @Log4j2
 @Getter
 public class SevenWondersGame extends SchedulingElement {
-    private final List<Pair<Player, ScoreCard>>   resultingScoringOrder = new ArrayList<>();
-    private final Deck                            deck;
-    private final GameOptions                     gameOptions;
-    private final PlayersFactory                  playersFactory;
-    private final Map<Integer, List<HandOfCards>> handsOfCardsPerAge    = new HashMap<>();
+    private final List<Pair<Player, ScoreCard>> resultingScoringOrder = new ArrayList<>();
+    private final Deck                          deck;
+    private final GameOptions                   gameOptions;
+    private final PlayersFactory                playersFactory;
 
     public SevenWondersGame(
             ModelElement parent,
@@ -64,13 +62,13 @@ public class SevenWondersGame extends SchedulingElement {
 
     @Override
     public void initialize() {
-        gameOptions.cityStatistics().refreshEventTrackingService(getGameOptions(), getCurrentReplicationNumber());
+        gameOptions.cityStatistics().refreshEventTrackingService(gameOptions, getCurrentReplicationNumber());
         transitionIntoTrackingPhase(GamePhase.INITIALIZE_PLAYERS);
 
         log.info("\n{}=>SevenWondersGame initialize game {}", getTime(), getCurrentReplicationNumber());
         playersFactory.initialisePlayers(gameOptions);
 
-        dealHands(gameOptions);
+        deck.dealHands(gameOptions);
 
         var nextOffset = 1;
         for (int i = 1; i <= gameOptions.agesToSchedule(); i++) {
@@ -145,7 +143,7 @@ public class SevenWondersGame extends SchedulingElement {
         public void action(JSLEvent<Object> event) {
             transitionIntoTrackingPhase(END_OF_GAME);
 
-            log.info("\n{}=>ExecuteEndOfGame", getTime());
+            logEvent("\n%s=>ExecuteEndOfGame".formatted(getTime()));
             var players = applyEndOfGameEffects();
 
             transitionIntoTrackingPhase(SCORING);
@@ -174,10 +172,33 @@ public class SevenWondersGame extends SchedulingElement {
 
             addWinnerToWinnersList(winner);
         }
-    }
 
-    private void logEvent(String scoreReportsStrings) {
-        getGameOptions().cityStatistics().getEventTrackingService().logEvent(scoreReportsStrings);
+        private List<Player> applyEndOfGameEffects() {
+            var players = playersFactory.getPlayers();
+            players.forEach(player -> {
+                player.log("\n%s=>ApplyingEndOfGameEffects for player %s".formatted(getTime(), player.getName()));
+
+                var efxReportBeforeStart = player.getEffectExecutionContext().report();
+                Optional<EffectReward> effectReward = player.getEffectExecutionContext()
+                        .executeEffectsEndOfGame(player);
+                effectReward.ifPresent(er -> {
+                    player.log("\nEndOfGame: Player %s gets reward %s".formatted(player.getName(), er.report()));
+                    player.applyEffectReward(er);
+                });
+
+                player.copyGuildCardEffectIfHasSpecialAction(players);
+
+                player.log(
+                        "%s=>FinishedEndOfGameEffects \nreward: %s \nefx before: %s  \nnew state: %s".formatted(
+                                String.valueOf(getTime()),
+                                effectReward.map(EffectReward::report).
+                                        orElse("no rewards"),
+                                efxReportBeforeStart,
+                                player.report()
+                        ));
+            });
+            return players;
+        }
     }
 
     class ExecuteEndOfAge implements EventActionIfc<Integer> {
@@ -187,7 +208,7 @@ public class SevenWondersGame extends SchedulingElement {
             var age = event.getMessage();
             transitionIntoTrackingPhase(GamePhase.endOfAge(age));
 
-            log.info("{}=>ExecuteEndOfAge {}", getTime(), age);
+            logEvent("%s=>ExecuteEndOfAge %s".formatted(getTime(), age));
             playersFactory.getPlayers()
                     .forEach(player -> player
                             .getEffectExecutionContext()
@@ -197,53 +218,7 @@ public class SevenWondersGame extends SchedulingElement {
             playersFactory.getPlayers()
                     .forEach(player -> player.log("EndOfAgePlayerState %s".formatted(player.report())));
         }
-    }
 
-    private void addWinnerToWinnersList(Player winner) {
-        gameOptions.cityStatistics().addWinner(winner.getWonderContext());
-    }
-
-    private List<Player> applyEndOfGameEffects() {
-        var players = playersFactory.getPlayers();
-        players.forEach(player -> {
-            log.info("\n{}=>ApplyingEndOfGameEffects for player {}", getTime(), player.getName());
-
-            var efxReportBeforeStart = player.getEffectExecutionContext().report();
-            Optional<EffectReward> effectReward = player.getEffectExecutionContext()
-                    .executeEffectsEndOfGame(player);
-            effectReward.ifPresent(er -> {
-                player.log("\nEndOfGame: Player %s gets reward %s".formatted(player.getName(), er.report()));
-                player.applyEffectReward(er);
-            });
-
-            player.copyGuildCardEffectIfHasSpecialAction(players);
-
-            player.log(
-                    "%s=>FinishedEndOfGameEffects \nreward: %s \nefx before: %s  \nnew state: %s".formatted(
-                            String.valueOf(getTime()),
-                            effectReward.map(EffectReward::report).
-                                    orElse("no rewards"),
-                            efxReportBeforeStart,
-                            player.report()
-                    ));
-        });
-        return players;
-    }
-
-    public void dealHands(GameOptions options) {
-        deck.resetDeck(options.numberOfPlayers());
-        IntStream.rangeClosed(1, options.agesToSchedule())
-                .forEach(age -> handsOfCardsPerAge.put(age, new ArrayList<>()));
-
-        handsOfCardsPerAge.forEach((age, hands) -> {
-            for (int i = 0; i < options.numberOfPlayers(); i++) {
-                var handOfCards = deck.prepareHandOfCards(age);
-                if (handOfCards.getCards().isEmpty()){
-                    throw new IllegalStateException("No cards in hand");
-                }
-                hands.add(handOfCards);
-            }
-        });
     }
 
     private int scheduleEndOfAge(int currentOffset, int age) {
@@ -282,7 +257,7 @@ public class SevenWondersGame extends SchedulingElement {
 
     private HandOfCards getHandOfCards(int age, HashMap<Player, Integer> currentIndexPerPlayer, int playerIndex, Player player) {
         var playerCount = playersFactory.getPlayers().size();
-        var handsPerAge = handsOfCardsPerAge.get(age);
+        var handsPerAge = deck.getHandsOfCardsPerAge().get(age);
 
         int currentHandIndex = Optional.ofNullable(currentIndexPerPlayer.get(player))
                 .orElse(playerIndex);
@@ -303,5 +278,13 @@ public class SevenWondersGame extends SchedulingElement {
             }
         }
         return handToAssign;
+    }
+
+    private void addWinnerToWinnersList(Player winner) {
+        gameOptions.cityStatistics().addWinner(winner.getWonderContext());
+    }
+
+    private void logEvent(String scoreReportsStrings) {
+        getGameOptions().cityStatistics().getEventTrackingService().logEvent(scoreReportsStrings);
     }
 }

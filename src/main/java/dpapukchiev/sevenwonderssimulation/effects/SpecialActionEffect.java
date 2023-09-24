@@ -26,6 +26,7 @@ public class SpecialActionEffect extends BaseEffect {
             for (int i = 0; i < times; i++) {
                 player.getVault().addSpecialActions(specialAction);
             }
+            player.log("Player %s got %s uses of the action %s".formatted(player.getName(), times, specialAction.name()));
             return;
         }
 
@@ -35,6 +36,7 @@ public class SpecialActionEffect extends BaseEffect {
 
     @Override
     public Optional<EffectReward> collectReward(Player player) {
+        player.collectMetric("collected-special-action-" + specialAction.name(), 1);
         player.getVault().addSpecialActions(specialAction);
         return Optional.of(EffectReward.builder()
                 .build());
