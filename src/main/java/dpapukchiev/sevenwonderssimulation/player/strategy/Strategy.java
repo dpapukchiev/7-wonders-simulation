@@ -21,7 +21,10 @@ import static dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction.PLAY
 public class Strategy {
     public enum StrategyName {
         DEFAULT,
-        V2
+        V2,
+        V4,
+        V5,
+        V3
     }
 
     private final StrategyName       name;
@@ -50,11 +53,33 @@ public class Strategy {
     }
 
     public static Strategy v3() {
-        return new Strategy(StrategyName.V2, List.of(
+        return new Strategy(StrategyName.V3, List.of(
                 new BuildWonderIfAvailableDiscardRandom(),
                 new BuildMostExpensiveUsingPlayWithoutCost(),
                 new BuildRandomWithNoCostCard(),
                 new BuildRandomFreeUpgrade(),
+                new BuildRandomWithCostCardIfAffordable(),
+                new DiscardRandom()
+        ));
+    }
+
+    public static Strategy v4() {
+        return new Strategy(StrategyName.V4, List.of(
+                new BuildRandomFreeUpgrade(),
+                new BuildRandomWithNoCostCard(),
+                new BuildWonderIfAvailableDiscardRandom(),
+                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildRandomWithCostCardIfAffordable(),
+                new DiscardRandom()
+        ));
+    }
+
+    public static Strategy v5() {
+        return new Strategy(StrategyName.V5, List.of(
+                new BuildWonderIfAvailableDiscardRandom(),
+                new BuildRandomFreeUpgrade(),
+                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildRandomWithNoCostCard(),
                 new BuildRandomWithCostCardIfAffordable(),
                 new DiscardRandom()
         ));

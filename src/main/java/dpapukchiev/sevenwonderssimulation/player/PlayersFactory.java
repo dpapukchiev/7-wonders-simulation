@@ -78,14 +78,14 @@ public class PlayersFactory {
 
     private Strategy getStrategyForPlayer(WonderContext wonderContext) {
         var strategyNumber = pickAStrategy.getValue();
-        if (strategyNumber == 1) {
-            return Strategy.defaultStrategy();
-        } else if (strategyNumber == 2) {
-            return Strategy.v2();
-        } else if (strategyNumber == 3) {
-            return Strategy.v3();
-        }
-        return Strategy.defaultStrategy();
+        return switch (String.valueOf(strategyNumber)) {
+            case "1.0" -> Strategy.defaultStrategy();
+            case "2.0" -> Strategy.v2();
+            case "3.0" -> Strategy.v3();
+            case "4.0" -> Strategy.v4();
+            case "5.0" -> Strategy.v5();
+            default -> throw new IllegalStateException("Unexpected value: " + strategyNumber);
+        };
     }
 
     private List<CityName> selectRandomCities(GameOptions options) {

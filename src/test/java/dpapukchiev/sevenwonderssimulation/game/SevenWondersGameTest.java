@@ -2,19 +2,14 @@ package dpapukchiev.sevenwonderssimulation.game;
 
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
-import jsl.observers.textfile.LogReport;
-import jsl.simulation.Executive;
 import jsl.simulation.Simulation;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.params.provider.Arguments;
 
-import java.nio.file.Path;
 import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.IntStream;
 
 import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.METRIC_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    private final static int                   ATTEMPTS       = 1000;
+    private final static int                   ATTEMPTS       = 10000;
     private final static CityStatistics.SortBy SORT_BY        = METRIC_NAME;
     private final static CityStatistics        cityStatistics = new CityStatistics(SORT_BY);
 
     @Test
     void play() {
-        var result = runGameSimulation(ATTEMPTS);
+        var result = runGameSimulation();
 
         var players = result.game().getPlayersFactory().getPlayers();
         assertEquals(result.gameOptions().numberOfPlayers(), players.size());
@@ -41,9 +36,9 @@ class SevenWondersGameTest {
     }
 
     @NotNull
-    private static GameResult runGameSimulation(int gamesToRun) {
+    private static GameResult runGameSimulation() {
         var simulation = new Simulation();
-        simulation.setNumberOfReplications(gamesToRun);
+        simulation.setNumberOfReplications(ATTEMPTS);
 
         var gameOptions = GameOptions.builder()
                 .numberOfPlayers(7)

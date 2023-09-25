@@ -57,19 +57,15 @@ public class CityStatistics {
                 new Metric(new Statistic(metricName), wonderContext, player.getName())
         );
 
-//        eventTrackingService.logEvent("%s %s %s-%s".formatted(
-//                player.getName(),
-//                player.getWonderContext().getName(),
-//                name,
-//                value
-//        ));
         metric.statistic().collect(value);
         metrics.put(metricName, metric);
     }
 
-    public void addWinner(WonderContext wonderContext) {
-        winners.putIfAbsent(wonderContext.getName(), 0);
-        winners.computeIfPresent(wonderContext.getName(), (k, v) -> v + 1);
+    public void addWinner(Player player) {
+        var winnerName = player.getWonderContext().getName() + "-" + player.getStrategy().getName().name();
+        winners.putIfAbsent(winnerName, 0);
+        winners.computeIfPresent(winnerName, (k, v) -> v + 1);
+        player.collectMetric("winner-times", 1);
     }
 
     public void log(String event) {

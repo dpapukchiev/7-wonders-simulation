@@ -41,14 +41,6 @@ public class Player {
     private CityStatistics         cityStatistics;
     private Strategy               strategy;
 
-    public String getReportName() {
-        return "%s-%s-%s".formatted(
-                name,
-                wonderContext.getName(),
-                strategy.getName()
-        );
-    }
-
     public ResourceContext resourceContext() {
         return new ResourceContext(this);
     }
@@ -69,6 +61,8 @@ public class Player {
     }
 
     public void executeTurn(TurnContext turnContext) {
+        var strategy = getStrategy();
+        collectMetric("execute-turn-using-strategy", 1);
         strategy.execute(turnContext);
     }
 

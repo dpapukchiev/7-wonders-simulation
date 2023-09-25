@@ -54,7 +54,7 @@ public class SevenWondersGame extends SchedulingElement {
         this.playersFactory = new PlayersFactory(
                 this.deck,
                 new RandomVariable(parent, new NormalRV(), "pickACity"),
-                new RandomVariable(parent, new DUniformRV(1, 3), "pickAStrategy"),
+                new RandomVariable(parent, new DUniformRV(1, 5), "pickAStrategy"),
                 new RandomVariable(parent, new NormalRV(), "cityDistribution"),
                 gameOptions.cityStatistics()
         );
@@ -281,7 +281,7 @@ public class SevenWondersGame extends SchedulingElement {
     }
 
     private void addWinnerToWinnersList(Player winner) {
-        gameOptions.cityStatistics().addWinner(winner.getWonderContext());
+        gameOptions.cityStatistics().addWinner(winner);
     }
 
     private void logEvent(String scoreReportsStrings) {
