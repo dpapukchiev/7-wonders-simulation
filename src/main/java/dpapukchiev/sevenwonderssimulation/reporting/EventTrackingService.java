@@ -13,23 +13,21 @@ import java.nio.file.Path;
 
 @Log4j2
 public class EventTrackingService {
-    private final static ObjectMapper objectMapper      = new ObjectMapper();
+    private final static ObjectMapper objectMapper = new ObjectMapper();
     private final        String       runId;
     private final        double       replicationNumber;
-    // check if log file exists
-// if not, create it
-// if yes, clear it
-    private final        int          LOG_EVERY_N_GAMES = 100;
+    private              int          logEveryNGames;
     private              double       currentLogNumber;
     private              File         logFile;
     private final        ModelElement simulation;
     private              GamePhase    phase;
 
     @SneakyThrows
-    public EventTrackingService(String runId, double replicationNumber, ModelElement simulation) {
+    public EventTrackingService(String runId, double replicationNumber, int logEveryNGames, ModelElement simulation) {
         this.runId = runId;
         this.replicationNumber = replicationNumber;
         this.simulation = simulation;
+        this.logEveryNGames = logEveryNGames;
         this.currentLogNumber = 0;
 //        var getRunDirectory = new File("run-%s".formatted(runId));
         var getRunDirectory = new File("run-log");
@@ -39,7 +37,7 @@ public class EventTrackingService {
         getRunDirectory.mkdir();
 
         var traceId = "R" + replicationNumber;
-        if (replicationNumber % LOG_EVERY_N_GAMES != 0) {
+        if (replicationNumber % logEveryNGames != 0) {
             return;
         }
         logFile = new File(Path.of("%s/%s.json".formatted(getRunDirectory, traceId)).toString());
@@ -51,9 +49,10 @@ public class EventTrackingService {
             throw new IllegalStateException("Could not create log file for run %s".formatted(traceId));
         }
     }
+
     @SneakyThrows
     public void logEvent(String event) {
-        if (replicationNumber % LOG_EVERY_N_GAMES != 0) {
+        if (replicationNumber % logEveryNGames != 0) {
             return;
         }
 

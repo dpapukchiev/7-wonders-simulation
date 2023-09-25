@@ -62,10 +62,11 @@ public class SevenWondersGame extends SchedulingElement {
 
     @Override
     public void initialize() {
-        gameOptions.cityStatistics().refreshEventTrackingService(gameOptions, getCurrentReplicationNumber());
+        var cityStatistics = gameOptions.cityStatistics();
+        cityStatistics.refreshEventTrackingService(gameOptions, getCurrentReplicationNumber());
         transitionIntoTrackingPhase(GamePhase.INITIALIZE_PLAYERS);
 
-        log.info("\n{}=>SevenWondersGame initialize game {}", getTime(), getCurrentReplicationNumber());
+        cityStatistics.log("\n%s=>SevenWondersGame initialize game %s".formatted(getTime(), getCurrentReplicationNumber()));
         playersFactory.initialisePlayers(gameOptions);
 
         deck.dealHands(gameOptions);

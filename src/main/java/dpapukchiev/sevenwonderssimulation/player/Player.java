@@ -147,9 +147,10 @@ public class Player {
     }
 
     public String report() {
-        return String.format("\n%s: %s\n%s %s",
+        return String.format("\n%s: %s\nstrategy: %s\n%s %s",
                 name,
                 wonderContext.report(),
+                strategy.getName(),
                 effectExecutionContext.report(),
                 vault.report()
         );

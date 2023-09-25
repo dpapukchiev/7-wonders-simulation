@@ -14,6 +14,7 @@ import dpapukchiev.sevenwonderssimulation.effects.VictoryPointEffect;
 import dpapukchiev.sevenwonderssimulation.effects.VictoryPointWithModifiersEffect;
 import dpapukchiev.sevenwonderssimulation.effects.WarShieldsEffect;
 import dpapukchiev.sevenwonderssimulation.effects.core.Effect;
+import dpapukchiev.sevenwonderssimulation.game.GameOptions;
 import jsl.simulation.ModelElement;
 import jsl.simulation.Simulation;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ class DeckTest extends BasePlayerTest {
     @ValueSource(ints = {3, 4, 5, 6, 7})
     void getCardsByAge(int numberOfPlayers) {
         var deck = new Deck(modelElement);
-        deck.resetDeck(numberOfPlayers);
+        deck.resetDeck(GameOptions.builder().numberOfPlayers(numberOfPlayers).build());
         var maxCardsPerAge = numberOfPlayers * 7;
 
         var result = deck.getCardsByAge();

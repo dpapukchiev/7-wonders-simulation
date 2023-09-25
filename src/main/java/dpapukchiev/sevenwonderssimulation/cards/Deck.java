@@ -80,7 +80,7 @@ public class Deck {
     }
 
     public void dealHands(GameOptions options) {
-        resetDeck(options.numberOfPlayers());
+        resetDeck(options);
         IntStream.rangeClosed(1, options.agesToSchedule())
                 .forEach(age -> handsOfCardsPerAge.put(age, new ArrayList<>()));
 
@@ -99,7 +99,7 @@ public class Deck {
         discardedCards.add(card);
     }
 
-    public void resetDeck(int numberOfPlayers) {
+    public void resetDeck(GameOptions gameOptions) {
         discardedCards.clear();
         allCards.clear();
 
@@ -111,18 +111,19 @@ public class Deck {
         allCards.addAll(getAge2Group2());
         allCards.addAll(getAge2Group3());
 
-        var randomSetOfGuildCards = getRandomSetOfGuildCards(numberOfPlayers);
-        log.info("Random set of guild cards: {}", randomSetOfGuildCards.stream()
+        var randomSetOfGuildCards = getRandomSetOfGuildCards(gameOptions.numberOfPlayers());
+        gameOptions.cityStatistics().log("Random set of guild cards: %s".formatted(randomSetOfGuildCards.stream()
                 .map(Card::getName)
                 .map(Enum::name)
-                .collect(Collectors.joining(", ")));
+                .collect(Collectors.joining(", ")))
+        );
 
         allCards.addAll(randomSetOfGuildCards);
         allCards.addAll(getAge3Group2());
         allCards.addAll(getAge3Group3());
 
         allCards = new ArrayList<>(allCards.stream()
-                .filter(card -> card.getRequiredPlayersCount() <= numberOfPlayers)
+                .filter(card -> card.getRequiredPlayersCount() <= gameOptions.numberOfPlayers())
                 .toList());
     }
 

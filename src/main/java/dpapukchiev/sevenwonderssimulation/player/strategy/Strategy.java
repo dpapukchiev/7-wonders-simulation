@@ -102,6 +102,11 @@ public class Strategy {
     private boolean play1Card(TurnContext turnContext, Player player) {
         for (StrategyStep step : steps) {
             var result = step.execute(turnContext);
+            player.collectMetric("strategy-step-executed-%s-%s".formatted(
+                    step.getClass().getSimpleName(),
+                    result.action().name()),
+                    1
+            );
             player.log("Player %s executing strategy step %s => %s"
                     .formatted(player.getName(), step.getClass().getSimpleName(), result.action()));
             switch (result.action()) {

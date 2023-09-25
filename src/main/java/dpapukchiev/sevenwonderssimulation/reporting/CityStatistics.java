@@ -30,6 +30,7 @@ public class CityStatistics {
         eventTrackingService = new EventTrackingService(
                 "%s-%s".formatted(gameOptions.startTime().toString(), gameOptions.runId()),
                 replicationNumber,
+                gameOptions.logEveryNGames(),
                 gameOptions.simulation()
         );
     }

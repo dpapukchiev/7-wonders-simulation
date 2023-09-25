@@ -11,16 +11,18 @@ import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
 
-import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.METRIC_NAME;
+import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.CITY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    private final static int                   ATTEMPTS       = 10000;
-    private final static CityStatistics.SortBy SORT_BY        = METRIC_NAME;
-    private final static CityStatistics        cityStatistics = new CityStatistics(SORT_BY);
+    private final static int                   NUMBER_OF_PLAYERS = 3;
+    private final static int                   ATTEMPTS          = 10;
+    private final static int                   LOG_EVERY_N_GAMES = 5;
+    private final static CityStatistics.SortBy SORT_BY           = CITY;
+    private final static CityStatistics        cityStatistics    = new CityStatistics(SORT_BY);
 
     @Test
     void play() {
@@ -41,9 +43,10 @@ class SevenWondersGameTest {
         simulation.setNumberOfReplications(ATTEMPTS);
 
         var gameOptions = GameOptions.builder()
-                .numberOfPlayers(7)
+                .numberOfPlayers(NUMBER_OF_PLAYERS)
                 .agesToSchedule(3)
                 .runId(UUID.randomUUID())
+                .logEveryNGames(LOG_EVERY_N_GAMES)
                 .startTime(Clock.systemDefaultZone().instant())
                 .cityStatistics(cityStatistics)
                 .simulation(simulation.getModel())

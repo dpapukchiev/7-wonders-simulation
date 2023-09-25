@@ -37,6 +37,7 @@ public class PlayersFactory {
         players.clear();
 
         var cities = selectRandomCities(options);
+        options.cityStatistics().log("Cities selected: %s".formatted(cities.stream().map(CityName::name).toList()));
         for (int i = 0; i < options.numberOfPlayers(); i++) {
             var wonderContext = wonderTemplate.build(cities.get(i));
             var providedResources = FreeUpgrades.getProvidedResources(
@@ -66,14 +67,13 @@ public class PlayersFactory {
 
             player.setLeftPlayer(players.get(previousPlayer));
             player.setRightPlayer(players.get(nextPlayer));
-            log.info("{}=> left: {}, right: {}",
+            player.log("%s=> left: %s, right: %s \nFinished initialising player \n%s".formatted(
                     player.getName(),
                     player.getLeftPlayer().getName(),
-                    player.getRightPlayer().getName()
-            );
+                    player.getRightPlayer().getName(),
+                    player.report()
+            ));
         }
-
-        players.forEach(player -> log.info("\nInitialised Player {}", player.report()));
     }
 
     private Strategy getStrategyForPlayer(WonderContext wonderContext) {

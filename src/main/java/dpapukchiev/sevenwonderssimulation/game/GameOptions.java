@@ -13,6 +13,7 @@ import java.util.UUID;
 public record GameOptions(
         int numberOfPlayers,
         int agesToSchedule,
+        int logEveryNGames,
         UUID runId,
         Instant startTime,
         List<RandomVariable> playerRandomVariables,
