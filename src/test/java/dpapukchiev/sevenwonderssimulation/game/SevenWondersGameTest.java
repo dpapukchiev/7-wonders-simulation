@@ -2,6 +2,7 @@ package dpapukchiev.sevenwonderssimulation.game;
 
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
+import dpapukchiev.sevenwonderssimulation.wonder.CityName;
 import jsl.simulation.Simulation;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
+    private final static List<CityName>        CITIES_TO_PLAY    = List.of(CityName.EPHESOS);
     private final static int                   NUMBER_OF_PLAYERS = 3;
     private final static int                   ATTEMPTS          = 10;
     private final static int                   LOG_EVERY_N_GAMES = 5;
@@ -50,6 +52,7 @@ class SevenWondersGameTest {
                 .startTime(Clock.systemDefaultZone().instant())
                 .cityStatistics(cityStatistics)
                 .simulation(simulation.getModel())
+                .citiesToPlay(CITIES_TO_PLAY)
                 .build();
 
         var game = new SevenWondersGame(

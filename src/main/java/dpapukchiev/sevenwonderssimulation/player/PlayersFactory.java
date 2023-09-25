@@ -44,7 +44,7 @@ public class PlayersFactory {
                     wonderContext.getCityName(),
                     wonderContext.getSide().equals("A")
             );
-            var strategy = getStrategyForPlayer(wonderContext);
+            var strategy = getStrategyForPlayer(options, wonderContext);
             var player = Player.builder()
                     .name("Player-%s-%s-%s".formatted(i, wonderContext.getCityName(), strategy.getName()))
                     .wonderContext(wonderContext)
@@ -76,7 +76,7 @@ public class PlayersFactory {
         }
     }
 
-    private Strategy getStrategyForPlayer(WonderContext wonderContext) {
+    private Strategy getStrategyForPlayer(GameOptions gameOptions, WonderContext wonderContext) {
         var strategyNumber = pickAStrategy.getValue();
         return switch (String.valueOf(strategyNumber)) {
             case "1.0" -> Strategy.defaultStrategy();
@@ -90,8 +90,11 @@ public class PlayersFactory {
 
     private List<CityName> selectRandomCities(GameOptions options) {
         var usedCities = new ArrayList<CityName>();
+        if(!options.citiesToPlay().isEmpty()){
+            usedCities.addAll(options.citiesToPlay());
+        }
 
-        for (int i = 0; i < options.numberOfPlayers(); i++) {
+        for (int i = usedCities.size(); i < options.numberOfPlayers(); i++) {
 
             var cityName = randomlySelect(CityName.allCities()
                             .stream()

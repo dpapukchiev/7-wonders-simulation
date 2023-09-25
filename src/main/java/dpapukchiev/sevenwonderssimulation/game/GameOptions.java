@@ -1,6 +1,7 @@
 package dpapukchiev.sevenwonderssimulation.game;
 
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
+import dpapukchiev.sevenwonderssimulation.wonder.CityName;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
 import lombok.Builder;
@@ -16,6 +17,7 @@ public record GameOptions(
         int logEveryNGames,
         UUID runId,
         Instant startTime,
+        List<CityName> citiesToPlay,
         List<RandomVariable> playerRandomVariables,
         CityStatistics cityStatistics,
         ModelElement simulation
