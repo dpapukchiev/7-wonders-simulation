@@ -21,8 +21,8 @@ class SevenWondersGameTest {
 
     private final static List<CityName>        CITIES_TO_PLAY    = List.of(CityName.OLIMPIA, CityName.BABYLON, CityName.HALIKARNASSOS);
     private final static int                   NUMBER_OF_PLAYERS = 3;
-    private final static int                   GAMES_TO_PLAY     = 100;
-    private final static int                   LOG_EVERY_N_GAMES = 10;
+    private final static int                   GAMES_TO_PLAY     = 1000;
+    private final static int                   LOG_EVERY_N_GAMES = Math.round((float) GAMES_TO_PLAY / 10);
     private final static CityStatistics.SortBy SORT_BY           = CITY;
     private final static CityStatistics        cityStatistics    = new CityStatistics(SORT_BY);
 
