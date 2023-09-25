@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    private final static List<CityName>        CITIES_TO_PLAY    = List.of(CityName.EPHESOS);
+    private final static List<CityName>        CITIES_TO_PLAY    = List.of(CityName.OLIMPIA, CityName.BABYLON, CityName.HALIKARNASSOS);
     private final static int                   NUMBER_OF_PLAYERS = 3;
-    private final static int                   ATTEMPTS          = 10;
-    private final static int                   LOG_EVERY_N_GAMES = 5;
+    private final static int                   GAMES_TO_PLAY     = 100;
+    private final static int                   LOG_EVERY_N_GAMES = 10;
     private final static CityStatistics.SortBy SORT_BY           = CITY;
     private final static CityStatistics        cityStatistics    = new CityStatistics(SORT_BY);
 
@@ -36,13 +36,13 @@ class SevenWondersGameTest {
         assertPlayersPlayedDistinctCards(players);
 
         cityStatistics.reportStatistics(SORT_BY);
-        cityStatistics.reportWinners(ATTEMPTS);
+        cityStatistics.reportWinners(GAMES_TO_PLAY);
     }
 
     @NotNull
     private static GameResult runGameSimulation() {
         var simulation = new Simulation();
-        simulation.setNumberOfReplications(ATTEMPTS);
+        simulation.setNumberOfReplications(GAMES_TO_PLAY);
 
         var gameOptions = GameOptions.builder()
                 .numberOfPlayers(NUMBER_OF_PLAYERS)

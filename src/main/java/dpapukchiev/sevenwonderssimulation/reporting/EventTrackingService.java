@@ -30,7 +30,7 @@ public class EventTrackingService {
         this.logEveryNGames = logEveryNGames;
         this.currentLogNumber = 0;
 //        var getRunDirectory = new File("run-%s".formatted(runId));
-        var getRunDirectory = new File("run-log");
+        var getRunDirectory = new File("./run-log");
         if (getRunDirectory.exists()) {
             getRunDirectory.delete();
         }

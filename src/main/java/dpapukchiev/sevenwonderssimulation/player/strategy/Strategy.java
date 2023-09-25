@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.Optional;
 
 import static dpapukchiev.sevenwonderssimulation.effects.core.SpecialAction.PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE;
 
@@ -88,23 +89,42 @@ public class Strategy {
     public void execute(TurnContext turnContext) {
         var player = turnContext.getPlayer();
 
-        boolean cardPlayed = play1Card(turnContext, player);
+        var cardPlayed = play1Card(turnContext, player);
         if (turnContext.getTurnCountAge() == 6) {
             if (player.getVault().getSpecialAction(PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE).isPresent()) {
-                playRemainingCard(turnContext, player);
+                player.log("Player %s has special action %s. Playing 1 more card using strategy %s".formatted(
+                        player.getName(),
+                        PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE,
+                        player.getStrategy().getName()
+                ));
+                var secondCardPlayed = play1Card(turnContext, player);
+                player.getVault().useSpecialAction(PLAY_BOTH_CARDS_AT_LAST_TURN_IN_AGE);
+
+                if (secondCardPlayed.isEmpty()) {
+                    player.log("Player %s cannot play second card at last turn in age %s".formatted(
+                            player.getName(),
+                            turnContext.getAge()
+                    ));
+                } else {
+                    player.log("Player %s played second card (%s) at last turn in age %s".formatted(
+                            player.getName(),
+                            secondCardPlayed.get().report(),
+                            turnContext.getAge()
+                    ));
+                }
             }
         }
-        if (cardPlayed) return;
-
-        throw new RuntimeException("StrategyStep no action to execute");
+        if (cardPlayed.isEmpty()) {
+            throw new RuntimeException("StrategyStep no action to execute");
+        }
     }
 
-    private boolean play1Card(TurnContext turnContext, Player player) {
+    private Optional<Card> play1Card(TurnContext turnContext, Player player) {
         for (StrategyStep step : steps) {
             var result = step.execute(turnContext);
             player.collectMetric("strategy-step-executed-%s-%s".formatted(
-                    step.getClass().getSimpleName(),
-                    result.action().name()),
+                            step.getClass().getSimpleName(),
+                            result.action().name()),
                     1
             );
             player.log("Player %s executing strategy step %s => %s"
@@ -115,14 +135,14 @@ public class Strategy {
                     scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
 
                     player.collectMetric("free-builds", 1);
-                    return true;
+                    return Optional.of(result.card());
                 }
                 case BUILD_WITH_SPECIAL_EFFECT -> {
                     removeFromHandAndAddToVault(turnContext, result.card());
                     scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
 
                     player.collectMetric("build-card-with-special-effect", 1);
-                    return true;
+                    return Optional.of(result.card());
                 }
                 case BUILD_WITH_COST -> {
                     payCost(turnContext, result.card());
@@ -130,13 +150,13 @@ public class Strategy {
                     scheduleEffectReward(player, result.card().getEffect(), turnContext.getTurn());
 
                     player.collectMetric("build-with-cost", 1);
-                    return true;
+                    return Optional.of(result.card());
                 }
                 case DISCARD -> {
                     discardCard(turnContext, result.card());
 
                     player.collectMetric("discarded", 1);
-                    return true;
+                    return Optional.of(result.card());
                 }
                 case WONDER -> {
                     var wonderStage = player
@@ -148,13 +168,13 @@ public class Strategy {
                     buildWonderStage(turnContext, wonderStage.get(), result.card());
 
                     player.collectMetric("wonder-stages-" + wonderStage.get().getStageNumber(), 1);
-                    return true;
+                    return Optional.of(result.card());
                 }
                 case SKIP -> {
                 }
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     private void playRemainingCard(TurnContext turnContext, Player player) {
