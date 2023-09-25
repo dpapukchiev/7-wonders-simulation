@@ -40,12 +40,12 @@ import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.METAL_ORE
 import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.STONE;
 import static dpapukchiev.sevenwonderssimulation.resources.RawMaterial.WOOD;
 
-public class FreeUpgrades {
+public class ProvidedResources {
     public boolean canBuildForFree(Card card, List<Card> builtCards) {
         return builtCards.stream()
                         .anyMatch(builtCard -> getFreeUpgrades(builtCard).contains(card.getName()));
     }
-    public static Pair<List<RawMaterial>, List<ManufacturedGood>> getProvidedResources(CityName cityName, boolean isSideA) {
+    public static Pair<List<RawMaterial>, List<ManufacturedGood>> getProvidedResources(CityName cityName) {
         return switch (cityName){
             case BABYLON -> Pair.of(List.of(CLAY), List.of());
             case RHODOS -> Pair.of(List.of(METAL_ORE), List.of());

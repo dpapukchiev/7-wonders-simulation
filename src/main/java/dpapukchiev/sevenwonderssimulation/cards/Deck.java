@@ -99,6 +99,13 @@ public class Deck {
         discardedCards.add(card);
     }
 
+    public Card getCardByName(CardName name) {
+        return allCards.stream()
+                .filter(card -> card.getName().equals(name))
+                .findFirst()
+                .orElseThrow();
+    }
+
     public void resetDeck(GameOptions gameOptions) {
         discardedCards.clear();
         allCards.clear();

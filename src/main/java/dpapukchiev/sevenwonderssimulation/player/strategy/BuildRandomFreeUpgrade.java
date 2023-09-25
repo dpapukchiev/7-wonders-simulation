@@ -1,10 +1,10 @@
 package dpapukchiev.sevenwonderssimulation.player.strategy;
 
-import dpapukchiev.sevenwonderssimulation.cards.FreeUpgrades;
+import dpapukchiev.sevenwonderssimulation.cards.ProvidedResources;
 import dpapukchiev.sevenwonderssimulation.game.TurnContext;
 
 public class BuildRandomFreeUpgrade implements StrategyStep {
-    private final FreeUpgrades freeUpgrades = new FreeUpgrades();
+    private final ProvidedResources freeUpgrades = new ProvidedResources();
 
     @Override
     public Result execute(TurnContext turnContext) {

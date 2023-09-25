@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Path;
 
+import static dpapukchiev.sevenwonderssimulation.game.GamePhase.INITIALIZATION;
+
 @Log4j2
 public class EventTrackingService {
     private final static ObjectMapper objectMapper = new ObjectMapper();
@@ -20,7 +22,7 @@ public class EventTrackingService {
     private              double       currentLogNumber;
     private              File         logFile;
     private final        ModelElement simulation;
-    private              GamePhase    phase;
+    private              GamePhase    phase        = INITIALIZATION;
 
     @SneakyThrows
     public EventTrackingService(String runId, double replicationNumber, int logEveryNGames, ModelElement simulation) {

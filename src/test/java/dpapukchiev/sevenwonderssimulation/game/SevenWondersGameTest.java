@@ -3,7 +3,9 @@ package dpapukchiev.sevenwonderssimulation.game;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import dpapukchiev.sevenwonderssimulation.wonder.CityName;
+import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.Simulation;
+import jsl.utilities.random.rvariable.NormalRV;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -11,15 +13,19 @@ import org.junit.jupiter.api.TestInstance;
 import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.CITY;
+import static dpapukchiev.sevenwonderssimulation.wonder.CityName.*;
+import static dpapukchiev.sevenwonderssimulation.wonder.CityName.ALEXANDRIA;
+import static dpapukchiev.sevenwonderssimulation.wonder.CityName.EPHESOS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SevenWondersGameTest {
 
-    private final static List<CityName>        CITIES_TO_PLAY    = List.of(CityName.OLIMPIA, CityName.BABYLON, CityName.HALIKARNASSOS);
+    private final static List<CityName>        CITIES_TO_PLAY    = List.of(EPHESOS, ALEXANDRIA, RHODOS);
     private final static int                   NUMBER_OF_PLAYERS = 3;
     private final static int                   GAMES_TO_PLAY     = 1000;
     private final static int                   LOG_EVERY_N_GAMES = Math.round((float) GAMES_TO_PLAY / 10);
@@ -53,6 +59,11 @@ class SevenWondersGameTest {
                 .cityStatistics(cityStatistics)
                 .simulation(simulation.getModel())
                 .citiesToPlay(CITIES_TO_PLAY)
+                .playerRandomVariables(
+                        IntStream.rangeClosed(1, NUMBER_OF_PLAYERS)
+                                .mapToObj(i -> new RandomVariable(simulation.getModel(), new NormalRV()))
+                                .toList()
+                )
                 .build();
 
         var game = new SevenWondersGame(
@@ -62,9 +73,6 @@ class SevenWondersGameTest {
 
         simulation.run();
         return new GameResult(gameOptions, game);
-    }
-
-    private record GameResult(GameOptions gameOptions, SevenWondersGame game) {
     }
 
     private static void assertPlayersPlayedDistinctCards(List<Player> players) {

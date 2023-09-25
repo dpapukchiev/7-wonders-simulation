@@ -228,7 +228,6 @@ public class ResourceContext {
         return player.getEffectExecutionContext().getAvailablePermanentEffects()
                 .stream()
                 .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
-                .filter(effect -> effect.getResourceBundle(player).isPresent())
                 .map(effect -> effect.getResourceBundle(player))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -238,7 +237,6 @@ public class ResourceContext {
     private List<Effect> getPermanentEffectsProvidingResources() {
         return player.getEffectExecutionContext().getAvailablePermanentEffects()
                 .stream()
-                .filter(effect -> effect.getState().equals(EffectState.AVAILABLE))
                 .filter(effect -> effect.getResourceBundle(player).isPresent())
                 .toList();
     }

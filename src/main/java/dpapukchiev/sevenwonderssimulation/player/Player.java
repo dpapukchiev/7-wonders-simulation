@@ -27,7 +27,8 @@ import static jsl.utilities.random.rvariable.JSLRandom.randomlySelect;
 
 @Log4j2
 @Getter
-@Builder
+@Setter
+@Builder(toBuilder = true)
 public class Player {
     private String                 name;
     private WonderContext          wonderContext;
@@ -100,7 +101,6 @@ public class Player {
         var cardEffect = card.getEffect();
         cardEffect.collectReward(this)
                 .ifPresent(this::applyEffectReward);
-        cardEffect.markAsExhausted();
         getEffectExecutionContext()
                 .getPermanentEffects()
                 .add(cardEffect);

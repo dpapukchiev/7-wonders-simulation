@@ -11,11 +11,11 @@ import static dpapukchiev.sevenwonderssimulation.cards.CardName.STALLE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FreeUpgradesTest {
+class ProvidedResourcesTest {
 
     @Test
     void getCardsWithNoCost() {
-        var freeUpgrades = new FreeUpgrades();
+        var freeUpgrades = new ProvidedResources();
 
         assertFalse(freeUpgrades.canBuildForFree(
                 getCard(APOTEKE),

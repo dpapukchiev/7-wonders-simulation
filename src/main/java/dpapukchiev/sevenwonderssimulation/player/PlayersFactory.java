@@ -1,13 +1,12 @@
 package dpapukchiev.sevenwonderssimulation.player;
 
 import dpapukchiev.sevenwonderssimulation.cards.Deck;
-import dpapukchiev.sevenwonderssimulation.cards.FreeUpgrades;
+import dpapukchiev.sevenwonderssimulation.cards.ProvidedResources;
 import dpapukchiev.sevenwonderssimulation.effects.core.EffectExecutionContext;
 import dpapukchiev.sevenwonderssimulation.game.GameOptions;
 import dpapukchiev.sevenwonderssimulation.player.strategy.Strategy;
 import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import dpapukchiev.sevenwonderssimulation.wonder.CityName;
-import dpapukchiev.sevenwonderssimulation.wonder.WonderContext;
 import dpapukchiev.sevenwonderssimulation.wonder.WonderTemplate;
 import jsl.modeling.elements.variable.RandomVariable;
 import lombok.Getter;
@@ -40,11 +39,10 @@ public class PlayersFactory {
         options.cityStatistics().log("Cities selected: %s".formatted(cities.stream().map(CityName::name).toList()));
         for (int i = 0; i < options.numberOfPlayers(); i++) {
             var wonderContext = wonderTemplate.build(cities.get(i));
-            var providedResources = FreeUpgrades.getProvidedResources(
-                    wonderContext.getCityName(),
-                    wonderContext.getSide().equals("A")
+            var providedResources = ProvidedResources.getProvidedResources(
+                    wonderContext.getCityName()
             );
-            var strategy = getStrategyForPlayer(options, wonderContext);
+            var strategy = getStrategyForPlayer(pickAStrategy.getValue());
             var player = Player.builder()
                     .name("Player-%s-%s-%s".formatted(i, wonderContext.getCityName(), strategy.getName()))
                     .wonderContext(wonderContext)
@@ -76,8 +74,7 @@ public class PlayersFactory {
         }
     }
 
-    private Strategy getStrategyForPlayer(GameOptions gameOptions, WonderContext wonderContext) {
-        var strategyNumber = pickAStrategy.getValue();
+    public Strategy getStrategyForPlayer(double strategyNumber) {
         return switch (String.valueOf(strategyNumber)) {
             case "1.0" -> Strategy.defaultStrategy();
             case "2.0" -> Strategy.v2();

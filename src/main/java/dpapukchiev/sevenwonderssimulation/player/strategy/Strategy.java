@@ -35,7 +35,7 @@ public class Strategy {
         return new Strategy(StrategyName.DEFAULT, List.of(
                 new BuildRandomFreeUpgrade(),
                 new BuildRandomWithCostCardIfAffordable(),
-                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildMostExpensiveUsingSpecialActionPlayWithoutCost(),
                 new BuildWonderIfAvailableDiscardRandom(),
                 new BuildRandomWithNoCostCard(),
                 new DiscardRandom()
@@ -44,7 +44,7 @@ public class Strategy {
 
     public static Strategy v2() {
         return new Strategy(StrategyName.V2, List.of(
-                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildMostExpensiveUsingSpecialActionPlayWithoutCost(),
                 new BuildRandomWithNoCostCard(),
                 new BuildRandomFreeUpgrade(),
                 new BuildRandomWithCostCardIfAffordable(),
@@ -56,7 +56,7 @@ public class Strategy {
     public static Strategy v3() {
         return new Strategy(StrategyName.V3, List.of(
                 new BuildWonderIfAvailableDiscardRandom(),
-                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildMostExpensiveUsingSpecialActionPlayWithoutCost(),
                 new BuildRandomWithNoCostCard(),
                 new BuildRandomFreeUpgrade(),
                 new BuildRandomWithCostCardIfAffordable(),
@@ -69,7 +69,7 @@ public class Strategy {
                 new BuildRandomFreeUpgrade(),
                 new BuildRandomWithNoCostCard(),
                 new BuildWonderIfAvailableDiscardRandom(),
-                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildMostExpensiveUsingSpecialActionPlayWithoutCost(),
                 new BuildRandomWithCostCardIfAffordable(),
                 new DiscardRandom()
         ));
@@ -79,7 +79,7 @@ public class Strategy {
         return new Strategy(StrategyName.V5, List.of(
                 new BuildWonderIfAvailableDiscardRandom(),
                 new BuildRandomFreeUpgrade(),
-                new BuildMostExpensiveUsingPlayWithoutCost(),
+                new BuildMostExpensiveUsingSpecialActionPlayWithoutCost(),
                 new BuildRandomWithNoCostCard(),
                 new BuildRandomWithCostCardIfAffordable(),
                 new DiscardRandom()

@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum GamePhase {
+    INITIALIZATION("Initialization"),
     INITIALIZE_PLAYERS("Initialize players"),
     PLAYER_TURN_AGE_1_TURN_1("Players turn age 1 turn 1"),
     END_OF_TURN_AGE_1_TURN_1("End of age 1 turn 1"),
