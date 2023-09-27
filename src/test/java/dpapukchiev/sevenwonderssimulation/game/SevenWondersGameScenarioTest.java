@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static dpapukchiev.sevenwonderssimulation.cards.CardName.APOTEKE;
-import static dpapukchiev.sevenwonderssimulation.cards.CardName.AQUADUKT;
 import static dpapukchiev.sevenwonderssimulation.cards.CardName.BADER;
 import static dpapukchiev.sevenwonderssimulation.cards.CardName.HOLZPLATZ;
 import static dpapukchiev.sevenwonderssimulation.cards.CardName.PRESSE;
@@ -33,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SevenWondersGameScenarioTest {
 
-    private CityStatistics cityStatistics = new CityStatistics(CityStatistics.SortBy.CITY);
+    private CityStatistics cityStatistics = new CityStatistics();
 
     @ValueSource(ints = {1, 2, 3, 4, 5})
     @ParameterizedTest

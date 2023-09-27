@@ -88,7 +88,7 @@ public class Player {
         if (myShields > rightShields) {
             getVault().addWarPoint(warPoint);
             log("Player %s gets %s war points from right player".formatted(name, warPoint.getValue()));
-            collectMetric("war-wins-from-left", warPoint.getValue());
+            collectMetric("war-wins-from-right", warPoint.getValue());
         } else if (myShields < rightShields) {
             getVault().addWarPoint(MINUS_ONE);
             log("Player %s gets -1 war point from right player".formatted(name));

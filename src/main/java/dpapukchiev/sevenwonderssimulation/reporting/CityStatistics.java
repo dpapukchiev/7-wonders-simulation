@@ -18,12 +18,10 @@ import static dpapukchiev.sevenwonderssimulation.game.GamePhase.WINNERS;
 @Log4j2
 @Getter
 public class CityStatistics {
-    private final SortBy               sortBy;
     private final Map<String, Integer> winners = new HashMap<>();
     private       EventTrackingService eventTrackingService;
 
-    public CityStatistics(SortBy sortBy) {
-        this.sortBy = sortBy;
+    public CityStatistics() {
     }
 
     public void refreshEventTrackingService(GameOptions gameOptions, double replicationNumber) {
@@ -33,12 +31,6 @@ public class CityStatistics {
                 gameOptions.logEveryNGames(),
                 gameOptions.simulation()
         );
-    }
-
-    public enum SortBy {
-        CITY,
-        METRIC,
-        METRIC_NAME
     }
 
     public record Metric(
@@ -73,17 +65,11 @@ public class CityStatistics {
         eventTrackingService.logEvent(event);
     }
 
-    public void reportStatistics(SortBy sortBy) {
+    public void reportStatistics() {
         eventTrackingService.transitionPhase(STATISTICS);
-        eventTrackingService.logEvent("\nSTATISTICS BY %s".formatted(sortBy));
+        eventTrackingService.logEvent("\nSTATISTICS");
 
         metrics.values().stream()
-                .sorted((s1, s2) -> switch (sortBy) {
-                    case CITY -> s1.wonderContext().getCityName().name()
-                            .compareTo(s2.wonderContext().getCityName().name());
-                    case METRIC -> s1.statistic().compareTo(s2.statistic());
-                    case METRIC_NAME -> s1.statistic().getName().compareTo(s2.statistic().getName());
-                })
                 .map(Metric::statistic)
                 .forEach(eventTrackingService::logStatistic);
 //                .forEach(log::info);
@@ -122,11 +108,7 @@ public class CityStatistics {
     }
 
     private String getMetricName(WonderContext wonderContext, String statisticName, Strategy strategy) {
-        return switch (sortBy) {
-            case CITY -> "%s-%s-%s".formatted(wonderContext.getName(), statisticName, strategy.getName().name());
-            case METRIC, METRIC_NAME ->
-                    "%s-%s-%s".formatted(statisticName, wonderContext.getName(), strategy.getName().name());
-        };
+        return "%s=%s=%s".formatted(wonderContext.getName(), statisticName, strategy.getName().name());
     }
 
 }

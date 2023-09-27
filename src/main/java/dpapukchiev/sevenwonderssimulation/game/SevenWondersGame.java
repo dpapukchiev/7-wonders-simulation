@@ -6,7 +6,6 @@ import dpapukchiev.sevenwonderssimulation.effects.core.EffectReward;
 import dpapukchiev.sevenwonderssimulation.player.Player;
 import dpapukchiev.sevenwonderssimulation.player.PlayersFactory;
 import dpapukchiev.sevenwonderssimulation.player.ScoreCard;
-import dpapukchiev.sevenwonderssimulation.reporting.CityStatistics;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.EventAction;
 import jsl.simulation.EventActionIfc;
@@ -24,12 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static dpapukchiev.sevenwonderssimulation.game.GamePhase.END_OF_GAME;
 import static dpapukchiev.sevenwonderssimulation.game.GamePhase.SCORING;
 import static dpapukchiev.sevenwonderssimulation.game.GamePhase.WINNERS;
-import static dpapukchiev.sevenwonderssimulation.reporting.CityStatistics.SortBy.METRIC_NAME;
 
 @Log4j2
 @Getter
@@ -166,7 +163,7 @@ public class SevenWondersGame extends SchedulingElement {
                     winner.score().getTotalScore()
             ));
 
-            getGameOptions().cityStatistics().reportStatistics(METRIC_NAME);
+            getGameOptions().cityStatistics().reportStatistics();
 
             addWinnerToWinnersList(winner);
         }
