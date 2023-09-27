@@ -85,15 +85,7 @@ public class CityStatistics {
                     case METRIC_NAME -> s1.statistic().getName().compareTo(s2.statistic().getName());
                 })
                 .map(Metric::statistic)
-                .map(s -> "%s: %s (n=%s, std=%s, min=%s, max=%s)".formatted(
-                        s.getName(),
-                        Math.round(s.getAverage() * 100.0) / 100.0,
-                        s.getCount(),
-                        Math.round(s.getStandardDeviation() * 100.0) / 100.0,
-                        s.getMin(),
-                        s.getMax()
-                ))
-                .forEach(eventTrackingService::logEvent);
+                .forEach(eventTrackingService::logStatistic);
 //                .forEach(log::info);
     }
 
